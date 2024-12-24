@@ -16,7 +16,7 @@ export default function Home() {
             At your disposal
           </h2>
           <p>Daily Availability<br />9am to 5pm</p>
-          <Link href="/tickets" className="hover:underline">
+          <Link href="/agreements" className="hover:underline">
             Start
           </Link>
         </div>

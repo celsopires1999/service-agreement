@@ -15,8 +15,8 @@ import { relations } from "drizzle-orm";
 export const agreements = pgTable("agreements", {
   agreementId: uuid("agreement_id").defaultRandom().primaryKey(),
   year: integer("year").notNull(),
-  version: integer("version").notNull(),
-  date: timestamp("date").notNull(),
+  revision: integer("revision").notNull(),
+  revisionDate: timestamp("revision_date").notNull(),
   name: varchar("name").notNull(),
   description: text("description").notNull(),
   contactEmail: varchar("contact_email").notNull(),
