@@ -1,4 +1,4 @@
-import { FileIcon, HomeIcon, UsersRound, LogOut } from "lucide-react"
+import { FileIcon, HomeIcon, Handshake } from "lucide-react"
 import Link from "next/link"
 // import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"
 // import { Button } from "@/components/ui/button"
@@ -11,10 +11,10 @@ export function Header() {
         <header className="sticky top-0 z-20 h-12 animate-slide border-b bg-background p-2">
             <div className="flex h-8 w-full items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <NavButton icon={HomeIcon} label="Home" href="/tickets" />
+                    <NavButton icon={HomeIcon} label="Home" href="/agreements" />
 
                     <Link
-                        href="/tickets"
+                        href="/agreements"
                         className="ml-0 flex items-center justify-center gap-2"
                         title="Home"
                     >
@@ -26,16 +26,16 @@ export function Header() {
                 <div className="flex items-center">
                     <NavButton
                         icon={FileIcon}
-                        label="Tickets"
-                        href="/tickets"
+                        label="Services"
+                        href="/services"
                     />
 
                     <NavButtonMenu
-                        icon={UsersRound}
-                        label="Customers"
+                        icon={Handshake}
+                        label="Agreements"
                         choices={[
-                            { title: "Search Customers", href: "/customers" },
-                            { title: "New Customer", href: "/customers/form" },
+                            { title: "Search Agreements", href: "/agreements" },
+                            { title: "New Agreement", href: "/agreements/form" },
                         ]}
                     />
 

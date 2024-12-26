@@ -48,19 +48,19 @@ export function AgreementTable({ data }: Props) {
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const columnHeadersArray: Array<keyof selectAgreementSchemaType> = [
-        "year",
         "name",
+        "contactEmail",
+        "year",
         "revision",
         "revisionDate",
-        "contactEmail",
     ]
 
     const columnLabels = {
-        year: "Year",
         name: "Name",
+        contactEmail: "Contact Email",
+        year: "Year",
         revision: "Revision",
         revisionDate: "Revision Date",
-        contactEmail: "Contact Email",
     }
 
     const columnWidths = {
@@ -87,16 +87,16 @@ export function AgreementTable({ data }: Props) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
                         <Link
-                            href={`/tickets/form?customerId=${row.original.agreementId}`}
+                            href={`/services/form?agreementId=${row.original.agreementId}`}
                             className="w-full"
                             prefetch={false}
                         >
-                            New Agreement
+                            Add Service
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Link
-                            href={`/customers/form?customerId=${row.original.agreementId}`}
+                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
                             className="w-full"
                             prefetch={false}
                         >
