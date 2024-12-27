@@ -27,13 +27,16 @@ export const saveAgreementAction = actionClient
             // New Agreement
             // createdAt and updatedAt are set by the database
 
-            if (agreement.agreementId === "") {
+            if (
+                agreement.agreementId === "" ||
+                agreement.agreementId === "(New)"
+            ) {
                 const result = await db
                     .insert(agreements)
                     .values({
                         year: agreement.year,
                         revision: agreement.revision,
-                        revisionDate: agreement.revisionDate,
+                        revisionDate: agreement.revisionDate.trim(),
                         name: agreement.name.trim(),
                         description: agreement.description.trim(),
                         contactEmail: agreement.contactEmail.trim(),
@@ -56,7 +59,7 @@ export const saveAgreementAction = actionClient
                 .set({
                     year: agreement.year,
                     revision: agreement.revision,
-                    revisionDate: agreement.revisionDate,
+                    revisionDate: agreement.revisionDate.trim(),
                     name: agreement.name.trim(),
                     description: agreement.description.trim(),
                     contactEmail: agreement.contactEmail.trim(),

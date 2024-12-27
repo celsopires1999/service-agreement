@@ -44,7 +44,7 @@ export function SelectWithLabel<Schema>({
             name={nameInSchema}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel className="text-base" htmlFor={nameInSchema}>
+                    <FormLabel className="text-base font-semibold" htmlFor={nameInSchema}>
                         {fieldTitle}
                     </FormLabel>
 

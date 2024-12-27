@@ -1,0 +1,111 @@
+import { BackButton } from "@/components/BackButton"
+import { getAgreement } from "@/lib/queries/getAgreement"
+import { getService } from "@/lib/queries/getService"
+import { ServiceForm } from "../ServiceForm"
+
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | undefined }>
+}) {
+    const { agreementId, serviceId } = await searchParams
+
+    if (!agreementId && !serviceId)
+        return {
+            title: "Missing Service ID or Agreement ID",
+        }
+
+    if (agreementId)
+        return {
+            title: `New Service for Agreement #${agreementId}`,
+        }
+
+    if (serviceId)
+        return {
+            title: `Edit Service #${serviceId}`,
+        }
+}
+
+export default async function ServiceFormPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | undefined }>
+}) {
+    try {
+        const { agreementId, serviceId } = await searchParams
+
+        if (!agreementId && !serviceId) {
+            return (
+                <>
+                    <h2 className="mb-2 text-2xl">
+                        Service ID or Agreement ID required to load form
+                    </h2>
+                    <BackButton title="Go Back" variant="default" />
+                </>
+            )
+        }
+
+        const currencies = [
+            {
+                id: "USD",
+                description: "United States Dollar",
+            },
+            {
+                id: "EUR",
+                description: "Euro",
+            },
+        ]
+
+        // New ticket form
+        if (agreementId) {
+            const agreement = await getAgreement(agreementId)
+
+            if (!agreement) {
+                return (
+                    <>
+                        <h2 className="mb-2 text-2xl">
+                            Agreement ID #{agreementId} not found
+                        </h2>
+                        <BackButton title="Go Back" variant="default" />
+                    </>
+                )
+            }
+
+            // return ticket form
+            return <ServiceForm agreement={agreement} currencies={currencies} />
+
+        }
+
+        // Edit ticket form
+        if (serviceId) {
+            const service = await getService(serviceId)
+
+            if (!service) {
+                return (
+                    <>
+                        <h2 className="mb-2 text-2xl">
+                            Service ID #{serviceId} not found
+                        </h2>
+                        <BackButton title="Go Back" variant="default" />
+                    </>
+                )
+            }
+
+            const agreement = await getAgreement(service.agreementId)
+
+            return (
+                < ServiceForm
+                    agreement={agreement}
+                    service={service}
+                    currencies={currencies}
+                />
+            )
+        }
+
+    } catch (e) {
+        if (e instanceof Error) {
+            console.error(e)
+            throw e
+        }
+    }
+}

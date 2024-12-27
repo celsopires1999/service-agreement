@@ -121,13 +121,7 @@ export function AgreementTable({ data }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "revisionDate" && value instanceof Date) {
-                        return value.toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                        })
-                    }
+                    // for now there is no need for transformation
                     return value
                 },
                 {
@@ -177,7 +171,7 @@ export function AgreementTable({ data }: Props) {
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className={`bg-secondary ${header.id === "actions" ? "w-12" : ""}`}
+                                        className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
                                     >
                                         <div
                                             className={`${header.id === "actions" ? "flex items-center justify-center" : ""}`}
