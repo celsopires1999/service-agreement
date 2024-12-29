@@ -37,7 +37,7 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
         agreementId: service?.agreementId ?? agreement.agreementId,
         name: service?.name ?? "",
         description: service?.description ?? "",
-        amount: service?.amount ?? "",
+        amount: service?.amount.replace(".", ",") ?? "",
         currency: service?.currency ?? "USD",
         responsibleEmail: service?.responsibleEmail ?? "",
     }

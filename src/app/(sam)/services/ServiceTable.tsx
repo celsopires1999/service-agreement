@@ -16,7 +16,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import type { selectAgreementSchemaType } from "@/zod-schemas/agreement"
+import { getServiceSearchResultsType } from "@/lib/queries/getServiceSearchResults"
 import {
     CellContext,
     createColumnHelper,
@@ -32,12 +32,13 @@ import { MoreHorizontal, TableOfContents } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
+import { clearLine } from "readline"
 
 type Props = {
-    data: selectAgreementSchemaType[]
+    data: getServiceSearchResultsType[]
 }
 
-export function AgreementTable({ data }: Props) {
+export function ServiceTable({ data }: Props) {
     const router = useRouter()
 
     const searchParams = useSearchParams()
@@ -47,17 +48,24 @@ export function AgreementTable({ data }: Props) {
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const columnHeadersArray: Array<keyof selectAgreementSchemaType> = [
+
+    const columnHeadersArray: Array<keyof getServiceSearchResultsType> = [
         "name",
-        "contactEmail",
+        "amount",
+        "currency",
+        "responsibleEmail",
+        "agreementName",
         "year",
         "revision",
         "revisionDate",
     ]
 
-    const columnLabels: Partial<{ [K in keyof selectAgreementSchemaType]: string }> = {
-        name: "Name",
-        contactEmail: "Contact Email",
+    const columnLabels: Partial<{ [K in keyof getServiceSearchResultsType]: string }> = {
+        name: "Service Name",
+        amount: "Amount",
+        currency: "Currency",
+        responsibleEmail: "Responsible Email",
+        agreementName: "Agreement Name",
         year: "Year",
         revision: "Revision",
         revisionDate: "Revision Date",
@@ -66,16 +74,18 @@ export function AgreementTable({ data }: Props) {
     const columnWidths: Partial<{
         [K in keyof typeof columnLabels]: number
     }> = {
+        amount: 150,
+        currency: 150,
         year: 150,
         revision: 150,
         revisionDate: 150,
     }
 
-    const columnHelper = createColumnHelper<selectAgreementSchemaType>()
+    const columnHelper = createColumnHelper<getServiceSearchResultsType>()
 
     const ActionsCell = ({
         row,
-    }: CellContext<selectAgreementSchemaType, unknown>) => {
+    }: CellContext<getServiceSearchResultsType, unknown>) => {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -89,20 +99,20 @@ export function AgreementTable({ data }: Props) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
                         <Link
-                            href={`/services/form?agreementId=${row.original.agreementId}`}
+                            href={`/services/${row.original.serviceId}`}
                             className="w-full"
                             prefetch={false}
                         >
-                            Add Service
+                            Systems to Service
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Link
-                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
+                            href={`/services/form?serviceId=${row.original.serviceId}`}
                             className="w-full"
                             prefetch={false}
                         >
-                            Edit Agreement
+                            Edit Service
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -123,7 +133,9 @@ export function AgreementTable({ data }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    // for now there is no need for transformation
+                    if (columnName === "amount") {
+                        return new Intl.NumberFormat("pt-BR", { style: "decimal" }).format(+value)
+                    }
                     return value
                 },
                 {
@@ -132,7 +144,20 @@ export function AgreementTable({ data }: Props) {
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
                     header: () => (columnLabels[columnName as keyof typeof columnLabels]),
+                    cell: (info) => {
+                        if (columnName === "amount") {
+                            return (
+                                <div className="text-right">
+                                    {info.renderValue()}
+                                </div>
+                            )
+                        }
+                        return (
+                            info.renderValue()
+                        )
+                    }
                 },
+
             )
         })]
 

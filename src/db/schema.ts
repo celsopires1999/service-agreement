@@ -59,8 +59,8 @@ export const systems = pgTable("systems", {
         .$onUpdate(() => new Date()),
 })
 
-export const servicesSystems = pgTable(
-    "services_systems",
+export const serviceSystems = pgTable(
+    "service_systems",
     {
         serviceId: uuid("service_id")
             .notNull()
@@ -90,9 +90,9 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
         fields: [services.agreementId],
         references: [agreements.agreementId],
     }),
-    systems: many(servicesSystems),
+    systems: many(serviceSystems),
 }))
 
 export const systemsRelations = relations(systems, ({ many }) => ({
-    services: many(servicesSystems),
+    services: many(serviceSystems),
 }))

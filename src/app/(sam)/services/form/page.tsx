@@ -26,7 +26,7 @@ export async function generateMetadata({
         }
 }
 
-export default async function ServiceFormPage({
+export default async function ServicePage({
     searchParams,
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>

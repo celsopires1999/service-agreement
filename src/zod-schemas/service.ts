@@ -15,14 +15,18 @@ export const insertServiceSchema = createInsertSchema(services, {
             .min(1, "Description is required")
             .max(500, "Description must be 500 characters or less"),
     amount: (schema) =>
-        schema.refine(
-            (value) => {
-                return isValidDecimalWithPrecision(value, 12, 2)
-            },
-            {
-                message: "Invalid amount",
-            },
-        ),
+        schema
+            .refine(
+                (value) => {
+                    const decimalValue = value.replace(",", ".")
+                    return isValidDecimalWithPrecision(decimalValue, 12, 2)
+                },
+                {
+                    message: "Invalid amount",
+                },
+            )
+            .transform((value) => value.replace(",", ".")),
+
     currency: (schema) =>
         schema.refine((value) => ["EUR", "USD"].includes(value), {
             message: "Invalid currency",

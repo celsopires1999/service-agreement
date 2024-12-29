@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { agreements } from "@/db/schema"
-import { asc, desc, ilike, or, sql } from "drizzle-orm"
+import { asc, desc, ilike, or } from "drizzle-orm"
 
 export async function getAgreementSearchResults(searchText: string) {
     const results = await db

@@ -1,4 +1,5 @@
 "use client"
+import { deleteServiceSystemAction } from "@/app/actions/deleteServiceSystemAction"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -12,11 +13,13 @@ import {
     Table,
     TableBody,
     TableCell,
+    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import type { selectAgreementSchemaType } from "@/zod-schemas/agreement"
+import { useToast } from "@/hooks/use-toast"
+import { getServiceSystemsSearchResultsType } from "@/lib/queries/getServiceSystemsSearchResults"
 import {
     CellContext,
     createColumnHelper,
@@ -28,54 +31,101 @@ import {
     getSortedRowModel,
     useReactTable
 } from "@tanstack/react-table"
+import Decimal from "decimal.js"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
-import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 type Props = {
-    data: selectAgreementSchemaType[]
+    data: getServiceSystemsSearchResultsType[]
 }
 
-export function AgreementTable({ data }: Props) {
+export function SystemsToServiceTable({ data }: Props) {
     const router = useRouter()
+    const { toast } = useToast()
 
     const searchParams = useSearchParams()
+
+    const handleDeleteServiceSystem = async (serviceId: string, systemId: string) => {
+        const result = await deleteServiceSystemAction({ serviceId, systemId })
+
+        if (result?.serverError) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: result?.serverError,
+            })
+            return
+        }
+
+        if (result?.data) {
+            toast({
+                variant: "default",
+                title: "Success! 🎉",
+                description: result.data.message,
+            })
+            return
+        }
+
+    }
+
+    const [total, setTotal] = useState({ allocation: "0.00", amount: "0.00" })
+
+    useEffect(() => {
+        const { allocation, amount } = totalAllocationAndAmount()
+        setTotal({ allocation, amount })
+    }, [data])
+
+    const totalAllocationAndAmount = () => {
+        const allocation = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.allocation)), new Decimal(0)).toString()
+        const amount = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.amount)), new Decimal(0)).toString()
+        return { allocation, amount }
+    }
+
+    const toDecimal = (value: string) => {
+        try {
+            const valueDecimal = new Decimal(value)
+            return valueDecimal
+        } catch (error) {
+            return new Decimal(0)
+        }
+    }
 
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const columnHeadersArray: Array<keyof selectAgreementSchemaType> = [
+
+    const columnHeadersArray: Array<keyof getServiceSystemsSearchResultsType> = [
         "name",
-        "contactEmail",
-        "year",
-        "revision",
-        "revisionDate",
+        "allocation",
+        "amount",
+        "currency",
+        "description",
     ]
 
-    const columnLabels: Partial<{ [K in keyof selectAgreementSchemaType]: string }> = {
-        name: "Name",
-        contactEmail: "Contact Email",
-        year: "Year",
-        revision: "Revision",
-        revisionDate: "Revision Date",
+    const columnLabels: Partial<{ [K in keyof getServiceSystemsSearchResultsType]: string }> = {
+        name: "System Name",
+        allocation: "Allocation",
+        amount: "Amount",
+        currency: "Currency",
+        description: "Description",
     }
 
     const columnWidths: Partial<{
         [K in keyof typeof columnLabels]: number
     }> = {
-        year: 150,
-        revision: 150,
-        revisionDate: 150,
+        amount: 150,
+        currency: 150,
+        allocation: 150,
     }
 
-    const columnHelper = createColumnHelper<selectAgreementSchemaType>()
+    const columnHelper = createColumnHelper<getServiceSystemsSearchResultsType>()
 
     const ActionsCell = ({
         row,
-    }: CellContext<selectAgreementSchemaType, unknown>) => {
+    }: CellContext<getServiceSystemsSearchResultsType, unknown>) => {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -87,23 +137,10 @@ export function AgreementTable({ data }: Props) {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Add Service
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Edit Agreement
-                        </Link>
+                    <DropdownMenuItem onClick={() =>
+                        handleDeleteServiceSystem(row.original.serviceId, row.original.systemId)}
+                    >
+                        Remove System
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -123,7 +160,10 @@ export function AgreementTable({ data }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    // for now there is no need for transformation
+                    if (columnName === "amount" || columnName === "allocation") {
+                        // return new Intl.NumberFormat("pt-BR", { style: "decimal" }).format(+value)
+                        return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
+                    }
                     return value
                 },
                 {
@@ -132,7 +172,20 @@ export function AgreementTable({ data }: Props) {
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
                     header: () => (columnLabels[columnName as keyof typeof columnLabels]),
+                    cell: (info) => {
+                        if (columnName === "amount" || columnName === "allocation") {
+                            return (
+                                <div className="text-right">
+                                    {info.renderValue()}
+                                </div>
+                            )
+                        }
+                        return (
+                            info.renderValue()
+                        )
+                    }
                 },
+
             )
         })]
 
@@ -208,6 +261,19 @@ export function AgreementTable({ data }: Props) {
                             </TableRow>
                         ))}
                     </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell colSpan={2}>Total</TableCell>
+                            <TableCell className="text-right">
+                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.allocation)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.amount)}
+                            </TableCell>
+                            <TableCell>{data[0].currency}</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-1">

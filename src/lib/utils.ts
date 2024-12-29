@@ -21,7 +21,7 @@ export function isValidDecimalWithPrecision(
             return false
         }
 
-        if (fractionalPart.length !== scale) {
+        if (fractionalPart && fractionalPart.length > scale) {
             return false
         }
 
