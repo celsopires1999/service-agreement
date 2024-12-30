@@ -56,7 +56,7 @@ export function AgreementTable({ data }: Props) {
     ]
 
     const columnLabels: Partial<{ [K in keyof selectAgreementSchemaType]: string }> = {
-        name: "Name",
+        name: "Agreement",
         contactEmail: "Contact Email",
         year: "Year",
         revision: "Revision",
@@ -89,20 +89,29 @@ export function AgreementTable({ data }: Props) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
                         <Link
-                            href={`/services/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Add Service
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Link
                             href={`/agreements/form?agreementId=${row.original.agreementId}`}
                             className="w-full"
                             prefetch={false}
                         >
                             Edit Agreement
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/services?searchText=${row.original.name}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            List Services
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/services/form?agreementId=${row.original.agreementId}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            Add Service
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

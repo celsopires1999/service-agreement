@@ -53,6 +53,8 @@ export const saveServiceSystemsAction = actionClient
 
                 return {
                     message: `System ID #${result[0].insertedSystemId} to Service ID #${result[0].insertedServiceId} created successfully`,
+                    serviceId: result[0].insertedServiceId,
+                    systemId: result[0].insertedSystemId,
                 }
             }
             // Existing service
@@ -79,6 +81,8 @@ export const saveServiceSystemsAction = actionClient
 
             return {
                 message: `System ID #${result[0].updatedSystemId} to Service ID #${result[0].updatedServiceId} updated successfully`,
+                serviceId: result[0].updatedServiceId,
+                systemId: result[0].updatedSystemId,
             }
         },
     )

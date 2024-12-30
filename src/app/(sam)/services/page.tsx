@@ -16,7 +16,7 @@ export default async function ServicesPage({
     if (!searchText) {
         return (
             <div>
-                <ServiceSearch />
+                <ServiceSearch searchText="" />
             </div>
         )
     }

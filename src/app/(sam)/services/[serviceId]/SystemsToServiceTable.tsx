@@ -269,7 +269,7 @@ export function SystemsToServiceTable({ data }: Props) {
                             <TableCell className="text-right">
                                 {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.amount)}
                             </TableCell>
-                            <TableCell>{data[0].currency}</TableCell>
+                            <TableCell>{data[0]?.currency}</TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableFooter>

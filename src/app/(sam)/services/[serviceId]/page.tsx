@@ -3,6 +3,7 @@ import { getService } from "@/lib/queries/getService"
 import { SystemsToServiceForm } from "./SystemsToServiceForm"
 import { getSystems } from "@/lib/queries/getSystems"
 import { getServiceSystemsSearchResults } from "@/lib/queries/getServiceSystemsSearchResults"
+import { getAgreement } from "@/lib/queries/getAgreement"
 
 export async function generateMetadata({
     params,
@@ -30,6 +31,7 @@ export default async function SystemsToServiceFormPage({
     try {
         const { serviceId } = await params
         const service = await getService(serviceId)
+        const agreement = await getAgreement(service.agreementId)
         const systemsResult = await getSystems()
         const systems = systemsResult.map((s) => ({ id: s.systemId, description: s.name }))
         const serviceSystems = await getServiceSystemsSearchResults(serviceId)
@@ -48,6 +50,7 @@ export default async function SystemsToServiceFormPage({
             <SystemsToServiceForm
                 key={serviceId}
                 service={service}
+                agreement={agreement}
                 systems={systems}
                 serviceSystems={serviceSystems}
             />

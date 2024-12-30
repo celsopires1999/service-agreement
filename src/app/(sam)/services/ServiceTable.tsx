@@ -60,14 +60,14 @@ export function ServiceTable({ data }: Props) {
     ]
 
     const columnLabels: Partial<{ [K in keyof getServiceSearchResultsType]: string }> = {
-        name: "Service Name",
+        name: "Service",
         amount: "Amount",
         currency: "Currency",
-        responsibleEmail: "Responsible Email",
-        agreementName: "Agreement Name",
+        responsibleEmail: "Responsible",
+        agreementName: "Agreement",
         year: "Year",
         revision: "Revision",
-        revisionDate: "Revision Date",
+        revisionDate: "Date",
     }
 
     const columnWidths: Partial<{
@@ -98,13 +98,14 @@ export function ServiceTable({ data }: Props) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
                         <Link
-                            href={`/services/${row.original.serviceId}`}
+                            href={`/services/form?agreementId=${row.original.agreementId}`}
                             className="w-full"
                             prefetch={false}
                         >
-                            Systems to Service
+                            New Service
                         </Link>
                     </DropdownMenuItem>
+
                     <DropdownMenuItem>
                         <Link
                             href={`/services/form?serviceId=${row.original.serviceId}`}
@@ -112,6 +113,25 @@ export function ServiceTable({ data }: Props) {
                             prefetch={false}
                         >
                             Edit Service
+                        </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/services/${row.original.serviceId}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            Systems
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            Edit Agreement
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

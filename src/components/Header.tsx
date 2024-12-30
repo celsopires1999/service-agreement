@@ -24,12 +24,6 @@ export function Header() {
                     </Link>
                 </div>
                 <div className="flex items-center">
-                    <NavButton
-                        icon={FileIcon}
-                        label="Services"
-                        href="/services"
-                    />
-
                     <NavButtonMenu
                         icon={Handshake}
                         label="Agreements"
@@ -37,6 +31,12 @@ export function Header() {
                             { title: "Search Agreements", href: "/agreements" },
                             { title: "New Agreement", href: "/agreements/form" },
                         ]}
+                    />
+
+                    <NavButton
+                        icon={FileIcon}
+                        label="Services"
+                        href="/services"
                     />
 
                     <ModeToggle />

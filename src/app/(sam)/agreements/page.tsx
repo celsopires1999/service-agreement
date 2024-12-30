@@ -16,7 +16,7 @@ export default async function AgreementsPage({
     if (!searchText) {
         return (
             <div>
-                <AgreementSearch />
+                <AgreementSearch searchText="" />
             </div>
         )
     }

@@ -50,6 +50,7 @@ export const saveAgreementAction = actionClient
 
                 return {
                     message: `Agreement ID #${result[0].insertedId} created successfully`,
+                    agreementId: result[0].insertedId,
                 }
             }
             // Existing agreement
@@ -72,6 +73,7 @@ export const saveAgreementAction = actionClient
 
             return {
                 message: `Agreement ID #${result[0].updatedId} updated successfully`,
+                agreementId: result[0].updatedId,
             }
         },
     )

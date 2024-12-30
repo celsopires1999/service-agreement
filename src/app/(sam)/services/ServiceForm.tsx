@@ -18,6 +18,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
+import Link from "next/link"
+
 
 type Props = {
     agreement: selectAgreementSchemaType
@@ -80,11 +82,31 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
     return (
         <div className="flex flex-col gap-1 sm:px-8">
             <DisplayServerActionResponse result={saveResult} />
-            <div>
+            <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
-                    {service?.serviceId ? "Edit" : "New"} Service{" "}
-                    {service?.serviceId ? `#${service.serviceId.substring(0, 5)}...` : "Form"}
+                    {service?.serviceId ? "Edit" : "New"} Service Form
+
                 </h2>
+                {!!saveResult?.data?.serviceId && !service?.serviceId && (
+                    <Link
+                        href={`/services/${saveResult.data.serviceId}`}
+                    >
+                        <h2>
+                            Go to Systems Form
+                        </h2>
+                    </Link>
+                )}
+                {
+                    !!service?.serviceId && (
+                        <Link
+                            href={`/services/${service.serviceId}`}
+                        >
+                            <h2>
+                                Go to Systems Form
+                            </h2>
+                        </Link>
+                    )
+                }
             </div>
 
             <Form {...form}>

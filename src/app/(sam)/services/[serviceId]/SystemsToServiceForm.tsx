@@ -7,18 +7,21 @@ import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 import { getServiceSystemsSearchResultsType } from "@/lib/queries/getServiceSystemsSearchResults"
+import { selectAgreementSchemaType } from "@/zod-schemas/agreement"
 import { selectServiceSchemaType } from "@/zod-schemas/service"
 import { insertServiceSystemsSchema, type insertServiceSystemsSchemaType } from "@/zod-schemas/service_systems"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Decimal from "decimal.js"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import { useEffect, useRef } from "react"
+import Link from "next/link"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { SystemsToServiceTable } from "./SystemsToServiceTable"
 
 type Props = {
     service: selectServiceSchemaType
+    agreement: selectAgreementSchemaType
     serviceSystems?: getServiceSystemsSearchResultsType[]
     systems?: {
         id: string
@@ -26,7 +29,7 @@ type Props = {
     }[]
 }
 
-export function SystemsToServiceForm({ service, serviceSystems, systems }: Props) {
+export function SystemsToServiceForm({ service, agreement, serviceSystems, systems }: Props) {
     const { toast } = useToast()
 
     const defaultValues: insertServiceSystemsSchemaType =
@@ -90,10 +93,21 @@ export function SystemsToServiceForm({ service, serviceSystems, systems }: Props
 
     return (
         <div className="flex flex-col gap-1 sm:px-8">
-            <div>
+            <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
                     {service?.name ? `${service.name}` : "Form"}
                 </h2>
+                {
+                    !!agreement?.agreementId && (
+                        <Link
+                            href={`/services?searchText=${agreement.name}`}
+                        >
+                            <h2>
+                                Go to Services List
+                            </h2>
+                        </Link>
+                    )
+                }
             </div>
 
             <Form {...form}>

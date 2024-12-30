@@ -15,9 +15,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
+import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
+
 
 type Props = {
     agreement?: selectAgreementSchemaType
@@ -99,11 +101,31 @@ export function AgreementForm({ agreement }: Props) {
     return (
         <div className="flex flex-col gap-1 sm:px-8">
             <DisplayServerActionResponse result={saveResult} />
-            <div>
+            <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
-                    {agreement?.agreementId ? "Edit" : "New"} Agreement{" "}
-                    {agreement?.agreementId ? `#${agreement.agreementId.substring(0, 5)}...` : "Form"}
+                    {agreement?.agreementId ? "Edit" : "New"} Agreement Form
+
                 </h2>
+                {!!saveResult?.data?.agreementId && !agreement?.agreementId && (
+                    <Link
+                        href={`/services/form?agreementId=${saveResult.data.agreementId}`}
+                    >
+                        <h2>
+                            Go to New Service Form
+                        </h2>
+                    </Link>
+                )}
+                {
+                    !!agreement?.agreementId && (
+                        <Link
+                            href={`/services?searchText=${agreement.name}`}
+                        >
+                            <h2>
+                                Go to Services List
+                            </h2>
+                        </Link>
+                    )
+                }
             </div>
 
             <Form {...form}>

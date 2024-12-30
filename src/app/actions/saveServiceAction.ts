@@ -43,6 +43,7 @@ export const saveServiceAction = actionClient
 
                 return {
                     message: `Service ID #${result[0].insertedId} created successfully`,
+                    serviceId: result[0].insertedId,
                 }
             }
             // Existing service
@@ -54,6 +55,7 @@ export const saveServiceAction = actionClient
 
             return {
                 message: `Service ID #${result.serviceId} updated successfully`,
+                serviceId: result.serviceId,
             }
         },
     )
