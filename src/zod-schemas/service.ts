@@ -1,7 +1,7 @@
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { services } from "@/db/schema"
-import { z } from "zod"
 import { isValidDecimalWithPrecision } from "@/lib/utils"
+import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { z } from "zod"
 
 export const insertServiceSchema = createInsertSchema(services, {
     serviceId: z.union([z.string().uuid("invalid UUID"), z.literal("(New)")]),

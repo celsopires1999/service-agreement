@@ -161,7 +161,6 @@ export function SystemsToServiceTable({ data }: Props) {
                     // transformational
                     const value = row[columnName]
                     if (columnName === "amount" || columnName === "allocation") {
-                        // return new Intl.NumberFormat("pt-BR", { style: "decimal" }).format(+value)
                         return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
                     }
                     return value

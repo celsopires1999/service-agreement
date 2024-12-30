@@ -32,7 +32,6 @@ import { MoreHorizontal, TableOfContents } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
-import { clearLine } from "readline"
 
 type Props = {
     data: getServiceSearchResultsType[]
@@ -134,7 +133,7 @@ export function ServiceTable({ data }: Props) {
                     // transformational
                     const value = row[columnName]
                     if (columnName === "amount") {
-                        return new Intl.NumberFormat("pt-BR", { style: "decimal" }).format(+value)
+                        return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
                     }
                     return value
                 },

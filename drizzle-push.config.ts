@@ -1,10 +1,10 @@
-import { defineConfig } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit"
 
 export default defineConfig({
-  schema: "./src/db/schema.ts",
-  out: "./src/db/migrations",
-  dialect: "postgresql",
-  dbCredentials: {
-    url: "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable",
-  },
-});
+    schema: "./src/db/schema.ts",
+    out: "./src/db/migrations",
+    dialect: "postgresql",
+    dbCredentials: {
+        url: "postgres://postgres:postgres@localhost:5432/servagre?sslmode=disable",
+    },
+})
