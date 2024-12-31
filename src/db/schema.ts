@@ -52,6 +52,8 @@ export const systems = pgTable("systems", {
     systemId: uuid("system_id").defaultRandom().primaryKey(),
     name: varchar("name").notNull(),
     description: text("description").notNull(),
+    users: integer("users").notNull(),
+    applicationId: varchar("application_id").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
         .notNull()

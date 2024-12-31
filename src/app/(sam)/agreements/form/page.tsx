@@ -2,6 +2,7 @@ import { BackButton } from "@/components/BackButton"
 import { getAgreement } from "@/lib/queries/getAgreement"
 // import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { AgreementForm } from "./AgreementForm"
+import { countServicesByAgreementId } from "@/lib/queries/service"
 
 export async function generateMetadata({
     searchParams,
@@ -47,11 +48,12 @@ export default async function AgreementFormPage({
                     </>
                 )
             }
-            // put agreement form component
+            const count = await countServicesByAgreementId(agreementId)
             return (
                 <AgreementForm
                     key={agreementId}
                     agreement={agreement}
+                    hasServices={count > 0}
                 />
             )
         } else {

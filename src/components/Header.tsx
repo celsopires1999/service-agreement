@@ -1,4 +1,4 @@
-import { FileIcon, HomeIcon, Handshake } from "lucide-react"
+import { FileIcon, HomeIcon, HandshakeIcon, CpuIcon } from "lucide-react"
 import Link from "next/link"
 // import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"
 // import { Button } from "@/components/ui/button"
@@ -25,7 +25,7 @@ export function Header() {
                 </div>
                 <div className="flex items-center">
                     <NavButtonMenu
-                        icon={Handshake}
+                        icon={HandshakeIcon}
                         label="Agreements"
                         choices={[
                             { title: "Search Agreements", href: "/agreements" },
@@ -37,6 +37,15 @@ export function Header() {
                         icon={FileIcon}
                         label="Services"
                         href="/services"
+                    />
+
+                    <NavButtonMenu
+                        icon={CpuIcon}
+                        label="Systems"
+                        choices={[
+                            { title: "Search Systems", href: "/systems" },
+                            { title: "New System", href: "/systems/form" },
+                        ]}
                     />
 
                     <ModeToggle />

@@ -28,6 +28,7 @@ import {
     getSortedRowModel,
     useReactTable
 } from "@tanstack/react-table"
+import { date } from "drizzle-orm/mysql-core"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -132,7 +133,17 @@ export function AgreementTable({ data }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    // for now there is no need for transformation
+                    if (columnName === "revisionDate" && typeof value === "string") {
+                        return value
+                            ? new Intl.DateTimeFormat("pt-BR", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                            }).format(
+                                new Date(+value.substring(0, 4), +value.substring(5, 7) - 1, +value.substring(8, 10))
+                            )
+                            : "";
+                    }
                     return value
                 },
                 {
@@ -174,6 +185,9 @@ export function AgreementTable({ data }: Props) {
 
     return (
         <div className="mt-6 flex flex-col gap-4">
+            <h2 className="text-2xl font-bold">
+                Agreements List
+            </h2>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>

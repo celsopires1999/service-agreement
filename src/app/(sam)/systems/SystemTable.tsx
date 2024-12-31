@@ -1,5 +1,4 @@
 "use client"
-import { deleteServiceSystemAction } from "@/app/actions/deleteServiceSystemAction"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -13,13 +12,11 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useToast } from "@/hooks/use-toast"
-import { getServiceSystemsSearchResultsType } from "@/lib/queries/getServiceSystemsSearchResults"
+import type { getSystemType } from "@/lib/queries/getSystems"
 import {
     CellContext,
     createColumnHelper,
@@ -31,110 +28,51 @@ import {
     getSortedRowModel,
     useReactTable
 } from "@tanstack/react-table"
-import Decimal from "decimal.js"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
+import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 
 type Props = {
-    data: getServiceSystemsSearchResultsType[]
+    data: getSystemType[]
 }
 
-export function SystemsToServiceTable({ data }: Props) {
+export function SystemTable({ data }: Props) {
     const router = useRouter()
-    const { toast } = useToast()
 
     const searchParams = useSearchParams()
-
-    const handleDeleteServiceSystem = async (serviceId: string, systemId: string) => {
-        try {
-            const result = await deleteServiceSystemAction({ serviceId, systemId })
-            if (result?.serverError) {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: result?.serverError,
-                })
-                return
-            }
-
-            if (result?.data) {
-                toast({
-                    variant: "default",
-                    title: "Success! 🎉",
-                    description: result.data.message,
-                })
-                return
-            }
-        } catch (error) {
-            if (error instanceof Error) {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: `Delete action error: ${error.message}`,
-                })
-                return
-            }
-        }
-    }
-
-    const [total, setTotal] = useState({ allocation: "0.00", amount: "0.00" })
-
-    useEffect(() => {
-        const { allocation, amount } = totalAllocationAndAmount()
-        setTotal({ allocation, amount })
-    }, [data])
-
-    const totalAllocationAndAmount = () => {
-        const allocation = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.allocation)), new Decimal(0)).toString()
-        const amount = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.amount)), new Decimal(0)).toString()
-        return { allocation, amount }
-    }
-
-    const toDecimal = (value: string) => {
-        try {
-            const valueDecimal = new Decimal(value)
-            return valueDecimal
-        } catch (error) {
-            return new Decimal(0)
-        }
-    }
 
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
-
-    const columnHeadersArray: Array<keyof getServiceSystemsSearchResultsType> = [
+    const columnHeadersArray: Array<keyof getSystemType> = [
         "name",
-        "allocation",
-        "amount",
-        "currency",
+        "applicationId",
+        "users",
         "description",
     ]
 
-    const columnLabels: Partial<{ [K in keyof getServiceSystemsSearchResultsType]: string }> = {
-        name: "System Name",
-        allocation: "Allocation",
-        amount: "Amount",
-        currency: "Currency",
+    const columnLabels: Partial<{ [K in keyof getSystemType]: string }> = {
+        name: "System",
+        applicationId: "Application ID",
+        users: "Users",
         description: "Description",
     }
 
     const columnWidths: Partial<{
         [K in keyof typeof columnLabels]: number
     }> = {
-        amount: 150,
-        currency: 150,
-        allocation: 150,
+        users: 150,
+        applicationId: 150,
     }
 
-    const columnHelper = createColumnHelper<getServiceSystemsSearchResultsType>()
+    const columnHelper = createColumnHelper<getSystemType>()
 
     const ActionsCell = ({
         row,
-    }: CellContext<getServiceSystemsSearchResultsType, unknown>) => {
+    }: CellContext<getSystemType, unknown>) => {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -146,10 +84,14 @@ export function SystemsToServiceTable({ data }: Props) {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>
-                        handleDeleteServiceSystem(row.original.serviceId, row.original.systemId)}
-                    >
-                        Remove System
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/systems/form?systemId=${row.original.systemId}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            Edit System
+                        </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -169,9 +111,7 @@ export function SystemsToServiceTable({ data }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "amount" || columnName === "allocation") {
-                        return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
-                    }
+                    // for now there is no need for transformation
                     return value
                 },
                 {
@@ -180,20 +120,7 @@ export function SystemsToServiceTable({ data }: Props) {
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
                     header: () => (columnLabels[columnName as keyof typeof columnLabels]),
-                    cell: (info) => {
-                        if (columnName === "amount" || columnName === "allocation") {
-                            return (
-                                <div className="text-right">
-                                    {info.renderValue()}
-                                </div>
-                            )
-                        }
-                        return (
-                            info.renderValue()
-                        )
-                    }
                 },
-
             )
         })]
 
@@ -226,6 +153,9 @@ export function SystemsToServiceTable({ data }: Props) {
 
     return (
         <div className="mt-6 flex flex-col gap-4">
+            <h2 className="text-2xl font-bold">
+                Systems List
+            </h2>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
@@ -269,19 +199,6 @@ export function SystemsToServiceTable({ data }: Props) {
                             </TableRow>
                         ))}
                     </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={2}>Total</TableCell>
-                            <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.allocation)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.amount)}
-                            </TableCell>
-                            <TableCell>{data[0]?.currency}</TableCell>
-                            <TableCell></TableCell>
-                        </TableRow>
-                    </TableFooter>
                 </Table>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-1">

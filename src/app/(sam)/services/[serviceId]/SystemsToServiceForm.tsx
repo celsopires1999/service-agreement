@@ -59,13 +59,14 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
         }
 
         const value = new Decimal(service.amount).mul(new Decimal(decimalAllocation).div(100)).toFixed(2);
-        setValue("amount", value);
+        setValue("amount", value.replace(".", ","));
 
     }, [allocation])
 
     const {
-        execute: executeSave,
+        executeAsync: executeSave,
         isPending: isSaving,
+        reset: resetSaveAction,
     } = useAction(saveServiceSystemsAction, {
         onSuccess({ data }) {
             if (data?.message) {
@@ -75,7 +76,7 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
                     description: data.message,
                 })
             }
-            form.reset()
+            form.reset(defaultValues)
         },
         // onError({ error }) {
         onError() {
@@ -88,7 +89,18 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
     })
 
     async function submitForm(data: insertServiceSystemsSchemaType) {
-        executeSave(data)
+        resetSaveAction()
+        try {
+            await executeSave(data)
+        } catch (error) {
+            if (error instanceof Error) {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: `Action error: ${error.message}`,
+                })
+            }
+        }
     }
 
     return (

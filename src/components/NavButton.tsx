@@ -11,8 +11,8 @@ type Props = {
 export function NavButton({ icon: Icon, label, href }: Props) {
     return (
         <Button
-            variant={"ghost"}
-            size={"icon"}
+            variant="ghost"
+            size="icon"
             aria-label={label}
             title={label}
             className="rounded-full"

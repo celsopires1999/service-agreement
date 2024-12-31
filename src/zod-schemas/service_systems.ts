@@ -32,14 +32,17 @@ export const insertServiceSystemsSchema = createInsertSchema(serviceSystems, {
             .transform((value) => value.replace(",", ".")),
 
     amount: (schema) =>
-        schema.refine(
-            (value) => {
-                return isValidDecimalWithPrecision(value, 12, 2)
-            },
-            {
-                message: "Invalid amount",
-            },
-        ),
+        schema
+            .refine(
+                (value) => {
+                    const decimalValue = value.replace(",", ".")
+                    return isValidDecimalWithPrecision(decimalValue, 12, 2)
+                },
+                {
+                    message: "Invalid amount",
+                },
+            )
+            .transform((value) => value.replace(",", ".")),
     currency: (schema) =>
         schema.refine((value) => ["EUR", "USD"].includes(value), {
             message: "Invalid currency",

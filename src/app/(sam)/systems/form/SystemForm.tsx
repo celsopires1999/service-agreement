@@ -1,61 +1,70 @@
 "use client"
 
-import { saveServiceAction } from "@/app/actions/saveServiceAction"
+import { saveSystemAction } from "@/app/actions/saveSystemAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
-import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
-import { selectAgreementSchemaType } from "@/zod-schemas/agreement"
 import {
-    insertServiceSchema,
-    type insertServiceSchemaType,
-    type selectServiceSchemaType,
-} from "@/zod-schemas/service"
+    insertSystemSchema,
+    type insertSystemSchemaType,
+    type selectSystemSchemaType,
+} from "@/zod-schemas/system"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import { useForm } from "react-hook-form"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
 
 
 type Props = {
-    agreement: selectAgreementSchemaType
-    service?: selectServiceSchemaType
-    currencies?: {
-        id: string
-        description: string
-    }[]
+    system?: selectSystemSchemaType
 }
 
-export function ServiceForm({ agreement, service, currencies }: Props) {
+export function SystemForm({ system }: Props) {
     const { toast } = useToast()
 
-    const defaultValues: insertServiceSchemaType =
-    {
-        serviceId: service?.serviceId ?? "(New)",
-        agreementId: service?.agreementId ?? agreement.agreementId,
-        name: service?.name ?? "",
-        description: service?.description ?? "",
-        amount: service?.amount.replace(".", ",") ?? "",
-        currency: service?.currency ?? "USD",
-        responsibleEmail: service?.responsibleEmail ?? "",
+    const searchParams = useSearchParams()
+    const hasSystemId = searchParams.has("systemId")
+
+    const emptyValues: insertSystemSchemaType = {
+        systemId: "(New)",
+        name: "",
+        description: "",
+        users: 0,
+        applicationId: "",
     }
 
-    const form = useForm<insertServiceSchemaType>({
+    const defaultValues: insertSystemSchemaType = hasSystemId
+        ? {
+            systemId: system?.systemId ?? "",
+            name: system?.name ?? "",
+            description: system?.description ?? "",
+            users: system?.users ?? 0,
+            applicationId: system?.applicationId ?? "",
+        }
+        : emptyValues
+
+    const form = useForm<insertSystemSchemaType>({
         mode: "onBlur",
-        resolver: zodResolver(insertServiceSchema),
+        resolver: zodResolver(insertSystemSchema),
         defaultValues,
     })
 
+    useEffect(() => {
+        form.reset(hasSystemId ? defaultValues : emptyValues)
+    }, [searchParams.get("systemId")]) // eslint-disable-line react-hooks/exhaustive-deps
+
     const {
-        execute: executeSave,
+        executeAsync: executeSave,
         result: saveResult,
         isPending: isSaving,
         reset: resetSaveAction,
-    } = useAction(saveServiceAction, {
+    } = useAction(saveSystemAction, {
         onSuccess({ data }) {
             if (data?.message) {
                 toast({
@@ -75,8 +84,19 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
         },
     })
 
-    async function submitForm(data: insertServiceSchemaType) {
-        executeSave(data)
+    async function submitForm(data: insertSystemSchemaType) {
+        resetSaveAction()
+        try {
+            await executeSave(data)
+        } catch (error) {
+            if (error instanceof Error) {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: `Action error: ${error.message}`,
+                })
+            }
+        }
     }
 
     return (
@@ -84,29 +104,9 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
             <DisplayServerActionResponse result={saveResult} />
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
-                    {service?.serviceId ? "Edit" : "New"} Service Form
+                    {system?.systemId ? "Edit" : "New"} System Form
 
                 </h2>
-                {!!saveResult?.data?.serviceId && !service?.serviceId && (
-                    <Link
-                        href={`/services/${saveResult.data.serviceId}`}
-                    >
-                        <h2>
-                            Go to Systems Form
-                        </h2>
-                    </Link>
-                )}
-                {
-                    !!service?.serviceId && (
-                        <Link
-                            href={`/services/${service.serviceId}`}
-                        >
-                            <h2>
-                                Go to Systems Form
-                            </h2>
-                        </Link>
-                    )
-                }
             </div>
 
             <Form {...form}>
@@ -115,42 +115,27 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
                     className="flex flex-col gap-4 md:flex-row md:gap-8"
                 >
                     <div className="flex w-full max-w-xs flex-col gap-4">
-                        <InputWithLabel<insertServiceSchemaType>
+                        <InputWithLabel<insertSystemSchemaType>
                             fieldTitle="Name"
                             nameInSchema="name"
                         />
 
-                        <InputWithLabel<insertServiceSchemaType>
-                            fieldTitle="Amount"
-                            nameInSchema="amount"
+                        <InputWithLabel<insertSystemSchemaType>
+                            fieldTitle="Application ID"
+                            nameInSchema="applicationId"
                         />
 
-                        <SelectWithLabel<insertServiceSchemaType>
-                            fieldTitle="Currency"
-                            nameInSchema="currency"
-                            data={currencies ?? []}
+                        <InputWithLabel<insertSystemSchemaType>
+                            fieldTitle="Users"
+                            nameInSchema="users"
+                            type="number"
+                            valueAsNumber
                         />
 
-                        <div className="mt-4 space-y-2">
-                            <h3 className="text-lg">Agreement Info</h3>
-                            <hr className="w-4/5" />
-                            <p>
-                                {agreement.name}
-                            </p>
-                            <p> {agreement.contactEmail}</p>
-                            <p>
-                                Valid for {agreement.year}, Revision {agreement.revision} on {agreement.revisionDate}
-                            </p>
-                        </div>
+
                     </div>
-
                     <div className="flex w-full max-w-xs flex-col gap-4">
-                        <InputWithLabel<insertServiceSchemaType>
-                            fieldTitle="Responsible Email"
-                            nameInSchema="responsibleEmail"
-                        />
-
-                        <TextAreaWithLabel<insertServiceSchemaType>
+                        <TextAreaWithLabel<insertSystemSchemaType>
                             fieldTitle="Description"
                             nameInSchema="description"
                             className="h-40"

@@ -155,6 +155,19 @@ export function ServiceTable({ data }: Props) {
                     if (columnName === "amount") {
                         return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
                     }
+
+                    if (columnName === "revisionDate" && typeof value === "string") {
+                        return value
+                            ? new Intl.DateTimeFormat("pt-BR", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                            }).format(
+                                new Date(+value.substring(0, 4), +value.substring(5, 7) - 1, +value.substring(8, 10))
+                            )
+                            : "";
+                    }
+
                     return value
                 },
                 {
@@ -209,6 +222,9 @@ export function ServiceTable({ data }: Props) {
 
     return (
         <div className="mt-6 flex flex-col gap-4">
+            <h2 className="text-2xl font-bold">
+                Services List
+            </h2>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>

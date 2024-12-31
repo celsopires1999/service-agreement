@@ -19,7 +19,7 @@ export function NavButtonMenu({ icon: Icon, label, choices }: Props) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
+                <Button variant="ghost" size="icon" title={label} className="rounded-full">
                     <Icon className="h-[1.2rem] w-[1.2rem]" />
                     <span className="sr-only">{label}</span>
                 </Button>
