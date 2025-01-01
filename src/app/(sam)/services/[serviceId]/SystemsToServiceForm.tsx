@@ -49,6 +49,12 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
     const { watch, setValue } = form;
     const allocation = watch("allocation")
 
+
+    const handleUpdateServiceSystem = (systemId: string, allocation: string) => {
+        setValue("systemId", systemId);
+        setValue("allocation", allocation);
+    }
+
     useEffect(() => {
         const decimalAllocation = allocation.replace(",", ".");
         try {
@@ -139,6 +145,8 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
                             <InputWithLabel<insertServiceSystemsSchemaType>
                                 fieldTitle="Allocation (%)"
                                 nameInSchema="allocation"
+                                type="number"
+                                step="0.01"
                             />
 
                             <InputWithLabel<insertServiceSystemsSchemaType>
@@ -174,7 +182,9 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
                     </div>
                 </form>
             </Form>
-            <SystemsToServiceTable data={serviceSystems ?? []} />
+            <SystemsToServiceTable
+                data={serviceSystems ?? []}
+                handleUpdateServiceSystem={handleUpdateServiceSystem} />
         </div>
 
     )

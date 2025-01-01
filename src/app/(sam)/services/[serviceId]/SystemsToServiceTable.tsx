@@ -38,9 +38,10 @@ import { useEffect, useMemo, useState } from "react"
 
 type Props = {
     data: getServiceSystemsSearchResultsType[]
+    handleUpdateServiceSystem(systemId: string, allocation: string): void
 }
 
-export function SystemsToServiceTable({ data }: Props) {
+export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props) {
     const router = useRouter()
     const { toast } = useToast()
 
@@ -147,10 +148,16 @@ export function SystemsToServiceTable({ data }: Props) {
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() =>
+                        handleUpdateServiceSystem(row.original.systemId, row.original.allocation)}
+                    >
+                        Edit System
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() =>
                         handleDeleteServiceSystem(row.original.serviceId, row.original.systemId)}
                     >
                         Remove System
                     </DropdownMenuItem>
+
                 </DropdownMenuContent>
             </DropdownMenu>
         )
