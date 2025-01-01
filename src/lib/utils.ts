@@ -26,7 +26,7 @@ export function isValidDecimalWithPrecision(
         }
 
         return true
-    } catch (e) {
+    } catch (e) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
         return false
     }
 }

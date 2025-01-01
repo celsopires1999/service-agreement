@@ -1,6 +1,6 @@
 "use client"
 
-import { saveServiceAction } from "@/app/actions/saveServiceAction"
+import { saveServiceAction } from "@/actions/saveServiceAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"

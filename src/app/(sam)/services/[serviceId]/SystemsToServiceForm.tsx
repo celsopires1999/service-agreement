@@ -1,6 +1,6 @@
 "use client"
 
-import { saveServiceSystemsAction } from "@/app/actions/saveServiceSystemsAction"
+import { saveServiceSystemsAction } from "@/actions/saveServiceSystemsAction"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { Button } from "@/components/ui/button"
@@ -53,7 +53,7 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
         const decimalAllocation = allocation.replace(",", ".");
         try {
             new Decimal(decimalAllocation)
-        } catch (error) {
+        } catch (error) { /* eslint-disable-line @typescript-eslint/no-unused-vars */
             setValue("amount", "");
             return
         }
@@ -61,7 +61,7 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
         const value = new Decimal(service.amount).mul(new Decimal(decimalAllocation).div(100)).toFixed(2);
         setValue("amount", value.replace(".", ","));
 
-    }, [allocation])
+    }, [allocation]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const {
         executeAsync: executeSave,

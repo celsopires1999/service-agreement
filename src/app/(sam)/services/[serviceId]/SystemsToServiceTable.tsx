@@ -1,5 +1,5 @@
 "use client"
-import { deleteServiceSystemAction } from "@/app/actions/deleteServiceSystemAction"
+import { deleteServiceSystemAction } from "@/actions/deleteServiceSystemAction"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -83,7 +83,7 @@ export function SystemsToServiceTable({ data }: Props) {
     useEffect(() => {
         const { allocation, amount } = totalAllocationAndAmount()
         setTotal({ allocation, amount })
-    }, [data])
+    }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const totalAllocationAndAmount = () => {
         const allocation = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.allocation)), new Decimal(0)).toString()
@@ -95,7 +95,7 @@ export function SystemsToServiceTable({ data }: Props) {
         try {
             const valueDecimal = new Decimal(value)
             return valueDecimal
-        } catch (error) {
+        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
             return new Decimal(0)
         }
     }

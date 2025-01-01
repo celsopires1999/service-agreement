@@ -1,6 +1,6 @@
 "use client"
 
-import { saveAgreementAction } from "@/app/actions/saveAgreementAction"
+import { saveAgreementAction } from "@/actions/saveAgreementAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
