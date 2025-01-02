@@ -23,4 +23,4 @@ export async function getServiceSystemsSearchResults(serviceId: string) {
 
 export type getServiceSystemsSearchResultsType = Awaited<
     ReturnType<typeof getServiceSystemsSearchResults>
->[0]
+>[number]

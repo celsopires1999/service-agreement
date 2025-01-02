@@ -7,13 +7,16 @@ export const insertSystemSchema = createInsertSchema(systems, {
     name: (schema) =>
         schema
             .min(1, "Name is required")
-            .max(20, "Name must be 20 characters or less"),
+            .max(50, "Name must be 50 characters or less"),
     description: (schema) =>
         schema
             .min(1, "Description is required")
             .max(500, "Description must be 500 characters or less"),
     users: (schema) => schema.max(99999, "Users must be 99999 or less"),
-    applicationId: (schema) => schema.min(1, "Application ID is required"),
+    applicationId: (schema) =>
+        schema
+            .min(1, "Application ID is required")
+            .max(20, "Application ID must be 50 characters or less"),
 })
 
 export const selectSystemSchema = createSelectSchema(systems)

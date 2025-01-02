@@ -37,4 +37,4 @@ export async function getServiceSearchResults(searchText: string) {
 
 export type getServiceSearchResultsType = Awaited<
     ReturnType<typeof getServiceSearchResults>
->[0]
+>[number]

@@ -93,6 +93,16 @@ export function SystemTable({ data }: Props) {
                             Edit System
                         </Link>
                     </DropdownMenuItem>
+
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/systems/${row.original.systemId}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            System Cost
+                        </Link>
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         )

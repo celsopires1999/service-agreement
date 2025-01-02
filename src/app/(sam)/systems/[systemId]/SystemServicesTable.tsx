@@ -1,5 +1,4 @@
 "use client"
-import { deleteServiceSystemAction } from "@/actions/deleteServiceSystemAction"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -19,7 +18,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useToast } from "@/hooks/use-toast"
-import { getServiceSystemsSearchResultsType } from "@/lib/queries/getServiceSystemsSearchResults"
+import { getServicesBySystemIdType } from "@/lib/queries/service"
 import {
     CellContext,
     createColumnHelper,
@@ -31,86 +30,20 @@ import {
     getSortedRowModel,
     useReactTable
 } from "@tanstack/react-table"
-import Decimal from "decimal.js"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
-import { useAction } from "next-safe-action/hooks"
-import Loading from "@/app/loading"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useMemo } from "react"
 
 
 type Props = {
-    data: getServiceSystemsSearchResultsType[]
-    handleUpdateServiceSystem(systemId: string, allocation: string): void
+    data: getServicesBySystemIdType[]
 }
 
-export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props) {
+export function SystemServicesTable({ data }: Props) {
     const router = useRouter()
-    const { toast } = useToast()
 
     const searchParams = useSearchParams()
-
-    const {
-        executeAsync: executeDelete,
-        isPending: isDeleting,
-        reset: resetDeleteAction,
-    } = useAction(deleteServiceSystemAction, {
-        onSuccess({ data }) {
-            if (data?.message) {
-                toast({
-                    variant: "default",
-                    title: "Success! 🎉",
-                    description: data.message,
-                })
-            }
-        },
-        // onError({ error }) {
-        onError() {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Save Failed",
-            })
-        },
-    })
-
-    const handleDeleteServiceSystem = async (serviceId: string, systemId: string) => {
-        resetDeleteAction()
-        try {
-            await executeDelete({ serviceId, systemId })
-        } catch (error) {
-            if (error instanceof Error) {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: `Action error: ${error.message}`,
-                })
-            }
-        }
-    }
-
-    const [total, setTotal] = useState({ allocation: "0.00", amount: "0.00" })
-
-    useEffect(() => {
-        const { allocation, amount } = totalAllocationAndAmount()
-        setTotal({ allocation, amount })
-    }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
-
-    const totalAllocationAndAmount = () => {
-        const allocation = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.allocation)), new Decimal(0)).toString()
-        const amount = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.amount)), new Decimal(0)).toString()
-        return { allocation, amount }
-    }
-
-    const toDecimal = (value: string) => {
-        try {
-            const valueDecimal = new Decimal(value)
-            return valueDecimal
-        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
-            return new Decimal(0)
-        }
-    }
 
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
@@ -118,35 +51,38 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
-    const columnHeadersArray: Array<keyof getServiceSystemsSearchResultsType> = [
-        "name",
-        "allocation",
-        "amount",
-        "currency",
-        "description",
+    const columnHeadersArray: Array<keyof getServicesBySystemIdType> = [
+        "year",
+        "agreementName",
+        "serviceName",
+        "systemAllocation",
+        "systemAmount",
+        "serviceAmount",
+        "serviceCurrency",
     ]
 
-    const columnLabels: Partial<{ [K in keyof getServiceSystemsSearchResultsType]: string }> = {
-        name: "System Name",
-        allocation: "Allocation",
-        amount: "Amount",
-        currency: "Currency",
-        description: "Description",
+    const columnLabels: Partial<{ [K in keyof getServicesBySystemIdType]: string }> = {
+        year: "Year",
+        agreementName: "Agreement",
+        serviceName: "Service",
+        systemAllocation: "Alloc (%)",
+        systemAmount: "Amount (USD)",
+        serviceAmount: "Service Amount",
+        serviceCurrency: "Currency",
     }
 
     const columnWidths: Partial<{
         [K in keyof typeof columnLabels]: number
     }> = {
-        amount: 150,
-        currency: 150,
-        allocation: 150,
+        year: 150,
+        systemAllocation: 150,
     }
 
-    const columnHelper = createColumnHelper<getServiceSystemsSearchResultsType>()
+    const columnHelper = createColumnHelper<getServicesBySystemIdType>()
 
     const ActionsCell = ({
         row,
-    }: CellContext<getServiceSystemsSearchResultsType, unknown>) => {
+    }: CellContext<getServicesBySystemIdType, unknown>) => {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -158,38 +94,36 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>
-                        handleUpdateServiceSystem(row.original.systemId, row.original.allocation)}
-                    >
-                        Edit Allocation
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem onClick={() =>
-                        handleDeleteServiceSystem(row.original.serviceId, row.original.systemId)}
-                    >
-                        Remove System
-                    </DropdownMenuItem>
 
                     <DropdownMenuItem>
                         <Link
-                            href={`/systems/form?systemId=${row.original.systemId}`}
+                            href={`/services/form?serviceId=${row.original.serviceId}`}
                             className="w-full"
                             prefetch={false}
                         >
-                            Edit System
+                            Service
                         </Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem>
                         <Link
-                            href={`/systems/${row.original.systemId}`}
+                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
                             className="w-full"
                             prefetch={false}
                         >
-                            System Costs
+                            Agreement
                         </Link>
                     </DropdownMenuItem>
 
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/services/${row.original.serviceId}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            Service Systems
+                        </Link>
+                    </DropdownMenuItem>
 
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -209,7 +143,7 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "amount" || columnName === "allocation") {
+                    if (columnName === "systemAmount" || columnName === "systemAllocation" || columnName === "serviceAmount") {
                         return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
                     }
                     return value
@@ -221,7 +155,7 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                         undefined,
                     header: () => (columnLabels[columnName as keyof typeof columnLabels]),
                     cell: (info) => {
-                        if (columnName === "amount" || columnName === "allocation") {
+                        if (columnName === "systemAmount" || columnName === "systemAllocation" || columnName === "serviceAmount") {
                             return (
                                 <div className="text-right">
                                     {info.renderValue()}
@@ -311,15 +245,11 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={2}>Total</TableCell>
+                            <TableCell colSpan={5}>Total</TableCell>
                             <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.allocation)}
+                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(0)}
                             </TableCell>
-                            <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.amount)}
-                            </TableCell>
-                            <TableCell>{data[0]?.currency}</TableCell>
-                            <TableCell></TableCell>
+                            <TableCell colSpan={2}></TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>
@@ -351,7 +281,6 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                     </div>
                 </div>
             </div>
-            {isDeleting && <Loading />}
         </div>
     )
 }
