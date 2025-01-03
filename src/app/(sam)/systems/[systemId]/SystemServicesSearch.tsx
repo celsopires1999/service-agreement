@@ -1,16 +1,42 @@
-import Form from "next/form"
-import { Input } from "@/components/ui/input"
 import { SearchButton } from "@/components/SearchButton"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getLastYearBySystemId } from "@/lib/queries/agreement"
+import { getCurrency } from "@/lib/queries/currency"
+import Form from "next/form"
 
 type Props = {
     systemId: string
     year?: string
     exchangeRate?: string
 }
-export function SystemServicesSearch({ systemId, year, exchangeRate }: Props) {
-    const defaultYear = year ?? "2025"
-    const defaultExchangeRate = exchangeRate ?? "1"
+export async function SystemServicesSearch({ systemId, year, exchangeRate }: Props) {
+
+    let searchYear: string
+    let searchExchangeRate: string
+
+    if (year) {
+        searchYear = year
+    } else {
+        try {
+            const result = await getLastYearBySystemId(systemId)
+            searchYear = result[0].year.toString()
+        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+            searchYear = new Date().getFullYear().toString()
+        }
+    }
+
+    if (exchangeRate) {
+        searchExchangeRate = exchangeRate
+    } else {
+        try {
+            const result = await getCurrency(+searchYear, "EUR")
+            searchExchangeRate = result[0].value
+        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+            searchExchangeRate = "1"
+        }
+    }
+
     return (
         <Form action={`/systems/${systemId}`} className="flex items-center gap-10">
             <div className="flex items-center align-middle gap-2">
@@ -21,7 +47,7 @@ export function SystemServicesSearch({ systemId, year, exchangeRate }: Props) {
                     max="2124"
                     name="year"
                     placeholder="Year"
-                    defaultValue={defaultYear}
+                    defaultValue={searchYear}
                     autoFocus
                     className="w-24"
                 />
@@ -31,12 +57,12 @@ export function SystemServicesSearch({ systemId, year, exchangeRate }: Props) {
                 <Label htmlFor="exchangeRate">EUR / USD</Label>
                 <Input
                     type="number"
-                    min="0.001"
-                    max="2"
-                    step="0.001"
+                    min="0.0001"
+                    max="1000"
+                    step="0.0001"
                     name="exchangeRate"
                     placeholder="Exchange Rate"
-                    defaultValue={defaultExchangeRate}
+                    defaultValue={searchExchangeRate}
                     className="w-24"
                 />
                 <SearchButton />

@@ -1,5 +1,6 @@
 "use client"
 import { deleteServiceSystemAction } from "@/actions/deleteServiceSystemAction"
+import Loading from "@/app/loading"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/table"
 import { useToast } from "@/hooks/use-toast"
 import { getServiceSystemsSearchResultsType } from "@/lib/queries/serviceSystem"
+import { toDecimal } from "@/lib/utils"
 import {
     CellContext,
     createColumnHelper,
@@ -33,11 +35,10 @@ import {
 } from "@tanstack/react-table"
 import Decimal from "decimal.js"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
+import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
-import { useAction } from "next-safe-action/hooks"
-import Loading from "@/app/loading"
-import Link from "next/link"
 
 
 type Props = {
@@ -103,15 +104,6 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
         return { allocation, amount }
     }
 
-    const toDecimal = (value: string) => {
-        try {
-            const valueDecimal = new Decimal(value)
-            return valueDecimal
-        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
-            return new Decimal(0)
-        }
-    }
-
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
@@ -128,7 +120,7 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
 
     const columnLabels: Partial<{ [K in keyof getServiceSystemsSearchResultsType]: string }> = {
         name: "System Name",
-        allocation: "Allocation",
+        allocation: "Alloc (%)",
         amount: "Amount",
         currency: "Currency",
         description: "Description",

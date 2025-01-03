@@ -18,6 +18,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { getServicesBySystemIdType } from "@/lib/queries/service"
+import { toDecimal } from "@/lib/utils"
 import {
     CellContext,
     createColumnHelper,
@@ -29,10 +30,11 @@ import {
     getSortedRowModel,
     useReactTable
 } from "@tanstack/react-table"
+import Decimal from "decimal.js"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 
 type Props = {
@@ -44,6 +46,18 @@ export function SystemServicesTable({ data }: Props) {
 
     const searchParams = useSearchParams()
 
+    const [total, setTotal] = useState("0.00")
+
+    useEffect(() => {
+        const amount = totalSystemAmount()
+        setTotal(amount)
+    }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
+
+    const totalSystemAmount = () => {
+        const amount = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.systemAmount)), new Decimal(0)).toString()
+        return amount
+    }
+
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
@@ -51,7 +65,6 @@ export function SystemServicesTable({ data }: Props) {
 
 
     const columnHeadersArray: Array<keyof getServicesBySystemIdType> = [
-        "year",
         "agreementName",
         "serviceName",
         "systemAllocation",
@@ -61,7 +74,6 @@ export function SystemServicesTable({ data }: Props) {
     ]
 
     const columnLabels: Partial<{ [K in keyof getServicesBySystemIdType]: string }> = {
-        year: "Year",
         agreementName: "Agreement",
         serviceName: "Service",
         systemAllocation: "Alloc (%)",
@@ -244,11 +256,11 @@ export function SystemServicesTable({ data }: Props) {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={5}>Total</TableCell>
+                            <TableCell colSpan={4}>Total</TableCell>
                             <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(0)}
+                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total)}
                             </TableCell>
-                            <TableCell colSpan={2}></TableCell>
+                            <TableCell colSpan={3}></TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>

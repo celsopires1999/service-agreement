@@ -6,6 +6,7 @@ import { validate as uuidValidate } from "uuid"
 import { SystemServiceHeader } from "./SystemServiceHeader"
 import { SystemServicesSearch } from "./SystemServicesSearch"
 import { SystemServicesTable } from "./SystemServicesTable"
+import { Suspense } from "react"
 
 export async function generateMetadata({
     params,
@@ -69,7 +70,9 @@ export default async function SystemsToServiceFormPage({
                         description={system.description}
                         users={system.users}
                         applicationId={system.applicationId} />
-                    <SystemServicesSearch systemId={systemId} year={year} exchangeRate={exchangeRate} />
+                    <Suspense key={systemId} fallback={<p>Loading...</p>}>
+                        <SystemServicesSearch systemId={systemId} year={year} exchangeRate={exchangeRate} />
+                    </Suspense>
                     <p className="mt-4">
                         Please check whether the provided year and exchange rate (EUR / USD) are valid.
                     </p>
@@ -126,7 +129,9 @@ export default async function SystemsToServiceFormPage({
                     description={system.description}
                     users={system.users}
                     applicationId={system.applicationId} />
-                <SystemServicesSearch systemId={systemId} year={year} exchangeRate={exchangeRate} />
+                <Suspense key={systemId} fallback={<p>Loading...</p>}>
+                    <SystemServicesSearch systemId={systemId} year={year} exchangeRate={exchangeRate} />
+                </Suspense>
                 <SystemServicesTable data={services} />
             </div>
         )

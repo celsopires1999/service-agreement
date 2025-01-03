@@ -26,7 +26,18 @@ export function isValidDecimalWithPrecision(
         }
 
         return true
-    } catch (e) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+    } catch (e) {
+        /* eslint-disable-line  @typescript-eslint/no-unused-vars */
         return false
+    }
+}
+
+export function toDecimal(value: string) {
+    try {
+        const valueDecimal = new Decimal(value)
+        return valueDecimal
+    } catch (error) {
+        /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+        return new Decimal(0)
     }
 }

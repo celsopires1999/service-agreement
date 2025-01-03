@@ -1,7 +1,7 @@
 import "server-only"
 
 import { db } from "@/db"
-import { agreements } from "@/db/schema"
+import { agreements, services, serviceSystems } from "@/db/schema"
 import { asc, desc, eq, ilike, or } from "drizzle-orm"
 
 export async function getAgreement(agreementId: string) {
@@ -31,5 +31,22 @@ export async function getAgreementSearchResults(searchText: string) {
             desc(agreements.revision),
         )
 
+    return results
+}
+
+export async function getLastYearBySystemId(systemId: string) {
+    const results = await db
+        .selectDistinct({
+            year: agreements.year,
+        })
+        .from(agreements)
+        .innerJoin(services, eq(services.agreementId, agreements.agreementId))
+        .innerJoin(
+            serviceSystems,
+            eq(serviceSystems.serviceId, services.serviceId),
+        )
+        .where(eq(serviceSystems.systemId, systemId))
+        .orderBy(desc(agreements.year))
+        .limit(1)
     return results
 }

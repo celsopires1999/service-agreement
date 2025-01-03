@@ -1,9 +1,16 @@
 import { db } from "./index"
-import { agreements, systems, services, serviceSystems } from "./schema"
+import {
+    agreements,
+    systems,
+    services,
+    serviceSystems,
+    currencies,
+} from "./schema"
 import { systemsData } from "./data/systems"
 import { agreementsData } from "./data/agreements"
 import { servicesData } from "./data/services"
 import { serviceSystemsData } from "./data/serviceSystems"
+import { currenciesData } from "./data/currencies"
 
 const main = async () => {
     console.log("Seeding...")
@@ -13,11 +20,13 @@ const main = async () => {
         await db.delete(services)
         await db.delete(systems)
         await db.delete(agreements)
+        await db.delete(currencies)
 
         await db.insert(systems).values(systemsData)
         await db.insert(agreements).values(agreementsData)
         await db.insert(services).values(servicesData)
         await db.insert(serviceSystems).values(serviceSystemsData)
+        await db.insert(currencies).values(currenciesData)
 
         console.log("Seed completed")
         process.exit(0)
