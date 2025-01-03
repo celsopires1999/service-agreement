@@ -1,9 +1,7 @@
 "use server"
 
-import { db } from "@/db"
-import { serviceSystems } from "@/db/schema"
+import { RemoveServiceSystemUseCase } from "@/core/service/application/use-cases/remove-service-system"
 import { actionClient } from "@/lib/safe-action"
-import { and, eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -13,7 +11,8 @@ const deleteServiceSystemSchema = z.object({
     systemId: z.string().uuid("invalid UUID"),
 })
 
-type deleteServiceSystemSchemaType = typeof deleteServiceSystemSchema._type
+export type deleteServiceSystemSchemaType =
+    typeof deleteServiceSystemSchema._type
 
 export const deleteServiceSystemAction = actionClient
     .metadata({ actionName: "deleteServiceSystemAction" })
@@ -27,29 +26,16 @@ export const deleteServiceSystemAction = actionClient
         }: {
             parsedInput: deleteServiceSystemSchemaType
         }) => {
-            const result = await db
-                .delete(serviceSystems)
-                .where(
-                    and(
-                        eq(serviceSystems.serviceId, params.serviceId),
-                        eq(serviceSystems.systemId, params.systemId),
-                    ),
-                )
-                .returning({
-                    deletedServiceId: serviceSystems.serviceId,
-                    deletedSystemId: serviceSystems.systemId,
-                })
+            const uc = new RemoveServiceSystemUseCase()
+            await uc.execute({
+                serviceId: params.serviceId,
+                systemId: params.systemId,
+            })
 
             revalidatePath(`/services/${params.serviceId}`)
 
-            if (result.length === 0) {
-                throw new Error(
-                    `System ID #${params.systemId} for Service ID #${params.serviceId} not found`,
-                )
-            }
-
             return {
-                message: `System ID #${result[0].deletedSystemId} deleted successfully from Service ID #${result[0].deletedServiceId}`,
+                message: `System ID #${params.systemId} deleted successfully from Service ID #${params.serviceId}`,
             }
         },
     )

@@ -46,6 +46,7 @@ export class ServiceDrizzleRepository {
                     amount: service.amount,
                     currency: service.currency,
                     responsibleEmail: service.responsibleEmail,
+                    isActive: service.isActive,
                 })
                 .where(eq(services.serviceId, service.serviceId))
                 .returning({ updatedId: services.serviceId })

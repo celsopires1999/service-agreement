@@ -113,7 +113,7 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
         <div className="flex flex-col gap-1 sm:px-8">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
-                    {service?.name ? `${service.name}` : "Form"}
+                    {service?.name ? `${service.name}` : "Service Allocation Form"} {service?.isActive ? "(Active)" : "(Inactive)"}
                 </h2>
                 {
                     !!agreement?.agreementId && (

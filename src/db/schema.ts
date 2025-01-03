@@ -10,6 +10,7 @@ import {
     primaryKey,
     date,
     unique,
+    boolean,
 } from "drizzle-orm/pg-core"
 
 import { relations } from "drizzle-orm"
@@ -48,6 +49,7 @@ export const services = pgTable(
         amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
         currency: currencyEnum("currency").notNull(),
         responsibleEmail: varchar("responsible_email").notNull(),
+        isActive: boolean("is_active").notNull().default(false),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at")
             .notNull()

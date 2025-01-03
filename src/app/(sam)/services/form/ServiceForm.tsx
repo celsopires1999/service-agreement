@@ -95,8 +95,7 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
             <DisplayServerActionResponse result={saveResult} />
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
-                    {service?.serviceId ? "Edit" : "New"} Service Form
-
+                    {service?.serviceId ? "Edit" : "New"} Service Form {service?.serviceId ? service?.isActive ? "(Active)" : "(Inactive)" : null}
                 </h2>
                 {!!saveResult?.data?.serviceId && !service?.serviceId && (
                     <Link

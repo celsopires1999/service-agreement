@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
 import { ServiceSystem } from "./serviceSystems"
+import Decimal from "decimal.js"
+import { toDecimal } from "@/lib/utils"
 
 export type currecyType = "EUR" | "USD"
 
@@ -11,6 +13,7 @@ export type ServiceConstructorProps = {
     amount: string
     currency: currecyType
     responsibleEmail: string
+    isActive: boolean
     serviceSystems?: ServiceSystem[]
 }
 
@@ -24,6 +27,7 @@ export class Service {
     amount: string
     currency: currecyType
     responsibleEmail: string
+    isActive: boolean
     serviceSystems: ServiceSystem[]
 
     constructor(props: ServiceConstructorProps) {
@@ -34,6 +38,7 @@ export class Service {
         this.amount = props.amount
         this.currency = props.currency
         this.responsibleEmail = props.responsibleEmail.trim().toLowerCase()
+        this.isActive = props.isActive
         this.serviceSystems = props.serviceSystems ?? []
     }
 
@@ -72,6 +77,10 @@ export class Service {
         })
     }
 
+    hasSystem(systemId: string) {
+        return !!this.serviceSystems.find((item) => item.systemId === systemId)
+    }
+
     addServiceSystem(systemId: string, allocation: string) {
         const serviceSystem = ServiceSystem.create({
             serviceId: this.serviceId,
@@ -82,5 +91,38 @@ export class Service {
         })
 
         this.serviceSystems.push(serviceSystem)
+    }
+
+    changeServiceSystemAllocation(systemId: string, allocation: string) {
+        const serviceSystem = this.serviceSystems.find(
+            (item) => item.systemId === systemId,
+        )
+
+        if (!serviceSystem) {
+            throw new Error(`systemId #${systemId} not found to be updated`)
+        }
+
+        serviceSystem.changeAllocation(this.amount, allocation)
+        serviceSystem.changeAmount(this.amount)
+    }
+
+    removeServiceSystem(systemId: string) {
+        this.serviceSystems = this.serviceSystems.filter(
+            (item) => item.systemId !== systemId,
+        )
+    }
+
+    changeActivationStatusBasedOnAllocation() {
+        const allocation = this.serviceSystems.reduce(
+            (acc, item) => new Decimal(acc).add(toDecimal(item.allocation)),
+            new Decimal(0),
+        )
+
+        if (allocation.eq(100.0)) {
+            this.isActive = true
+            return
+        }
+
+        this.isActive = false
     }
 }

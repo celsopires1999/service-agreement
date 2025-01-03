@@ -46,8 +46,10 @@ export class ServiceSystem {
         })
     }
 
-    changeCurrency(currency: currecyType) {
-        this.currency = currency
+    changeAllocation(totalAmount: string, allocation: string) {
+        const amount = ServiceSystem.calculateAmount(totalAmount, allocation)
+        this.amount = amount
+        this.allocation = allocation
     }
 
     changeAmount(totalAmount: string) {
@@ -56,6 +58,10 @@ export class ServiceSystem {
             this.allocation,
         )
         this.amount = amount
+    }
+
+    changeCurrency(currency: currecyType) {
+        this.currency = currency
     }
 
     static calculateAmount(totalAmount: string, allocation: string) {
