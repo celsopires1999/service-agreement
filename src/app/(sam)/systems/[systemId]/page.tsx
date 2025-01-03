@@ -1,5 +1,5 @@
 import { BackButton } from "@/components/BackButton"
-import { getSystem } from "@/lib/queries/getSystems"
+import { getSystem } from "@/lib/queries/system"
 import { getServicesBySystemId } from "@/lib/queries/service"
 import Decimal from "decimal.js"
 import { validate as uuidValidate } from "uuid"
@@ -84,7 +84,7 @@ export default async function SystemsToServiceFormPage({
 
         try {
             exchangeRateDecimal = new Decimal(exchangeRate)
-        } catch (error) {
+        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
             return (
                 <>
                     <h2 className="mb-2 text-2xl">

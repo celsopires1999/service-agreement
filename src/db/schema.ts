@@ -91,6 +91,16 @@ export const serviceSystems = pgTable(
     (t) => [primaryKey({ columns: [t.serviceId, t.systemId] })],
 )
 
+export const currencies = pgTable(
+    "currencies",
+    {
+        year: integer("year").notNull(),
+        currency: currencyEnum("currency").notNull(),
+        value: decimal("value", { precision: 8, scale: 4 }).notNull(),
+    },
+    (t) => [primaryKey({ columns: [t.year, t.currency] })],
+)
+
 // Create relations
 export const agreementsRelations = relations(agreements, ({ many }) => ({
     services: many(services),

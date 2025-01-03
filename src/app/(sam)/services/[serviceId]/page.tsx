@@ -1,9 +1,9 @@
 import { BackButton } from "@/components/BackButton"
-import { getService } from "@/lib/queries/getService"
+import { getService } from "@/lib/queries/service"
 import { SystemsToServiceForm } from "./SystemsToServiceForm"
-import { getSystems } from "@/lib/queries/getSystems"
-import { getServiceSystemsSearchResults } from "@/lib/queries/getServiceSystemsSearchResults"
-import { getAgreement } from "@/lib/queries/getAgreement"
+import { getSystems } from "@/lib/queries/system"
+import { getServiceSystemsSearchResults } from "@/lib/queries/serviceSystem"
+import { getAgreement } from "@/lib/queries/agreement"
 
 export async function generateMetadata({
     params,

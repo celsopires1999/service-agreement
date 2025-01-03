@@ -1,4 +1,4 @@
-import { getServiceSearchResults } from "@/lib/queries/getServiceSearchResults"
+import { getServiceSearchResults } from "@/lib/queries/service"
 import { ServiceSearch } from "./ServiceSearch"
 import { ServiceTable } from "./ServiceTable"
 

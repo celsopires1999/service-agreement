@@ -1,5 +1,5 @@
 import { BackButton } from "@/components/BackButton"
-import { getAgreement } from "@/lib/queries/getAgreement"
+import { getAgreement } from "@/lib/queries/agreement"
 // import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { AgreementForm } from "./AgreementForm"
 import { countServicesByAgreementId } from "@/lib/queries/service"

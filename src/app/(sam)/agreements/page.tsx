@@ -1,4 +1,4 @@
-import { getAgreementSearchResults } from "@/lib/queries/getAgreementSearchResults"
+import { getAgreementSearchResults } from "@/lib/queries/agreement"
 import { AgreementSearch } from "./AgreementSearch"
 import { AgreementTable } from "./AgreementTable"
 

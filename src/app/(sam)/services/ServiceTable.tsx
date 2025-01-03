@@ -16,7 +16,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { getServiceSearchResultsType } from "@/lib/queries/getServiceSearchResults"
+import { getServiceSearchResultsType } from "@/lib/queries/service"
 import {
     CellContext,
     createColumnHelper,

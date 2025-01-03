@@ -1,4 +1,4 @@
-import { getSystemSearchResults } from "@/lib/queries/getSystems"
+import { getSystemSearchResults } from "@/lib/queries/system"
 import { SystemSearch } from "./SystemSearch"
 import { SystemTable } from "./SystemTable"
 

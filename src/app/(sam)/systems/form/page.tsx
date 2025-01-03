@@ -1,5 +1,5 @@
 import { BackButton } from "@/components/BackButton"
-import { getSystem } from "@/lib/queries/getSystems"
+import { getSystem } from "@/lib/queries/system"
 import { SystemForm } from "./SystemForm"
 
 export async function generateMetadata({

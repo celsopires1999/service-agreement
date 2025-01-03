@@ -1,3 +1,5 @@
+import "server-only"
+
 import { db } from "@/db"
 import { systems } from "@/db/schema"
 import { asc, eq, or, ilike } from "drizzle-orm"

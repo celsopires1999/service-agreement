@@ -1,6 +1,18 @@
+import "server-only"
+
 import { db } from "@/db"
 import { agreements } from "@/db/schema"
-import { asc, desc, ilike, or } from "drizzle-orm"
+import { asc, desc, eq, ilike, or } from "drizzle-orm"
+
+export async function getAgreement(agreementId: string) {
+    const agreement = await db
+        .select()
+        .from(agreements)
+        .where(eq(agreements.agreementId, agreementId))
+        .limit(1)
+
+    return agreement[0]
+}
 
 export async function getAgreementSearchResults(searchText: string) {
     const results = await db

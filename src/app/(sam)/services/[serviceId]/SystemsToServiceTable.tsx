@@ -19,7 +19,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useToast } from "@/hooks/use-toast"
-import { getServiceSystemsSearchResultsType } from "@/lib/queries/getServiceSystemsSearchResults"
+import { getServiceSystemsSearchResultsType } from "@/lib/queries/serviceSystem"
 import {
     CellContext,
     createColumnHelper,

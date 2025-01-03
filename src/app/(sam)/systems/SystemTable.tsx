@@ -16,7 +16,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import type { getSystemType } from "@/lib/queries/getSystems"
+import type { getSystemType } from "@/lib/queries/system"
 import {
     CellContext,
     createColumnHelper,
