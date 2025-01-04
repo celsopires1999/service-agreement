@@ -1,4 +1,10 @@
-import { FileIcon, HomeIcon, HandshakeIcon, CpuIcon } from "lucide-react"
+import {
+    FileIcon,
+    HomeIcon,
+    HandshakeIcon,
+    CpuIcon,
+    EuroIcon,
+} from "lucide-react"
 import Link from "next/link"
 // import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"
 // import { Button } from "@/components/ui/button"
@@ -11,7 +17,11 @@ export function Header() {
         <header className="sticky top-0 z-20 h-12 animate-slide border-b bg-background p-2">
             <div className="flex h-8 w-full items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <NavButton icon={HomeIcon} label="Home" href="/agreements" />
+                    <NavButton
+                        icon={HomeIcon}
+                        label="Home"
+                        href="/agreements"
+                    />
 
                     <Link
                         href="/agreements"
@@ -29,7 +39,10 @@ export function Header() {
                         label="Agreements"
                         choices={[
                             { title: "Search Agreements", href: "/agreements" },
-                            { title: "New Agreement", href: "/agreements/form" },
+                            {
+                                title: "New Agreement",
+                                href: "/agreements/form",
+                            },
                         ]}
                     />
 
@@ -46,6 +59,12 @@ export function Header() {
                             { title: "Search Systems", href: "/systems" },
                             { title: "New System", href: "/systems/form" },
                         ]}
+                    />
+
+                    <NavButton
+                        icon={EuroIcon}
+                        label="Euro Exchange Rate"
+                        href="/currencies"
                     />
 
                     <ModeToggle />

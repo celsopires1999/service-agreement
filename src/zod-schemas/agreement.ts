@@ -5,7 +5,7 @@ import { z } from "zod"
 export const insertAgreementSchema = createInsertSchema(agreements, {
     agreementId: z.string(),
     year: (schema) =>
-        schema.min(2024, "Year is required").max(2125, "Max year is 2155"),
+        schema.min(2024, "Min year is 2024").max(2125, "Max year is 2155"),
     revision: (schema) =>
         schema.min(1, "Version is required").max(100, "Max version is 100"),
     revisionDate: (schema) => schema.date("Invalid revision date"),

@@ -15,7 +15,7 @@ export async function getAgreement(agreementId: string) {
 }
 
 export async function getAgreementSearchResults(searchText: string) {
-    const results = await db
+    return db
         .select()
         .from(agreements)
         .where(
@@ -30,12 +30,10 @@ export async function getAgreementSearchResults(searchText: string) {
             desc(agreements.year),
             desc(agreements.revision),
         )
-
-    return results
 }
 
 export async function getLastYearBySystemId(systemId: string) {
-    const results = await db
+    return db
         .selectDistinct({
             year: agreements.year,
         })
@@ -48,5 +46,4 @@ export async function getLastYearBySystemId(systemId: string) {
         .where(eq(serviceSystems.systemId, systemId))
         .orderBy(desc(agreements.year))
         .limit(1)
-    return results
 }

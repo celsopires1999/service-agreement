@@ -35,6 +35,7 @@ export async function getServicesBySystemId(systemId: string, year: number) {
             serviceId: services.serviceId,
             serviceAmount: services.amount,
             serviceCurrency: services.currency,
+            serviceIsActive: services.isActive,
             agreementId: agreements.agreementId,
             agreementName: agreements.name,
         })

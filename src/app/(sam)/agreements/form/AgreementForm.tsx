@@ -118,8 +118,7 @@ export function AgreementForm({ agreement, hasServices }: Props) {
                     {agreement?.agreementId ? "Edit" : "New"} Agreement Form
 
                 </h2>
-                {/* {!!saveResult?.data?.agreementId && !agreement?.agreementId && ( */}
-                {!!saveResult?.data?.agreementId && !hasServices && (
+                {!!saveResult?.data?.agreementId && !agreement?.agreementId && !hasServices && (
                     <Link
                         href={`/services/form?agreementId=${saveResult.data.agreementId}`}
                     >

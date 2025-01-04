@@ -2,7 +2,7 @@ import "server-only"
 
 import { db } from "@/db"
 import { currencies } from "@/db/schema"
-import { and, eq } from "drizzle-orm"
+import { and, eq, ilike, or, desc, asc } from "drizzle-orm"
 
 export async function getCurrency(year: number, currency: "EUR" | "USD") {
     return db
@@ -17,3 +17,15 @@ export async function getCurrency(year: number, currency: "EUR" | "USD") {
         )
         .limit(1)
 }
+
+export async function getAllEURValues() {
+    return db
+        .select()
+        .from(currencies)
+        .where(eq(currencies.currency, "EUR"))
+        .orderBy(desc(currencies.year))
+}
+
+export type getAllEURValuesType = Awaited<
+    ReturnType<typeof getAllEURValues>
+>[number]

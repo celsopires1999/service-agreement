@@ -99,6 +99,11 @@ export const currencies = pgTable(
         year: integer("year").notNull(),
         currency: currencyEnum("currency").notNull(),
         value: decimal("value", { precision: 8, scale: 4 }).notNull(),
+        createdAt: timestamp("created_at").notNull().defaultNow(),
+        updatedAt: timestamp("updated_at")
+            .notNull()
+            .defaultNow()
+            .$onUpdate(() => new Date()),
     },
     (t) => [primaryKey({ columns: [t.year, t.currency] })],
 )

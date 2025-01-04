@@ -26,8 +26,16 @@ export function isValidDecimalWithPrecision(
         }
 
         return true
-    } catch (e) {
-        /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+        return false
+    }
+}
+
+export function isGreaterThanZero(value: string) {
+    try {
+        const valueDecimal = new Decimal(value)
+        return valueDecimal.gt(0)
+    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
         return false
     }
 }
@@ -36,8 +44,7 @@ export function toDecimal(value: string) {
     try {
         const valueDecimal = new Decimal(value)
         return valueDecimal
-    } catch (error) {
-        /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
         return new Decimal(0)
     }
 }
