@@ -28,14 +28,18 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    useReactTable
+    useReactTable,
 } from "@tanstack/react-table"
 import Decimal from "decimal.js"
-import { CircleCheckIcon, CircleXIcon, MoreHorizontal, TableOfContents } from "lucide-react"
+import {
+    CircleCheckIcon,
+    CircleXIcon,
+    MoreHorizontal,
+    TableOfContents,
+} from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
-
 
 type Props = {
     data: getServicesBySystemIdType[]
@@ -54,7 +58,13 @@ export function SystemServicesTable({ data }: Props) {
     }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const totalSystemAmount = () => {
-        const amount = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.systemAmount)), new Decimal(0)).toString()
+        const amount = data
+            .reduce(
+                (acc, item) =>
+                    new Decimal(acc).add(toDecimal(item.systemAmount)),
+                new Decimal(0),
+            )
+            .toString()
         return amount
     }
 
@@ -62,7 +72,6 @@ export function SystemServicesTable({ data }: Props) {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
-
 
     const columnHeadersArray: Array<keyof getServicesBySystemIdType> = [
         "agreementName",
@@ -74,7 +83,9 @@ export function SystemServicesTable({ data }: Props) {
         "serviceCurrency",
     ]
 
-    const columnLabels: Partial<{ [K in keyof getServicesBySystemIdType]: string }> = {
+    const columnLabels: Partial<{
+        [K in keyof getServicesBySystemIdType]: string
+    }> = {
         agreementName: "Agreement",
         serviceName: "Service",
         serviceIsActive: "Active",
@@ -137,7 +148,6 @@ export function SystemServicesTable({ data }: Props) {
                             Service Systems
                         </Link>
                     </DropdownMenuItem>
-
                 </DropdownMenuContent>
             </DropdownMenu>
         )
@@ -156,8 +166,16 @@ export function SystemServicesTable({ data }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "systemAmount" || columnName === "systemAllocation" || columnName === "serviceAmount") {
-                        return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
+                    if (
+                        columnName === "systemAmount" ||
+                        columnName === "systemAllocation" ||
+                        columnName === "serviceAmount"
+                    ) {
+                        return new Intl.NumberFormat("pt-BR", {
+                            style: "decimal",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(+value)
                     }
                     return value
                 },
@@ -166,10 +184,15 @@ export function SystemServicesTable({ data }: Props) {
                     size:
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
-                    header: () => (columnLabels[columnName as keyof typeof columnLabels]),
+                    header: () =>
+                        columnLabels[columnName as keyof typeof columnLabels],
                     cell: (info) => {
                         // presentational
-                        if (columnName === "systemAmount" || columnName === "systemAllocation" || columnName === "serviceAmount") {
+                        if (
+                            columnName === "systemAmount" ||
+                            columnName === "systemAllocation" ||
+                            columnName === "serviceAmount"
+                        ) {
                             return (
                                 <div className="text-right">
                                     {info.renderValue()}
@@ -178,7 +201,6 @@ export function SystemServicesTable({ data }: Props) {
                         }
 
                         if (columnName === "serviceIsActive") {
-
                             return (
                                 <div className="grid place-content-center">
                                     {info.getValue() === false ? (
@@ -190,14 +212,12 @@ export function SystemServicesTable({ data }: Props) {
                             )
                         }
 
-                        return (
-                            info.renderValue()
-                        )
-                    }
+                        return info.renderValue()
+                    },
                 },
-
             )
-        })]
+        }),
+    ]
 
     const table = useReactTable({
         data,
@@ -244,10 +264,10 @@ export function SystemServicesTable({ data }: Props) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext(),
+                                                  )}
                                         </div>
                                     </TableHead>
                                 ))}
@@ -273,11 +293,15 @@ export function SystemServicesTable({ data }: Props) {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={4}>Total</TableCell>
+                            <TableCell colSpan={5}>Total</TableCell>
                             <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total)}
+                                {new Intl.NumberFormat("pt-BR", {
+                                    style: "decimal",
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                }).format(+total)}
                             </TableCell>
-                            <TableCell colSpan={3}></TableCell>
+                            <TableCell colSpan={2}></TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>

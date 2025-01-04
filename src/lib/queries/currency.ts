@@ -2,7 +2,7 @@ import "server-only"
 
 import { db } from "@/db"
 import { currencies } from "@/db/schema"
-import { and, eq, ilike, or, desc, asc } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 
 export async function getCurrency(year: number, currency: "EUR" | "USD") {
     return db

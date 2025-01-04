@@ -7,7 +7,7 @@ export const servicesData = [
         amount: "250_000.99",
         currency: "EUR" as const,
         responsibleEmail: "8o6tD@example.com",
-        isActive: false,
+        isActive: true,
     },
     {
         serviceId: "dedec5ab-a66d-400e-b21a-8a987dffa4a7",
@@ -17,6 +17,6 @@ export const servicesData = [
         amount: "500_000.99",
         currency: "EUR" as const,
         responsibleEmail: "john.doe@example.com",
-        isActive: false,
+        isActive: true,
     },
 ]
