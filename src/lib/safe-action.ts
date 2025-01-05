@@ -20,7 +20,10 @@ export const actionClient = createSafeActionClient({
         //     return scope
         // })
 
-        if (e.constructor.name === "PostgresError") {
+        if (
+            e.constructor.name === "PostgresError" ||
+            e.constructor.name === "c"
+        ) {
             const { code, detail } = e as PostgresError
             if (code === "23503") {
                 return `Related table exists. ${detail}`
@@ -37,7 +40,10 @@ export const actionClient = createSafeActionClient({
         }
         console.error(log)
 
-        if (e.constructor.name === "PostgresError") {
+        if (
+            e.constructor.name === "PostgresError" ||
+            e.constructor.name === "c"
+        ) {
             return "Database Error: Your data did not save. Support will be notified."
         }
         return e.message
