@@ -1,4 +1,7 @@
 "use client"
+import { deleteServiceAction } from "@/actions/deleteServiceAction"
+import { AlertConfirmation } from "@/components/AlertConfirmation"
+import Deleting from "@/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -16,6 +19,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { toast } from "@/hooks/use-toast"
 import { getServiceSearchResultsType } from "@/lib/queries/service"
 import {
     CellContext,
@@ -26,12 +30,13 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    useReactTable
+    useReactTable,
 } from "@tanstack/react-table"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 
 type Props = {
     data: getServiceSearchResultsType[]
@@ -42,11 +47,63 @@ export function ServiceTable({ data }: Props) {
 
     const searchParams = useSearchParams()
 
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+    const [serviceToDelete, setServiceToDelete] =
+        useState<getServiceSearchResultsType | null>(null)
+
+    const handleDeleteService = (service: getServiceSearchResultsType) => {
+        setServiceToDelete(service)
+        setShowDeleteConfirmation(true)
+    }
+
+    const {
+        executeAsync: executeDelete,
+        isPending: isDeleting,
+        reset: resetDeleteAction,
+    } = useAction(deleteServiceAction, {
+        onSuccess({ data }) {
+            if (data?.message) {
+                toast({
+                    variant: "default",
+                    title: "Success! 🎉",
+                    description: data.message,
+                })
+            }
+        },
+        onError({ error }) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.serverError,
+            })
+        },
+    })
+
+    const confirmDeleteService = async () => {
+        if (serviceToDelete) {
+            resetDeleteAction()
+            try {
+                await executeDelete({
+                    serviceId: serviceToDelete.serviceId,
+                })
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: `Action error: ${error.message}`,
+                    })
+                }
+            }
+        }
+        setShowDeleteConfirmation(false)
+        setServiceToDelete(null)
+    }
+
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
-
 
     const columnHeadersArray: Array<keyof getServiceSearchResultsType> = [
         "name",
@@ -59,7 +116,9 @@ export function ServiceTable({ data }: Props) {
         "revisionDate",
     ]
 
-    const columnLabels: Partial<{ [K in keyof getServiceSearchResultsType]: string }> = {
+    const columnLabels: Partial<{
+        [K in keyof getServiceSearchResultsType]: string
+    }> = {
         name: "Service",
         amount: "Amount",
         currency: "Currency",
@@ -125,6 +184,7 @@ export function ServiceTable({ data }: Props) {
                             Systems
                         </Link>
                     </DropdownMenuItem>
+
                     <DropdownMenuItem>
                         <Link
                             href={`/agreements/form?agreementId=${row.original.agreementId}`}
@@ -133,6 +193,12 @@ export function ServiceTable({ data }: Props) {
                         >
                             Edit Agreement
                         </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                        onClick={() => handleDeleteService(row.original)}
+                    >
+                        Delete Service
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -153,19 +219,30 @@ export function ServiceTable({ data }: Props) {
                     // transformational
                     const value = row[columnName]
                     if (columnName === "amount") {
-                        return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
+                        return new Intl.NumberFormat("pt-BR", {
+                            style: "decimal",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(+value)
                     }
 
-                    if (columnName === "revisionDate" && typeof value === "string") {
+                    if (
+                        columnName === "revisionDate" &&
+                        typeof value === "string"
+                    ) {
                         return value
                             ? new Intl.DateTimeFormat("pt-BR", {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                            }).format(
-                                new Date(+value.substring(0, 4), +value.substring(5, 7) - 1, +value.substring(8, 10))
-                            )
-                            : "";
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                              }).format(
+                                  new Date(
+                                      +value.substring(0, 4),
+                                      +value.substring(5, 7) - 1,
+                                      +value.substring(8, 10),
+                                  ),
+                              )
+                            : ""
                     }
 
                     return value
@@ -175,7 +252,8 @@ export function ServiceTable({ data }: Props) {
                     size:
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
-                    header: () => (columnLabels[columnName as keyof typeof columnLabels]),
+                    header: () =>
+                        columnLabels[columnName as keyof typeof columnLabels],
                     cell: (info) => {
                         if (columnName === "amount") {
                             return (
@@ -184,14 +262,12 @@ export function ServiceTable({ data }: Props) {
                                 </div>
                             )
                         }
-                        return (
-                            info.renderValue()
-                        )
-                    }
+                        return info.renderValue()
+                    },
                 },
-
             )
-        })]
+        }),
+    ]
 
     const table = useReactTable({
         data,
@@ -222,9 +298,7 @@ export function ServiceTable({ data }: Props) {
 
     return (
         <div className="mt-6 flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">
-                Services List
-            </h2>
+            <h2 className="text-2xl font-bold">Services List</h2>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
@@ -241,10 +315,10 @@ export function ServiceTable({ data }: Props) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext(),
+                                                  )}
                                         </div>
                                     </TableHead>
                                 ))}
@@ -297,6 +371,14 @@ export function ServiceTable({ data }: Props) {
                     </div>
                 </div>
             </div>
+            <AlertConfirmation
+                open={showDeleteConfirmation}
+                setOpen={setShowDeleteConfirmation}
+                confirmationAction={confirmDeleteService}
+                title="Are you sure you want to delete this Service?"
+                message={`This action cannot be undone. This will permanently delete the service ${serviceToDelete?.name}.`}
+            />
+            {isDeleting && <Deleting />}
         </div>
     )
 }

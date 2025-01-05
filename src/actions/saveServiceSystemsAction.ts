@@ -1,7 +1,6 @@
 "use server"
 
 import { SaveServiceSystemUseCase } from "@/core/service/application/use-cases/save-service-system"
-import { serviceSystems } from "@/db/schema"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertServiceSystemsSchema,
@@ -25,7 +24,7 @@ export const saveServiceSystemsAction = actionClient
             const uc = new SaveServiceSystemUseCase()
             await uc.execute(serviceSystem)
 
-            revalidatePath(`/services/${serviceSystems.serviceId}`)
+            revalidatePath(`/services/${serviceSystem.serviceId}`)
 
             return {
                 message: `System ID #${serviceSystem.systemId} to Service ID #${serviceSystem.serviceId} saved successfully`,

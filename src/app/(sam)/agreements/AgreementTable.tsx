@@ -1,4 +1,7 @@
 "use client"
+import { deleteAgreementAction } from "@/actions/deleteAgreementAction"
+import { AlertConfirmation } from "@/components/AlertConfirmation"
+import Deleting from "@/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -16,6 +19,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { toast } from "@/hooks/use-toast"
 import type { selectAgreementSchemaType } from "@/zod-schemas/agreement"
 import {
     CellContext,
@@ -26,12 +30,13 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    useReactTable
+    useReactTable,
 } from "@tanstack/react-table"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 
 type Props = {
     data: selectAgreementSchemaType[]
@@ -41,6 +46,59 @@ export function AgreementTable({ data }: Props) {
     const router = useRouter()
 
     const searchParams = useSearchParams()
+
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+    const [agreementToDelete, setAgreementToDelete] =
+        useState<selectAgreementSchemaType | null>(null)
+
+    const handleDeleteAgreement = (agreement: selectAgreementSchemaType) => {
+        setAgreementToDelete(agreement)
+        setShowDeleteConfirmation(true)
+    }
+
+    const {
+        executeAsync: executeDelete,
+        isPending: isDeleting,
+        reset: resetDeleteAction,
+    } = useAction(deleteAgreementAction, {
+        onSuccess({ data }) {
+            if (data?.message) {
+                toast({
+                    variant: "default",
+                    title: "Success! 🎉",
+                    description: data.message,
+                })
+            }
+        },
+        onError({ error }) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.serverError,
+            })
+        },
+    })
+
+    const confirmDeleteAgreement = async () => {
+        if (agreementToDelete) {
+            resetDeleteAction()
+            try {
+                await executeDelete({
+                    agreementId: agreementToDelete.agreementId,
+                })
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: `Action error: ${error.message}`,
+                    })
+                }
+            }
+        }
+        setShowDeleteConfirmation(false)
+        setAgreementToDelete(null)
+    }
 
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
@@ -55,7 +113,9 @@ export function AgreementTable({ data }: Props) {
         "revisionDate",
     ]
 
-    const columnLabels: Partial<{ [K in keyof selectAgreementSchemaType]: string }> = {
+    const columnLabels: Partial<{
+        [K in keyof selectAgreementSchemaType]: string
+    }> = {
         name: "Agreement",
         contactEmail: "Contact Email",
         year: "Year",
@@ -114,6 +174,12 @@ export function AgreementTable({ data }: Props) {
                             Add Service
                         </Link>
                     </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                        onClick={() => handleDeleteAgreement(row.original)}
+                    >
+                        Delete Agreement
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         )
@@ -132,16 +198,23 @@ export function AgreementTable({ data }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "revisionDate" && typeof value === "string") {
+                    if (
+                        columnName === "revisionDate" &&
+                        typeof value === "string"
+                    ) {
                         return value
                             ? new Intl.DateTimeFormat("pt-BR", {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                            }).format(
-                                new Date(+value.substring(0, 4), +value.substring(5, 7) - 1, +value.substring(8, 10))
-                            )
-                            : "";
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                              }).format(
+                                  new Date(
+                                      +value.substring(0, 4),
+                                      +value.substring(5, 7) - 1,
+                                      +value.substring(8, 10),
+                                  ),
+                              )
+                            : ""
                     }
                     return value
                 },
@@ -150,10 +223,12 @@ export function AgreementTable({ data }: Props) {
                     size:
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
-                    header: () => (columnLabels[columnName as keyof typeof columnLabels]),
+                    header: () =>
+                        columnLabels[columnName as keyof typeof columnLabels],
                 },
             )
-        })]
+        }),
+    ]
 
     const table = useReactTable({
         data,
@@ -184,9 +259,7 @@ export function AgreementTable({ data }: Props) {
 
     return (
         <div className="mt-6 flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">
-                Agreements List
-            </h2>
+            <h2 className="text-2xl font-bold">Agreements List</h2>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
@@ -203,10 +276,10 @@ export function AgreementTable({ data }: Props) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext(),
+                                                  )}
                                         </div>
                                     </TableHead>
                                 ))}
@@ -259,6 +332,14 @@ export function AgreementTable({ data }: Props) {
                     </div>
                 </div>
             </div>
+            <AlertConfirmation
+                open={showDeleteConfirmation}
+                setOpen={setShowDeleteConfirmation}
+                confirmationAction={confirmDeleteAgreement}
+                title="Are you sure you want to delete this Agreement?"
+                message={`This action cannot be undone. This will permanently delete the agreement ${agreementToDelete?.name}.`}
+            />
+            {isDeleting && <Deleting />}
         </div>
     )
 }

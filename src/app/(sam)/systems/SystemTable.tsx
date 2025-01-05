@@ -1,4 +1,7 @@
 "use client"
+import { deleteSystemAction } from "@/actions/deleteSystemAction"
+import { AlertConfirmation } from "@/components/AlertConfirmation"
+import Deleting from "@/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -16,6 +19,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { toast } from "@/hooks/use-toast"
 import type { getSystemType } from "@/lib/queries/system"
 import {
     CellContext,
@@ -26,12 +30,13 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    useReactTable
+    useReactTable,
 } from "@tanstack/react-table"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 
 type Props = {
     data: getSystemType[]
@@ -41,6 +46,60 @@ export function SystemTable({ data }: Props) {
     const router = useRouter()
 
     const searchParams = useSearchParams()
+
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+    const [systemToDelete, setSystemToDelete] = useState<getSystemType | null>(
+        null,
+    )
+
+    const handleDeleteSystem = (system: getSystemType) => {
+        setSystemToDelete(system)
+        setShowDeleteConfirmation(true)
+    }
+
+    const {
+        executeAsync: executeDelete,
+        isPending: isDeleting,
+        reset: resetDeleteAction,
+    } = useAction(deleteSystemAction, {
+        onSuccess({ data }) {
+            if (data?.message) {
+                toast({
+                    variant: "default",
+                    title: "Success! 🎉",
+                    description: data.message,
+                })
+            }
+        },
+        onError({ error }) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.serverError,
+            })
+        },
+    })
+
+    const confirmDeleteSystem = async () => {
+        if (systemToDelete) {
+            resetDeleteAction()
+            try {
+                await executeDelete({
+                    systemId: systemToDelete.systemId,
+                })
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: `Action error: ${error.message}`,
+                    })
+                }
+            }
+        }
+        setShowDeleteConfirmation(false)
+        setSystemToDelete(null)
+    }
 
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
@@ -70,9 +129,7 @@ export function SystemTable({ data }: Props) {
 
     const columnHelper = createColumnHelper<getSystemType>()
 
-    const ActionsCell = ({
-        row,
-    }: CellContext<getSystemType, unknown>) => {
+    const ActionsCell = ({ row }: CellContext<getSystemType, unknown>) => {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -103,6 +160,12 @@ export function SystemTable({ data }: Props) {
                             System Cost
                         </Link>
                     </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                        onClick={() => handleDeleteSystem(row.original)}
+                    >
+                        Delete System
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         )
@@ -129,10 +192,12 @@ export function SystemTable({ data }: Props) {
                     size:
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
-                    header: () => (columnLabels[columnName as keyof typeof columnLabels]),
+                    header: () =>
+                        columnLabels[columnName as keyof typeof columnLabels],
                 },
             )
-        })]
+        }),
+    ]
 
     const table = useReactTable({
         data,
@@ -163,9 +228,7 @@ export function SystemTable({ data }: Props) {
 
     return (
         <div className="mt-6 flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">
-                Systems List
-            </h2>
+            <h2 className="text-2xl font-bold">Systems List</h2>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
@@ -182,10 +245,10 @@ export function SystemTable({ data }: Props) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext(),
+                                                  )}
                                         </div>
                                     </TableHead>
                                 ))}
@@ -238,6 +301,14 @@ export function SystemTable({ data }: Props) {
                     </div>
                 </div>
             </div>
+            <AlertConfirmation
+                open={showDeleteConfirmation}
+                setOpen={setShowDeleteConfirmation}
+                confirmationAction={confirmDeleteSystem}
+                title="Are you sure you want to delete this System?"
+                message={`This action cannot be undone. This will permanently delete the system ${systemToDelete?.name}.`}
+            />
+            {isDeleting && <Deleting />}
         </div>
     )
 }

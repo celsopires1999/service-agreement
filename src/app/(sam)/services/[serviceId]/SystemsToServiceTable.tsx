@@ -1,6 +1,6 @@
 "use client"
 import { deleteServiceSystemAction } from "@/actions/deleteServiceSystemAction"
-import Loading from "@/app/loading"
+import Deleting from "@/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -31,7 +31,7 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    useReactTable
+    useReactTable,
 } from "@tanstack/react-table"
 import Decimal from "decimal.js"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
@@ -40,13 +40,15 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
-
 type Props = {
     data: getServiceSystemsSearchResultsType[]
     handleUpdateServiceSystem(systemId: string, allocation: string): void
 }
 
-export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props) {
+export function SystemsToServiceTable({
+    data,
+    handleUpdateServiceSystem,
+}: Props) {
     const router = useRouter()
     const { toast } = useToast()
 
@@ -66,17 +68,19 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                 })
             }
         },
-        // onError({ error }) {
-        onError() {
+        onError({ error }) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "Save Failed",
+                description: error.serverError,
             })
         },
     })
 
-    const handleDeleteServiceSystem = async (serviceId: string, systemId: string) => {
+    const handleDeleteServiceSystem = async (
+        serviceId: string,
+        systemId: string,
+    ) => {
         resetDeleteAction()
         try {
             await executeDelete({ serviceId, systemId })
@@ -99,8 +103,18 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
     }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const totalAllocationAndAmount = () => {
-        const allocation = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.allocation)), new Decimal(0)).toString()
-        const amount = data.reduce((acc, item) => new Decimal(acc).add(toDecimal(item.amount)), new Decimal(0)).toString()
+        const allocation = data
+            .reduce(
+                (acc, item) => new Decimal(acc).add(toDecimal(item.allocation)),
+                new Decimal(0),
+            )
+            .toString()
+        const amount = data
+            .reduce(
+                (acc, item) => new Decimal(acc).add(toDecimal(item.amount)),
+                new Decimal(0),
+            )
+            .toString()
         return { allocation, amount }
     }
 
@@ -109,16 +123,12 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
+    const columnHeadersArray: Array<keyof getServiceSystemsSearchResultsType> =
+        ["name", "allocation", "amount", "currency", "description"]
 
-    const columnHeadersArray: Array<keyof getServiceSystemsSearchResultsType> = [
-        "name",
-        "allocation",
-        "amount",
-        "currency",
-        "description",
-    ]
-
-    const columnLabels: Partial<{ [K in keyof getServiceSystemsSearchResultsType]: string }> = {
+    const columnLabels: Partial<{
+        [K in keyof getServiceSystemsSearchResultsType]: string
+    }> = {
         name: "System Name",
         allocation: "Alloc (%)",
         amount: "Amount",
@@ -134,7 +144,8 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
         allocation: 150,
     }
 
-    const columnHelper = createColumnHelper<getServiceSystemsSearchResultsType>()
+    const columnHelper =
+        createColumnHelper<getServiceSystemsSearchResultsType>()
 
     const ActionsCell = ({
         row,
@@ -150,16 +161,15 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() =>
-                        handleUpdateServiceSystem(row.original.systemId, row.original.allocation)}
+                    <DropdownMenuItem
+                        onClick={() =>
+                            handleUpdateServiceSystem(
+                                row.original.systemId,
+                                row.original.allocation,
+                            )
+                        }
                     >
                         Edit Allocation
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem onClick={() =>
-                        handleDeleteServiceSystem(row.original.serviceId, row.original.systemId)}
-                    >
-                        Remove System
                     </DropdownMenuItem>
 
                     <DropdownMenuItem>
@@ -182,7 +192,16 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                         </Link>
                     </DropdownMenuItem>
 
-
+                    <DropdownMenuItem
+                        onClick={() =>
+                            handleDeleteServiceSystem(
+                                row.original.serviceId,
+                                row.original.systemId,
+                            )
+                        }
+                    >
+                        Remove System
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         )
@@ -201,8 +220,15 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "amount" || columnName === "allocation") {
-                        return new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+value)
+                    if (
+                        columnName === "amount" ||
+                        columnName === "allocation"
+                    ) {
+                        return new Intl.NumberFormat("pt-BR", {
+                            style: "decimal",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(+value)
                     }
                     return value
                 },
@@ -211,23 +237,25 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                     size:
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
-                    header: () => (columnLabels[columnName as keyof typeof columnLabels]),
+                    header: () =>
+                        columnLabels[columnName as keyof typeof columnLabels],
                     cell: (info) => {
-                        if (columnName === "amount" || columnName === "allocation") {
+                        if (
+                            columnName === "amount" ||
+                            columnName === "allocation"
+                        ) {
                             return (
                                 <div className="text-right">
                                     {info.renderValue()}
                                 </div>
                             )
                         }
-                        return (
-                            info.renderValue()
-                        )
-                    }
+                        return info.renderValue()
+                    },
                 },
-
             )
-        })]
+        }),
+    ]
 
     const table = useReactTable({
         data,
@@ -274,10 +302,10 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext(),
+                                                  )}
                                         </div>
                                     </TableHead>
                                 ))}
@@ -305,10 +333,18 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                         <TableRow>
                             <TableCell colSpan={2}>Total</TableCell>
                             <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.allocation)}
+                                {new Intl.NumberFormat("pt-BR", {
+                                    style: "decimal",
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                }).format(+total.allocation)}
                             </TableCell>
                             <TableCell className="text-right">
-                                {new Intl.NumberFormat("pt-BR", { style: "decimal", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+total.amount)}
+                                {new Intl.NumberFormat("pt-BR", {
+                                    style: "decimal",
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                }).format(+total.amount)}
                             </TableCell>
                             <TableCell>{data[0]?.currency}</TableCell>
                             <TableCell></TableCell>
@@ -343,7 +379,7 @@ export function SystemsToServiceTable({ data, handleUpdateServiceSystem }: Props
                     </div>
                 </div>
             </div>
-            {isDeleting && <Loading />}
+            {isDeleting && <Deleting />}
         </div>
     )
 }

@@ -22,6 +22,9 @@ export const actionClient = createSafeActionClient({
 
         if (e.constructor.name === "PostgresError") {
             const { code, detail } = e as PostgresError
+            if (code === "23503") {
+                return `Related table exists. ${detail}`
+            }
             if (code === "23505") {
                 return `Unique entry required. ${detail}`
             }
