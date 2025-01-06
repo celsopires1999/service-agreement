@@ -1,8 +1,6 @@
-// import { NeonDbError } from "@neondatabase/serverless"
 import { createSafeActionClient } from "next-safe-action"
-import { PostgresError } from "postgres"
+import { DatabaseError } from "pg"
 import { z } from "zod"
-// import * as Sentry from '@sentry/nextjs'
 
 export const actionClient = createSafeActionClient({
     defineMetadataSchema() {
@@ -12,21 +10,11 @@ export const actionClient = createSafeActionClient({
     },
     handleServerError(e, utils) {
         const { clientInput, metadata } = utils
-        // Sentry.captureException(e, (scope) => {
-        //     scope.clear()
-        //     scope.setContext('serverError', { message: e.message })
-        //     scope.setContext('metadata', { actionName: metadata?.actionName })
-        //     scope.setContext('clientInput', { clientInput })
-        //     return scope
-        // })
 
-        if (
-            e.constructor.name === "PostgresError" ||
-            e.constructor.name === "c"
-        ) {
-            const { code, detail } = e as PostgresError
+        if (e instanceof DatabaseError) {
+            const { code, detail } = e
             if (code === "23503") {
-                return `Related table exists. ${detail}`
+                return `Relational key violation. ${detail}`
             }
             if (code === "23505") {
                 return `Unique entry required. ${detail}`
@@ -34,16 +22,14 @@ export const actionClient = createSafeActionClient({
         }
 
         const log = {
+            time: new Date().toISOString(),
             message: e.message,
             actionName: metadata?.actionName,
             clientInput: clientInput,
         }
         console.error(log)
 
-        if (
-            e.constructor.name === "PostgresError" ||
-            e.constructor.name === "c"
-        ) {
+        if (e instanceof DatabaseError) {
             return "Database Error: Your data did not save. Support will be notified."
         }
         return e.message

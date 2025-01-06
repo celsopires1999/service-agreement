@@ -1,6 +1,6 @@
 "use server"
 
-import { RemoveServiceSystemUseCase } from "@/core/service/application/use-cases/remove-service-system"
+import { RemoveServiceSystemUseCase } from "@/core/service/application/use-cases/remove-service-system.use-case"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"

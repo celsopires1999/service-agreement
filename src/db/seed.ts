@@ -1,20 +1,19 @@
+import { agreementsData } from "./data/agreements"
+import { currenciesData } from "./data/currencies"
+import { servicesData } from "./data/services"
+import { serviceSystemsData } from "./data/serviceSystems"
+import { systemsData } from "./data/systems"
 import { db } from "./index"
 import {
     agreements,
-    systems,
+    currencies,
     services,
     serviceSystems,
-    currencies,
+    systems,
 } from "./schema"
-import { systemsData } from "./data/systems"
-import { agreementsData } from "./data/agreements"
-import { servicesData } from "./data/services"
-import { serviceSystemsData } from "./data/serviceSystems"
-import { currenciesData } from "./data/currencies"
 
 const main = async () => {
     console.log("Seeding...")
-
     try {
         await db.delete(serviceSystems)
         await db.delete(services)

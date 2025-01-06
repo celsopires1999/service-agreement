@@ -1,6 +1,6 @@
 "use server"
 
-import { SaveServiceSystemUseCase } from "@/core/service/application/use-cases/save-service-system"
+import { SaveServiceSystemUseCase } from "@/core/service/application/use-cases/save-service-system.use-case"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertServiceSystemsSchema,
