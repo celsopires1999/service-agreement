@@ -36,6 +36,8 @@ export const saveServiceAction = actionClient
                         amount: service.amount.trim(),
                         currency: service.currency,
                         responsibleEmail: service.responsibleEmail.trim(),
+                        providerAllocation: service.providerAllocation.trim(),
+                        localAllocation: service.localAllocation.trim(),
                     })
                     .returning({ insertedId: services.serviceId })
 

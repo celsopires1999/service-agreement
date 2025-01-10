@@ -1,4 +1,6 @@
-export const servicesData = [
+import { insertServiceSchemaType } from "@/zod-schemas/service"
+
+export const servicesData: insertServiceSchemaType[] = [
     {
         serviceId: "62f0f1b4-950e-4877-a4e6-82f92fb2f6f0",
         name: "NX Central Support",
@@ -8,6 +10,8 @@ export const servicesData = [
         currency: "EUR" as const,
         responsibleEmail: "8o6tD@example.com",
         isActive: true,
+        providerAllocation: "Number of users",
+        localAllocation: "Number of users",
     },
     {
         serviceId: "dedec5ab-a66d-400e-b21a-8a987dffa4a7",
@@ -18,5 +22,7 @@ export const servicesData = [
         currency: "EUR" as const,
         responsibleEmail: "john.doe@example.com",
         isActive: true,
+        providerAllocation: "Number of users",
+        localAllocation: "Number of users",
     },
 ]

@@ -9,7 +9,10 @@ import { useToast } from "@/hooks/use-toast"
 import { getServiceSystemsSearchResultsType } from "@/lib/queries/serviceSystem"
 import { selectAgreementSchemaType } from "@/zod-schemas/agreement"
 import { selectServiceSchemaType } from "@/zod-schemas/service"
-import { insertServiceSystemsSchema, type insertServiceSystemsSchemaType } from "@/zod-schemas/service_systems"
+import {
+    insertServiceSystemsSchema,
+    type insertServiceSystemsSchemaType,
+} from "@/zod-schemas/service_systems"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Decimal from "decimal.js"
 import { LoaderCircle } from "lucide-react"
@@ -27,13 +30,19 @@ type Props = {
         id: string
         description: string
     }[]
+    isEditable?: boolean
 }
 
-export function SystemsToServiceForm({ service, agreement, serviceSystems, systems }: Props) {
+export function SystemsToServiceForm({
+    service,
+    agreement,
+    serviceSystems,
+    systems,
+    isEditable = true,
+}: Props) {
     const { toast } = useToast()
 
-    const defaultValues: insertServiceSystemsSchemaType =
-    {
+    const defaultValues: insertServiceSystemsSchemaType = {
         systemId: "",
         serviceId: service.serviceId,
         allocation: "",
@@ -46,27 +55,30 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
         resolver: zodResolver(insertServiceSystemsSchema),
         defaultValues,
     })
-    const { watch, setValue } = form;
+    const { watch, setValue } = form
     const allocation = watch("allocation")
 
-
-    const handleUpdateServiceSystem = (systemId: string, allocation: string) => {
-        setValue("systemId", systemId);
-        setValue("allocation", allocation);
+    const handleUpdateServiceSystem = (
+        systemId: string,
+        allocation: string,
+    ) => {
+        setValue("systemId", systemId)
+        setValue("allocation", allocation)
     }
 
     useEffect(() => {
-        const decimalAllocation = allocation.replace(",", ".");
+        const decimalAllocation = allocation.replace(",", ".")
         try {
             new Decimal(decimalAllocation)
-        } catch (error) { /* eslint-disable-line @typescript-eslint/no-unused-vars */
-            setValue("amount", "");
+        } catch (error) /* eslint-disable-line @typescript-eslint/no-unused-vars */ {
+            setValue("amount", "")
             return
         }
 
-        const value = new Decimal(service.amount).mul(new Decimal(decimalAllocation).div(100)).toFixed(2);
-        setValue("amount", value.replace(".", ","));
-
+        const value = new Decimal(service.amount)
+            .mul(new Decimal(decimalAllocation).div(100))
+            .toFixed(2)
+        setValue("amount", value.replace(".", ","))
     }, [allocation]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const {
@@ -113,79 +125,80 @@ export function SystemsToServiceForm({ service, agreement, serviceSystems, syste
         <div className="flex flex-col gap-1 sm:px-8">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
-                    {service?.name ? `${service.name}` : "Service Allocation Form"} {service?.isActive ? "(Active)" : "(Inactive)"}
+                    {service?.name
+                        ? `${service.name}`
+                        : "Service Allocation Form"}{" "}
+                    {service?.isActive ? "(Active)" : "(Inactive)"}
                 </h2>
-                {
-                    !!agreement?.agreementId && (
-                        <Link
-                            href={`/services?searchText=${agreement.name}`}
-                        >
-                            <h2>
-                                Go to Services List
-                            </h2>
-                        </Link>
-                    )
-                }
+                {!!agreement?.agreementId && (
+                    <Link href={`/services?searchText=${agreement.name}`}>
+                        <h2>Go to Services List</h2>
+                    </Link>
+                )}
             </div>
 
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(submitForm)}
-                    className="flex gap-4 flex-row md:gap-8"
-                >
-                    <div className="flex w-full flex-col gap-4 mt-4">
-                        <div className="flex w-full gap-4 justify-between">
-                            <SelectWithLabel<insertServiceSystemsSchemaType>
-                                fieldTitle="System"
-                                nameInSchema="systemId"
-                                data={systems ?? []}
-                                className="min-w-48"
-                            />
+            {isEditable && (
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(submitForm)}
+                        className="flex flex-row gap-4 md:gap-8"
+                    >
+                        <div className="mt-4 flex w-full flex-col gap-4">
+                            <div className="flex w-full justify-between gap-4">
+                                <SelectWithLabel<insertServiceSystemsSchemaType>
+                                    fieldTitle="System"
+                                    nameInSchema="systemId"
+                                    data={systems ?? []}
+                                    className="min-w-48"
+                                />
 
-                            <InputWithLabel<insertServiceSystemsSchemaType>
-                                fieldTitle="Allocation (%)"
-                                nameInSchema="allocation"
-                                type="number"
-                                step="0.01"
-                            />
+                                <InputWithLabel<insertServiceSystemsSchemaType>
+                                    fieldTitle="Allocation (%)"
+                                    nameInSchema="allocation"
+                                    type="number"
+                                    step="0.01"
+                                />
 
-                            <InputWithLabel<insertServiceSystemsSchemaType>
-                                fieldTitle="Amount"
-                                nameInSchema="amount"
-                                disabled
-                            />
+                                <InputWithLabel<insertServiceSystemsSchemaType>
+                                    fieldTitle="Amount"
+                                    nameInSchema="amount"
+                                    disabled
+                                />
 
-                            <InputWithLabel<insertServiceSystemsSchemaType>
-                                fieldTitle="Currency"
-                                nameInSchema="currency"
-                                disabled
-                            />
+                                <InputWithLabel<insertServiceSystemsSchemaType>
+                                    fieldTitle="Currency"
+                                    nameInSchema="currency"
+                                    disabled
+                                />
 
-                            <div className="mt-8">
-                                <Button
-                                    type="submit"
-                                    variant="default"
-                                    title="Save"
-                                    disabled={isSaving}
-                                >
-                                    {isSaving ? (
-                                        <>
-                                            <LoaderCircle className="animate-spin" />{" "}
-                                            Saving
-                                        </>
-                                    ) : (
-                                        "Save"
-                                    )}
-                                </Button>
+                                <div className="mt-8">
+                                    <Button
+                                        type="submit"
+                                        variant="default"
+                                        title="Save"
+                                        disabled={isSaving}
+                                    >
+                                        {isSaving ? (
+                                            <>
+                                                <LoaderCircle className="animate-spin" />{" "}
+                                                Saving
+                                            </>
+                                        ) : (
+                                            "Save"
+                                        )}
+                                    </Button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </Form>
+                    </form>
+                </Form>
+            )}
+
             <SystemsToServiceTable
                 data={serviceSystems ?? []}
-                handleUpdateServiceSystem={handleUpdateServiceSystem} />
+                handleUpdateServiceSystem={handleUpdateServiceSystem}
+                isEditable={isEditable}
+            />
         </div>
-
     )
 }

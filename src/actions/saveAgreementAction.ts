@@ -35,7 +35,9 @@ export const saveAgreementAction = actionClient
                     .insert(agreements)
                     .values({
                         year: agreement.year,
+                        code: agreement.code.trim(),
                         revision: agreement.revision,
+                        isRevised: agreement.isRevised,
                         revisionDate: agreement.revisionDate.trim(),
                         name: agreement.name.trim(),
                         description: agreement.description.trim(),
@@ -59,7 +61,9 @@ export const saveAgreementAction = actionClient
                 .update(agreements)
                 .set({
                     year: agreement.year,
+                    code: agreement.code.trim(),
                     revision: agreement.revision,
+                    isRevised: agreement.isRevised,
                     revisionDate: agreement.revisionDate.trim(),
                     name: agreement.name.trim(),
                     description: agreement.description.trim(),

@@ -43,11 +43,13 @@ import { useEffect, useMemo, useState } from "react"
 type Props = {
     data: getServiceSystemsSearchResultsType[]
     handleUpdateServiceSystem(systemId: string, allocation: string): void
+    isEditable?: boolean
 }
 
 export function SystemsToServiceTable({
     data,
     handleUpdateServiceSystem,
+    isEditable = true,
 }: Props) {
     const router = useRouter()
     const { toast } = useToast()
@@ -161,16 +163,18 @@ export function SystemsToServiceTable({
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        onClick={() =>
-                            handleUpdateServiceSystem(
-                                row.original.systemId,
-                                row.original.allocation,
-                            )
-                        }
-                    >
-                        Edit Allocation
-                    </DropdownMenuItem>
+                    {isEditable && (
+                        <DropdownMenuItem
+                            onClick={() =>
+                                handleUpdateServiceSystem(
+                                    row.original.systemId,
+                                    row.original.allocation,
+                                )
+                            }
+                        >
+                            Edit Allocation
+                        </DropdownMenuItem>
+                    )}
 
                     <DropdownMenuItem>
                         <Link
@@ -178,7 +182,7 @@ export function SystemsToServiceTable({
                             className="w-full"
                             prefetch={false}
                         >
-                            Edit System
+                            System
                         </Link>
                     </DropdownMenuItem>
 
@@ -192,16 +196,18 @@ export function SystemsToServiceTable({
                         </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem
-                        onClick={() =>
-                            handleDeleteServiceSystem(
-                                row.original.serviceId,
-                                row.original.systemId,
-                            )
-                        }
-                    >
-                        Remove System
-                    </DropdownMenuItem>
+                    {isEditable && (
+                        <DropdownMenuItem
+                            onClick={() =>
+                                handleDeleteServiceSystem(
+                                    row.original.serviceId,
+                                    row.original.systemId,
+                                )
+                            }
+                        >
+                            Remove System
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         )

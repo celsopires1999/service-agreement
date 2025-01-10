@@ -14,6 +14,8 @@ export type ServiceConstructorProps = {
     currency: currecyType
     responsibleEmail: string
     isActive: boolean
+    providerAllocation: string
+    localAllocation: string
     serviceSystems?: ServiceSystem[]
 }
 
@@ -28,6 +30,8 @@ export class Service {
     currency: currecyType
     responsibleEmail: string
     isActive: boolean
+    providerAllocation: string
+    localAllocation: string
     serviceSystems: ServiceSystem[]
 
     constructor(props: ServiceConstructorProps) {
@@ -39,6 +43,8 @@ export class Service {
         this.currency = props.currency
         this.responsibleEmail = props.responsibleEmail.trim().toLowerCase()
         this.isActive = props.isActive
+        this.providerAllocation = props.providerAllocation
+        this.localAllocation = props.localAllocation
         this.serviceSystems = props.serviceSystems ?? []
     }
 
@@ -75,6 +81,14 @@ export class Service {
         this.serviceSystems.forEach((serviceSystem) => {
             serviceSystem.changeAmount(amount)
         })
+    }
+
+    changeProviderAllocation(allocation: string) {
+        this.providerAllocation = allocation
+    }
+
+    changeLocalAllocation(allocation: string) {
+        this.localAllocation = allocation
     }
 
     hasSystem(systemId: string) {

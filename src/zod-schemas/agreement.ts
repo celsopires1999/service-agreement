@@ -4,10 +4,74 @@ import { z } from "zod"
 
 export const insertAgreementSchema = createInsertSchema(agreements, {
     agreementId: z.string(),
-    year: (schema) =>
-        schema.min(2024, "Min year is 2024").max(2125, "Max year is 2155"),
-    revision: (schema) =>
-        schema.min(1, "Version is required").max(100, "Max version is 100"),
+    year: z
+        .union([z.number(), z.string()])
+        .refine(
+            (value) => {
+                let year: number
+
+                if (typeof value === "string") {
+                    year = parseInt(value)
+
+                    if (isNaN(year)) {
+                        return false
+                    }
+                } else {
+                    year = value
+                }
+
+                if (year < 2024 || year > 2125) {
+                    return false
+                }
+
+                return true
+            },
+            {
+                message: "Year must be a number between 2024 and 2125",
+            },
+        )
+        .transform((value) => {
+            if (typeof value === "string") {
+                return parseInt(value)
+            }
+            return value
+        }),
+    code: (schema) =>
+        schema
+            .min(1, "Code is required")
+            .max(20, "Code must be 20 characters or less"),
+
+    revision: z
+        .union([z.number(), z.string()])
+        .refine(
+            (value) => {
+                let revision: number
+
+                if (typeof value === "string") {
+                    revision = parseInt(value)
+                    if (isNaN(revision)) {
+                        return false
+                    }
+                } else {
+                    revision = value
+                }
+
+                if (revision < 1 || revision > 100) {
+                    return false
+                }
+
+                return true
+            },
+            {
+                message: "Revision must be a number between 1 and 100",
+            },
+        )
+        .transform((value) => {
+            if (typeof value === "string") {
+                return parseInt(value)
+            }
+            return value
+        }),
     revisionDate: (schema) => schema.date("Invalid revision date"),
     name: (schema) =>
         schema

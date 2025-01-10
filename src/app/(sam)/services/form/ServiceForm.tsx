@@ -20,7 +20,6 @@ import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import Link from "next/link"
 
-
 type Props = {
     agreement: selectAgreementSchemaType
     service?: selectServiceSchemaType
@@ -28,13 +27,18 @@ type Props = {
         id: string
         description: string
     }[]
+    isEditable?: boolean
 }
 
-export function ServiceForm({ agreement, service, currencies }: Props) {
+export function ServiceForm({
+    agreement,
+    service,
+    currencies,
+    isEditable = true,
+}: Props) {
     const { toast } = useToast()
 
-    const defaultValues: insertServiceSchemaType =
-    {
+    const defaultValues: insertServiceSchemaType = {
         serviceId: service?.serviceId ?? "(New)",
         agreementId: service?.agreementId ?? agreement.agreementId,
         name: service?.name ?? "",
@@ -42,6 +46,8 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
         amount: service?.amount.replace(".", ",") ?? "",
         currency: service?.currency ?? "USD",
         responsibleEmail: service?.responsibleEmail ?? "",
+        providerAllocation: service?.providerAllocation ?? "",
+        localAllocation: service?.localAllocation ?? "",
     }
 
     const form = useForm<insertServiceSchemaType>({
@@ -95,28 +101,28 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
             <DisplayServerActionResponse result={saveResult} />
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
-                    {service?.serviceId ? "Edit" : "New"} Service Form {service?.serviceId ? service?.isActive ? "(Active)" : "(Inactive)" : null}
+                    {service?.serviceId && isEditable
+                        ? "Edit"
+                        : service?.serviceId
+                          ? "View"
+                          : "New"}{" "}
+                    Service Form{" "}
+                    {service?.serviceId
+                        ? service?.isActive
+                            ? "(Active)"
+                            : "(Inactive)"
+                        : null}
                 </h2>
                 {!!saveResult?.data?.serviceId && !service?.serviceId && (
-                    <Link
-                        href={`/services/${saveResult.data.serviceId}`}
-                    >
-                        <h2>
-                            Go to Systems Form
-                        </h2>
+                    <Link href={`/services/${saveResult.data.serviceId}`}>
+                        <h2>Go to Systems Form</h2>
                     </Link>
                 )}
-                {
-                    !!service?.serviceId && (
-                        <Link
-                            href={`/services/${service.serviceId}`}
-                        >
-                            <h2>
-                                Go to Systems Form
-                            </h2>
-                        </Link>
-                    )
-                }
+                {!!service?.serviceId && (
+                    <Link href={`/services/${service.serviceId}`}>
+                        <h2>Go to Systems Form</h2>
+                    </Link>
+                )}
             </div>
 
             <Form {...form}>
@@ -128,74 +134,104 @@ export function ServiceForm({ agreement, service, currencies }: Props) {
                         <InputWithLabel<insertServiceSchemaType>
                             fieldTitle="Name"
                             nameInSchema="name"
+                            disabled={!isEditable}
                         />
 
                         <InputWithLabel<insertServiceSchemaType>
                             fieldTitle="Amount"
                             nameInSchema="amount"
+                            disabled={!isEditable}
                         />
 
-                        <SelectWithLabel<insertServiceSchemaType>
-                            fieldTitle="Currency"
-                            nameInSchema="currency"
-                            data={currencies ?? []}
+                        {isEditable ? (
+                            <SelectWithLabel<insertServiceSchemaType>
+                                fieldTitle="Currency"
+                                nameInSchema="currency"
+                                data={currencies ?? []}
+                            />
+                        ) : (
+                            <InputWithLabel<insertServiceSchemaType>
+                                fieldTitle="Currency"
+                                nameInSchema="currency"
+                                disabled={!isEditable}
+                            />
+                        )}
+
+                        <InputWithLabel<insertServiceSchemaType>
+                            fieldTitle="Responsible Email"
+                            nameInSchema="responsibleEmail"
+                            disabled={!isEditable}
                         />
 
                         <div className="mt-4 space-y-2">
                             <h3 className="text-lg">Agreement Info</h3>
                             <hr className="w-4/5" />
+                            <p>{agreement.code}</p>
+                            <p>{agreement.name}</p>
                             <p>
-                                {agreement.name}
+                                Valid for {agreement.year}, Revision{" "}
+                                {agreement.revision} on {agreement.revisionDate}
                             </p>
-                            <p> {agreement.contactEmail}</p>
                             <p>
-                                Valid for {agreement.year}, Revision {agreement.revision} on {agreement.revisionDate}
+                                {agreement.isRevised
+                                    ? "Revision Finished"
+                                    : "Revision in Progress"}
                             </p>
                         </div>
                     </div>
 
                     <div className="flex w-full max-w-xs flex-col gap-4">
-                        <InputWithLabel<insertServiceSchemaType>
-                            fieldTitle="Responsible Email"
-                            nameInSchema="responsibleEmail"
-                        />
-
                         <TextAreaWithLabel<insertServiceSchemaType>
                             fieldTitle="Description"
                             nameInSchema="description"
                             className="h-40"
+                            disabled={!isEditable}
                         />
 
-                        <div className="flex gap-2">
-                            <Button
-                                type="submit"
-                                className="w-3/4"
-                                variant="default"
-                                title="Save"
-                                disabled={isSaving}
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <LoaderCircle className="animate-spin" />{" "}
-                                        Saving
-                                    </>
-                                ) : (
-                                    "Save"
-                                )}
-                            </Button>
+                        <TextAreaWithLabel<insertServiceSchemaType>
+                            fieldTitle="Provider Allocation"
+                            nameInSchema="providerAllocation"
+                            disabled={!isEditable}
+                        />
 
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                title="Reset"
-                                onClick={() => {
-                                    form.reset(defaultValues)
-                                    resetSaveAction()
-                                }}
-                            >
-                                Reset
-                            </Button>
-                        </div>
+                        <TextAreaWithLabel<insertServiceSchemaType>
+                            fieldTitle="Local Allocation"
+                            nameInSchema="localAllocation"
+                            disabled={!isEditable}
+                        />
+
+                        {isEditable && (
+                            <div className="flex gap-2">
+                                <Button
+                                    type="submit"
+                                    className="w-3/4"
+                                    variant="default"
+                                    title="Save"
+                                    disabled={isSaving}
+                                >
+                                    {isSaving ? (
+                                        <>
+                                            <LoaderCircle className="animate-spin" />{" "}
+                                            Saving
+                                        </>
+                                    ) : (
+                                        "Save"
+                                    )}
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    title="Reset"
+                                    onClick={() => {
+                                        form.reset(defaultValues)
+                                        resetSaveAction()
+                                    }}
+                                >
+                                    Reset
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </form>
             </Form>

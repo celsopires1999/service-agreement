@@ -48,11 +48,11 @@ export default async function ServicePage({
         const currencies = [
             {
                 id: "USD",
-                description: "United States Dollar",
+                description: "USD",
             },
             {
                 id: "EUR",
-                description: "Euro",
+                description: "EUR",
             },
         ]
 
@@ -72,8 +72,13 @@ export default async function ServicePage({
             }
 
             // return ticket form
-            return <ServiceForm agreement={agreement} currencies={currencies} />
-
+            return (
+                <ServiceForm
+                    agreement={agreement}
+                    currencies={currencies}
+                    isEditable={!agreement.isRevised}
+                />
+            )
         }
 
         // Edit ticket form
@@ -94,14 +99,14 @@ export default async function ServicePage({
             const agreement = await getAgreement(service.agreementId)
 
             return (
-                < ServiceForm
+                <ServiceForm
                     agreement={agreement}
                     service={service}
                     currencies={currencies}
+                    isEditable={!agreement.isRevised}
                 />
             )
         }
-
     } catch (e) {
         if (e instanceof Error) {
             console.error(e)

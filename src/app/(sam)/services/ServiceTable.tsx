@@ -32,7 +32,12 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { MoreHorizontal, TableOfContents } from "lucide-react"
+import {
+    CircleCheckIcon,
+    CircleXIcon,
+    MoreHorizontal,
+    TableOfContents,
+} from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -109,10 +114,11 @@ export function ServiceTable({ data }: Props) {
         "name",
         "amount",
         "currency",
-        "responsibleEmail",
+        "agreementCode",
         "agreementName",
         "year",
         "revision",
+        "isRevised",
         "revisionDate",
     ]
 
@@ -122,10 +128,11 @@ export function ServiceTable({ data }: Props) {
         name: "Service",
         amount: "Amount",
         currency: "Currency",
-        responsibleEmail: "Responsible",
-        agreementName: "Agreement",
+        agreementCode: "Agreement",
+        agreementName: "Name",
         year: "Year",
         revision: "Revision",
+        isRevised: "Revised",
         revisionDate: "Date",
     }
 
@@ -136,6 +143,7 @@ export function ServiceTable({ data }: Props) {
         currency: 150,
         year: 150,
         revision: 150,
+        isRevised: 150,
         revisionDate: 150,
     }
 
@@ -155,25 +163,30 @@ export function ServiceTable({ data }: Props) {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            New Service
-                        </Link>
-                    </DropdownMenuItem>
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services/form?serviceId=${row.original.serviceId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Edit Service
-                        </Link>
-                    </DropdownMenuItem>
+                    {!row.original.isRevised && (
+                        <>
+                            <DropdownMenuItem>
+                                <Link
+                                    href={`/services/form?agreementId=${row.original.agreementId}`}
+                                    className="w-full"
+                                    prefetch={false}
+                                >
+                                    New Service
+                                </Link>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem>
+                                <Link
+                                    href={`/services/form?serviceId=${row.original.serviceId}`}
+                                    className="w-full"
+                                    prefetch={false}
+                                >
+                                    Edit Service
+                                </Link>
+                            </DropdownMenuItem>
+                        </>
+                    )}
 
                     <DropdownMenuItem>
                         <Link
@@ -195,11 +208,13 @@ export function ServiceTable({ data }: Props) {
                         </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem
-                        onClick={() => handleDeleteService(row.original)}
-                    >
-                        Delete Service
-                    </DropdownMenuItem>
+                    {!row.original.isRevised && (
+                        <DropdownMenuItem
+                            onClick={() => handleDeleteService(row.original)}
+                        >
+                            Delete Service
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         )
@@ -262,6 +277,19 @@ export function ServiceTable({ data }: Props) {
                                 </div>
                             )
                         }
+
+                        if (columnName === "isRevised") {
+                            return (
+                                <div className="grid place-content-center">
+                                    {info.getValue() === false ? (
+                                        <CircleXIcon className="opacity-25" />
+                                    ) : (
+                                        <CircleCheckIcon className="text-green-600" />
+                                    )}
+                                </div>
+                            )
+                        }
+
                         return info.renderValue()
                     },
                 },

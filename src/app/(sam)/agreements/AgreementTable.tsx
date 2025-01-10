@@ -32,7 +32,12 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { MoreHorizontal, TableOfContents } from "lucide-react"
+import {
+    CircleCheckIcon,
+    CircleXIcon,
+    MoreHorizontal,
+    TableOfContents,
+} from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -106,20 +111,24 @@ export function AgreementTable({ data }: Props) {
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const columnHeadersArray: Array<keyof selectAgreementSchemaType> = [
+        "code",
         "name",
         "contactEmail",
         "year",
         "revision",
+        "isRevised",
         "revisionDate",
     ]
 
     const columnLabels: Partial<{
         [K in keyof selectAgreementSchemaType]: string
     }> = {
+        code: "Code",
         name: "Agreement",
         contactEmail: "Contact Email",
         year: "Year",
         revision: "Revision",
+        isRevised: "Revised",
         revisionDate: "Revision Date",
     }
 
@@ -128,6 +137,7 @@ export function AgreementTable({ data }: Props) {
     }> = {
         year: 150,
         revision: 150,
+        isRevised: 150,
         revisionDate: 150,
     }
 
@@ -225,6 +235,22 @@ export function AgreementTable({ data }: Props) {
                         undefined,
                     header: () =>
                         columnLabels[columnName as keyof typeof columnLabels],
+                    cell: (info) => {
+                        // presentational
+                        if (columnName === "isRevised") {
+                            return (
+                                <div className="grid place-content-center">
+                                    {info.getValue() === false ? (
+                                        <CircleXIcon className="opacity-25" />
+                                    ) : (
+                                        <CircleCheckIcon className="text-green-600" />
+                                    )}
+                                </div>
+                            )
+                        }
+
+                        return info.renderValue()
+                    },
                 },
             )
         }),
