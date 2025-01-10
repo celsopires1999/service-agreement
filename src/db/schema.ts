@@ -20,7 +20,9 @@ export const agreements = pgTable(
     {
         agreementId: uuid("agreement_id").defaultRandom().primaryKey(),
         year: integer("year").notNull(),
-        revision: integer("revision").notNull(),
+        code: varchar("code").notNull(),
+        revision: integer("revision").notNull().default(1),
+        isRevised: boolean("is_revised").notNull().default(false),
         revisionDate: date("revision_date", { mode: "string" }).notNull(),
         name: varchar("name").notNull(),
         description: text("description").notNull(),
@@ -32,7 +34,7 @@ export const agreements = pgTable(
             .defaultNow()
             .$onUpdate(() => new Date()),
     },
-    (t) => [unique().on(t.year, t.name)],
+    (t) => [unique().on(t.year, t.code, t.revision)],
 )
 
 export const currencyEnum = pgEnum("currency", ["EUR", "USD"])
@@ -49,6 +51,8 @@ export const services = pgTable(
         amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
         currency: currencyEnum("currency").notNull(),
         responsibleEmail: varchar("responsible_email").notNull(),
+        providerAllocation: text("provider_allocation").notNull(),
+        localAllocation: text("local_allocation").notNull(),
         isActive: boolean("is_active").notNull().default(false),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at")

@@ -2,6 +2,7 @@
 
 import { saveAgreementAction } from "@/actions/saveAgreementAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
+import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { Button } from "@/components/ui/button"
@@ -20,7 +21,6 @@ import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 
-
 type Props = {
     agreement?: selectAgreementSchemaType
     hasServices?: boolean
@@ -35,7 +35,9 @@ export function AgreementForm({ agreement, hasServices }: Props) {
     const emptyValues: insertAgreementSchemaType = {
         agreementId: "",
         year: new Date().getFullYear(),
+        code: "",
         revision: 1,
+        isRevised: false,
         revisionDate: new Date().toISOString().slice(0, 10),
         name: "",
         description: "",
@@ -45,19 +47,23 @@ export function AgreementForm({ agreement, hasServices }: Props) {
 
     const defaultValues: insertAgreementSchemaType = hasAgreementId
         ? {
-            agreementId: agreement?.agreementId ?? "",
-            year: agreement?.year ?? 0,
-            revision: agreement?.revision ?? 0,
-            revisionDate: (agreement?.revisionDate ?? new Date()).toLocaleString("pt-BR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            }),
-            name: agreement?.name ?? "",
-            description: agreement?.description ?? "",
-            contactEmail: agreement?.contactEmail ?? "",
-            comment: agreement?.comment ?? "",
-        }
+              agreementId: agreement?.agreementId ?? "",
+              year: agreement?.year ?? 0,
+              code: agreement?.code ?? "",
+              revision: agreement?.revision ?? 1,
+              isRevised: agreement?.isRevised ?? false,
+              revisionDate: (
+                  agreement?.revisionDate ?? new Date()
+              ).toLocaleString("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+              }),
+              name: agreement?.name ?? "",
+              description: agreement?.description ?? "",
+              contactEmail: agreement?.contactEmail ?? "",
+              comment: agreement?.comment ?? "",
+          }
         : emptyValues
 
     const form = useForm<insertAgreementSchemaType>({
@@ -116,39 +122,26 @@ export function AgreementForm({ agreement, hasServices }: Props) {
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
                     {agreement?.agreementId ? "Edit" : "New"} Agreement Form
-
                 </h2>
-                {!!saveResult?.data?.agreementId && !agreement?.agreementId && !hasServices && (
-                    <Link
-                        href={`/services/form?agreementId=${saveResult.data.agreementId}`}
-                    >
-                        <h2>
-                            Go to New Service Form
-                        </h2>
+                {!!saveResult?.data?.agreementId &&
+                    !agreement?.agreementId &&
+                    !hasServices && (
+                        <Link
+                            href={`/services/form?agreementId=${saveResult.data.agreementId}`}
+                        >
+                            <h2>Go to New Service Form</h2>
+                        </Link>
+                    )}
+                {!!agreement?.agreementId && hasServices && (
+                    <Link href={`/services?searchText=${agreement.name}`}>
+                        <h2>Go to Services List</h2>
                     </Link>
                 )}
-                {
-                    !!agreement?.agreementId && hasServices && (
-                        <Link
-                            href={`/services?searchText=${agreement.name}`}
-                        >
-                            <h2>
-                                Go to Services List
-                            </h2>
-                        </Link>
-                    )
-                }
-                {
-                    !!agreement?.agreementId && !hasServices && (
-                        <Link
-                            href={`/agreements?searchText=${agreement.name}`}
-                        >
-                            <h2>
-                                Go to Agreements List
-                            </h2>
-                        </Link>
-                    )
-                }
+                {!!agreement?.agreementId && !hasServices && (
+                    <Link href={`/agreements?searchText=${agreement.name}`}>
+                        <h2>Go to Agreements List</h2>
+                    </Link>
+                )}
             </div>
 
             <Form {...form}>
@@ -158,14 +151,39 @@ export function AgreementForm({ agreement, hasServices }: Props) {
                 >
                     <div className="flex w-full max-w-xs flex-col gap-4">
                         <InputWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Year"
+                            nameInSchema="year"
+                            type="number"
+                            step={1}
+                            min={2024}
+                            max={2125}
+                            // valueAsNumber TODO: review this - remove this from component
+                        />
+
+                        <InputWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Code"
+                            nameInSchema="code"
+                        />
+
+                        <InputWithLabel<insertAgreementSchemaType>
                             fieldTitle="Name"
                             nameInSchema="name"
                         />
 
-                        <TextAreaWithLabel<insertAgreementSchemaType>
-                            fieldTitle="Description"
-                            nameInSchema="description"
-                            className="h-40"
+                        <InputWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Revision"
+                            nameInSchema="revision"
+                            type="number"
+                            step={1}
+                            min={1}
+                            max={100}
+                            // valueAsNumber TODO: review this - remove this from component
+                        />
+
+                        <InputWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Revision Date"
+                            nameInSchema="revisionDate"
+                            type="date"
                         />
 
                         <InputWithLabel<insertAgreementSchemaType>
@@ -175,28 +193,22 @@ export function AgreementForm({ agreement, hasServices }: Props) {
                     </div>
 
                     <div className="flex w-full max-w-xs flex-col gap-4">
-                        <InputWithLabel<insertAgreementSchemaType>
-                            fieldTitle="Year"
-                            nameInSchema="year"
-                            type="number"
-                            valueAsNumber
+                        <CheckboxWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Revised?"
+                            nameInSchema="isRevised"
+                            message="Yes"
                         />
 
-                        <InputWithLabel<insertAgreementSchemaType>
-                            fieldTitle="Revision"
-                            nameInSchema="revision"
-                            type="number"
-                            valueAsNumber
+                        <TextAreaWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Description"
+                            nameInSchema="description"
+                            className="h-40"
                         />
-                        <InputWithLabel<insertAgreementSchemaType>
-                            fieldTitle="Revision Date"
-                            nameInSchema="revisionDate"
-                            type="date"
-                        />
+
                         <TextAreaWithLabel<insertAgreementSchemaType>
                             fieldTitle="Comment"
                             nameInSchema="comment"
-                            className="h-40"
+                            className="h-36"
                         />
 
                         <div className="flex gap-2">

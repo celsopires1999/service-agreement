@@ -64,18 +64,19 @@ export async function getServiceSearchResults(searchText: string) {
             currency: services.currency,
             responsibleEmail: services.responsibleEmail,
             agreementId: services.agreementId,
+            agreementCode: agreements.code,
             agreementName: agreements.name,
             year: agreements.year,
             revision: agreements.revision,
             revisionDate: agreements.revisionDate,
+            isRevised: agreements.isRevised,
         })
         .from(services)
         .innerJoin(agreements, eq(services.agreementId, agreements.agreementId))
         .where(
             or(
                 ilike(services.name, `%${searchText}%`),
-                ilike(services.description, `%${searchText}%`),
-                ilike(services.responsibleEmail, `%${searchText}%`),
+                ilike(agreements.code, `%${searchText}%`),
                 ilike(agreements.name, `%${searchText}%`),
             ),
         )

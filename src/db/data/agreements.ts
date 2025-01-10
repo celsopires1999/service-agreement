@@ -3,6 +3,7 @@ import { insertAgreementSchemaType } from "@/zod-schemas/agreement"
 export const agreementsData: insertAgreementSchemaType[] = [
     {
         agreementId: "84c93124-e3f9-48f9-92d5-fcdb4bbbe2ef",
+        code: "TIC00001",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-23",
@@ -14,6 +15,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "d00ca900-84dc-45d6-97df-42783e657945",
+        code: "TIC00002",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-24",
@@ -25,6 +27,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "66411eeb-7812-41b7-b628-e48df6209cd1",
+        code: "TIC00003",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-25",
@@ -36,6 +39,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "61ad98a0-327f-4f38-a9af-e4fa8e7697a2",
+        code: "TIC00004",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-26",
@@ -47,6 +51,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "53476c80-9cd5-48c5-8fed-55532569a78d",
+        code: "TIC00005",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-27",
@@ -58,6 +63,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "d5b419c5-a06a-4461-89ba-95d62d614803",
+        code: "TIC00006",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-28",
@@ -69,6 +75,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "ea217658-f2ac-4837-9776-339fc04a10f7",
+        code: "TIC00007",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-29",
@@ -80,6 +87,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "25b5843d-d99b-4460-bc34-67e354c2a7e4",
+        code: "TIC00008",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-30",
@@ -91,6 +99,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "88d8bd30-8626-4351-9386-fca35c1a6c46",
+        code: "TIC00009",
         year: 2025,
         revision: 1,
         revisionDate: "2024-12-31",
@@ -102,6 +111,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "bad0629a-2f74-449a-a9c5-d4276de55f54",
+        code: "TIC00010",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-01",
@@ -113,6 +123,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "cd0dcd26-6e75-4aba-8124-0a91b26aade1",
+        code: "TIC00011",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-02",
@@ -124,6 +135,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "c215ada7-8761-4c45-b5e7-852d304566c7",
+        code: "TIC00012",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-03",
@@ -135,6 +147,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "9b93c6a3-90d6-4801-86b8-f41eea56f061",
+        code: "TIC00013",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-04",
@@ -146,6 +159,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "0f8be300-a7e0-4ca0-aebb-bf8f642ba479",
+        code: "TIC00014",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-05",
@@ -157,6 +171,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "ba5b3205-649b-43ef-b22c-9ff37e40427d",
+        code: "TIC00015",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-06",
@@ -168,6 +183,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "5e45ea12-eb75-4799-a406-07baa5e365d0",
+        code: "TIC00016",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-07",
@@ -179,6 +195,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "22b35fe0-cbe9-4428-a29a-be7abeb17b51",
+        code: "TIC00017",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-08",
@@ -190,6 +207,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "bb47d3e5-3aa4-436d-878e-703c1fa72c02",
+        code: "TIC00018",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-09",
@@ -201,6 +219,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "5e97bba4-d7de-46b5-b7c9-3a1a653c57c9",
+        code: "TIC00019",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-10",
@@ -212,6 +231,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
     },
     {
         agreementId: "b2ded3ea-ffa5-496d-91a6-db127668949c",
+        code: "TIC00020",
         year: 2025,
         revision: 1,
         revisionDate: "2025-01-11",

@@ -15,6 +15,8 @@ export class SaveServiceUseCase {
         entity.changeResponsibleEmail(input.responsibleEmail)
         entity.changeAmount(input.amount)
         entity.changeCurrency(input.currency)
+        entity.changeProviderAllocation(input.providerAllocation)
+        entity.changeLocalAllocation(input.localAllocation)
         entity.changeActivationStatusBasedOnAllocation()
 
         const serviceId = await repo.update(entity)

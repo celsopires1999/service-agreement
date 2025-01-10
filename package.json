@@ -13,7 +13,7 @@
     "db:seed": "tsx ./src/db/seed.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "deploy": "git pull && npm install && next build && pm2 restart service-agreement"
+    "deploy": "git pull && npm ci --only=production && next build && pm2 restart service-agreement"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

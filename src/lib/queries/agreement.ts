@@ -20,13 +20,13 @@ export async function getAgreementSearchResults(searchText: string) {
         .from(agreements)
         .where(
             or(
+                ilike(agreements.code, `%${searchText}%`),
                 ilike(agreements.name, `%${searchText}%`),
-                ilike(agreements.description, `%${searchText}%`),
                 ilike(agreements.contactEmail, `%${searchText}%`),
             ),
         )
         .orderBy(
-            asc(agreements.name),
+            asc(agreements.code),
             desc(agreements.year),
             desc(agreements.revision),
         )

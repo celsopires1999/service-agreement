@@ -33,7 +33,10 @@ export default async function SystemsToServiceFormPage({
         const service = await getService(serviceId)
         const agreement = await getAgreement(service.agreementId)
         const systemsResult = await getSystems()
-        const systems = systemsResult.map((s) => ({ id: s.systemId, description: s.name }))
+        const systems = systemsResult.map((s) => ({
+            id: s.systemId,
+            description: s.name,
+        }))
         const serviceSystems = await getServiceSystemsSearchResults(serviceId)
 
         if (!service) {
@@ -53,6 +56,7 @@ export default async function SystemsToServiceFormPage({
                 agreement={agreement}
                 systems={systems}
                 serviceSystems={serviceSystems}
+                isEditable={!agreement.isRevised}
             />
         )
     } catch (e) {

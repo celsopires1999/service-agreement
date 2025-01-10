@@ -32,6 +32,14 @@ export const insertServiceSchema = createInsertSchema(services, {
             message: "Invalid currency",
         }),
     responsibleEmail: (schema) => schema.email("Invalid email address"),
+    providerAllocation: (schema) =>
+        schema
+            .min(1, "Provider Allocation is required")
+            .max(500, "Provider Allocation must be 500 characters or less"),
+    localAllocation: (schema) =>
+        schema
+            .min(1, "Local Allocation is required")
+            .max(500, "Local Allocation must be 500 characters or less"),
 })
 
 export const selectServiceSchema = createSelectSchema(services)
