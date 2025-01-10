@@ -7,13 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push --config=drizzle-push.config.ts",
-    "db:migrate": "tsx ./src/db/migrate.ts",
-    "db:seed": "tsx ./src/db/seed.ts",
+    "db:generate": "env $(cat .env.drizzle | grep -v '^#' | xargs) drizzle-kit generate",
+    "db:push": "env $(cat .env.drizzle | grep -v '^#' | xargs) drizzle-kit push",
+    "db:migrate": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/migrate.ts",
+    "db:seed": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/seed.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "deploy": "git pull && npm ci --only=production && next build && pm2 restart service-agreement"
+    "deploy": "git pull && npm ci && next build && pm2 restart service-agreement"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

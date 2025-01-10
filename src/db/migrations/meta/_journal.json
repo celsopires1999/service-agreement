@@ -15,6 +15,13 @@
       "when": 1736531733491,
       "tag": "0001_new-fields",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1736541796856,
+      "tag": "0002_faulty_fantastic_four",
+      "breakpoints": true
     }
   ]
 }
