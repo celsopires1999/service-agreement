@@ -192,26 +192,27 @@ export function AgreementForm({ agreement, hasServices }: Props) {
                         />
                     </div>
 
-                    <div className="flex w-full max-w-xs flex-col gap-4">
+                    <div className="flex w-full max-w-2xl flex-col gap-4">
                         <CheckboxWithLabel<insertAgreementSchemaType>
                             fieldTitle="Revised?"
                             nameInSchema="isRevised"
                             message="Yes"
+                            className="max-w-xs"
                         />
 
                         <TextAreaWithLabel<insertAgreementSchemaType>
                             fieldTitle="Description"
                             nameInSchema="description"
-                            className="h-40"
+                            className="h-40 max-w-2xl"
                         />
 
                         <TextAreaWithLabel<insertAgreementSchemaType>
                             fieldTitle="Comment"
                             nameInSchema="comment"
-                            className="h-36"
+                            className="h-36 max-w-2xl"
                         />
 
-                        <div className="flex gap-2">
+                        <div className="flex max-w-xs gap-2">
                             <Button
                                 type="submit"
                                 className="w-3/4"

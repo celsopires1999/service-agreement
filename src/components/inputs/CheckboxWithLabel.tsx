@@ -16,6 +16,7 @@ type Props<Schema> = {
     nameInSchema: keyof Schema & string
     message: string
     disabled?: boolean
+    className?: string
 }
 
 export function CheckboxWithLabel<Schema>({
@@ -23,6 +24,7 @@ export function CheckboxWithLabel<Schema>({
     nameInSchema,
     message,
     disabled = false,
+    className,
 }: Props<Schema>) {
     const form = useFormContext()
 
@@ -31,7 +33,9 @@ export function CheckboxWithLabel<Schema>({
             control={form.control}
             name={nameInSchema}
             render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2">
+                <FormItem
+                    className={`flex flex-row items-center gap-2 ${className}`}
+                >
                     <FormLabel
                         className="mt-2 w-1/3 text-base font-semibold"
                         htmlFor={nameInSchema}

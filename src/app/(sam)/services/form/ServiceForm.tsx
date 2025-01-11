@@ -180,28 +180,30 @@ export function ServiceForm({
                         </div>
                     </div>
 
-                    <div className="flex w-full max-w-xs flex-col gap-4">
+                    <div className="flex w-full max-w-2xl flex-col gap-4">
                         <TextAreaWithLabel<insertServiceSchemaType>
                             fieldTitle="Description"
                             nameInSchema="description"
-                            className="h-40"
+                            className="h-40 max-w-2xl"
                             disabled={!isEditable}
                         />
 
                         <TextAreaWithLabel<insertServiceSchemaType>
                             fieldTitle="Provider Allocation"
                             nameInSchema="providerAllocation"
+                            className="max-w-2xl"
                             disabled={!isEditable}
                         />
 
                         <TextAreaWithLabel<insertServiceSchemaType>
                             fieldTitle="Local Allocation"
                             nameInSchema="localAllocation"
+                            className="max-w-2xl"
                             disabled={!isEditable}
                         />
 
                         {isEditable && (
-                            <div className="flex gap-2">
+                            <div className="flex max-w-xs gap-2">
                                 <Button
                                     type="submit"
                                     className="w-3/4"
