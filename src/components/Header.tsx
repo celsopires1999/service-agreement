@@ -1,16 +1,15 @@
+import { NavButton } from "@/components/NavButton"
 import {
-    FileIcon,
-    HomeIcon,
-    HandshakeIcon,
     CpuIcon,
     EuroIcon,
+    FileIcon,
+    HandshakeIcon,
+    HomeIcon,
 } from "lucide-react"
 import Link from "next/link"
-// import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"
-// import { Button } from "@/components/ui/button"
-import { NavButton } from "@/components/NavButton"
 import { ModeToggle } from "./ModeToggle"
 import { NavButtonMenu } from "./NavButtonMenu"
+import { SignOut } from "./SignOut"
 
 export function Header() {
     return (
@@ -69,17 +68,7 @@ export function Header() {
 
                     <ModeToggle />
 
-                    {/* <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="LogOut"
-                        className="rounded-full"
-                        asChild
-                    >
-                        <LogoutLink>
-                            <LogOut />
-                        </LogoutLink>
-                    </Button> */}
+                    <SignOut />
                 </div>
             </div>
         </header>
