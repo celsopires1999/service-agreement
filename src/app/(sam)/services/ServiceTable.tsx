@@ -165,28 +165,28 @@ export function ServiceTable({ data }: Props) {
                     <DropdownMenuSeparator />
 
                     {!row.original.isRevised && (
-                        <>
-                            <DropdownMenuItem>
-                                <Link
-                                    href={`/services/form?agreementId=${row.original.agreementId}`}
-                                    className="w-full"
-                                    prefetch={false}
-                                >
-                                    New Service
-                                </Link>
-                            </DropdownMenuItem>
-
-                            <DropdownMenuItem>
-                                <Link
-                                    href={`/services/form?serviceId=${row.original.serviceId}`}
-                                    className="w-full"
-                                    prefetch={false}
-                                >
-                                    Edit Service
-                                </Link>
-                            </DropdownMenuItem>
-                        </>
+                        <DropdownMenuItem>
+                            <Link
+                                href={`/services/form?agreementId=${row.original.agreementId}`}
+                                className="w-full"
+                                prefetch={false}
+                            >
+                                New Service
+                            </Link>
+                        </DropdownMenuItem>
                     )}
+
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/services/form?serviceId=${row.original.serviceId}`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            {!row.original.isRevised
+                                ? "Edit Service"
+                                : "View Service"}
+                        </Link>
+                    </DropdownMenuItem>
 
                     <DropdownMenuItem>
                         <Link
