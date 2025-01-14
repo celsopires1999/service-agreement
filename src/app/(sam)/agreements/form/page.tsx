@@ -60,10 +60,15 @@ export default async function AgreementFormPage({
             // new agreement form component
             return <AgreementForm key="new" />
         }
-    } catch (e) {
-        if (e instanceof Error) {
-            console.error(e)
-            throw e
+    } catch (error) {
+        if (error instanceof Error) {
+            if (error instanceof Error) {
+                if (error instanceof Error) {
+                    return <p className="mt-4">Error: ${error.message}</p>
+                }
+
+                return <p className="mt-4">Unexpected error</p>
+            }
         }
     }
 }

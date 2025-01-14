@@ -69,15 +69,22 @@ export default async function SystemsToServiceFormPage({
                         name={system.name}
                         description={system.description}
                         users={system.users}
-                        applicationId={system.applicationId} />
+                        applicationId={system.applicationId}
+                    />
                     <Suspense key={systemId} fallback={<p>Loading...</p>}>
-                        <SystemServicesSearch systemId={systemId} year={year} exchangeRate={exchangeRate} />
+                        <SystemServicesSearch
+                            systemId={systemId}
+                            year={year}
+                            exchangeRate={exchangeRate}
+                        />
                     </Suspense>
                     <p className="mt-4">
-                        Please check whether the provided year and exchange rate (EUR / USD) are valid.
+                        Please check whether the provided year and exchange rate
+                        (EUR / USD) are valid.
                     </p>
                     <p>
-                        Click on <span className="font-bold">Search</span> when you are ready.
+                        Click on <span className="font-bold">Search</span> when
+                        you are ready.
                     </p>
                 </div>
             )
@@ -87,7 +94,7 @@ export default async function SystemsToServiceFormPage({
 
         try {
             exchangeRateDecimal = new Decimal(exchangeRate)
-        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+        } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
             return (
                 <>
                     <h2 className="mb-2 text-2xl">
@@ -101,9 +108,7 @@ export default async function SystemsToServiceFormPage({
         if (!Number.isInteger(+year)) {
             return (
                 <>
-                    <h2 className="mb-2 text-2xl">
-                        Year {year} is not valid
-                    </h2>
+                    <h2 className="mb-2 text-2xl">Year {year} is not valid</h2>
                     <BackButton title="Go Back" variant="default" />
                 </>
             )
@@ -115,9 +120,12 @@ export default async function SystemsToServiceFormPage({
         const services = result.map((service) => {
             return {
                 ...service,
-                systemAmount: service.serviceCurrency === "EUR"
-                    ? new Decimal(service.systemAmount).mul(exchangeRateDecimal).toFixed(2)
-                    : service.systemAmount,
+                systemAmount:
+                    service.serviceCurrency === "EUR"
+                        ? new Decimal(service.systemAmount)
+                              .mul(exchangeRateDecimal)
+                              .toFixed(2)
+                        : service.systemAmount,
             }
         })
 
@@ -128,17 +136,29 @@ export default async function SystemsToServiceFormPage({
                     name={system.name}
                     description={system.description}
                     users={system.users}
-                    applicationId={system.applicationId} />
+                    applicationId={system.applicationId}
+                />
                 <Suspense key={systemId} fallback={<p>Loading...</p>}>
-                    <SystemServicesSearch systemId={systemId} year={year} exchangeRate={exchangeRate} />
+                    <SystemServicesSearch
+                        systemId={systemId}
+                        year={year}
+                        exchangeRate={exchangeRate}
+                    />
                 </Suspense>
                 <SystemServicesTable data={services} />
             </div>
         )
-    } catch (e) {
-        if (e instanceof Error) {
-            console.error(e)
-            throw e
+    } catch (error) {
+        if (error instanceof Error) {
+            if (error instanceof Error) {
+                if (error instanceof Error) {
+                    if (error instanceof Error) {
+                        return <p className="mt-4">Error: ${error.message}</p>
+                    }
+
+                    return <p className="mt-4">Unexpected error</p>
+                }
+            }
         }
     }
 }

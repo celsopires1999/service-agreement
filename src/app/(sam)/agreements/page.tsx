@@ -21,16 +21,23 @@ export default async function AgreementsPage({
         )
     }
 
-    const results = await getAgreementSearchResults(searchText)
+    try {
+        const results = await getAgreementSearchResults(searchText)
+        return (
+            <div>
+                <AgreementSearch searchText={searchText} />
+                {results.length ? (
+                    <AgreementTable data={results} />
+                ) : (
+                    <p className="mt-4">No results found</p>
+                )}
+            </div>
+        )
+    } catch (error) {
+        if (error instanceof Error) {
+            return <p className="mt-4">Error: ${error.message}</p>
+        }
 
-    return (
-        <div>
-            <AgreementSearch searchText={searchText} />
-            {results.length ? (
-                <AgreementTable data={results} />
-            ) : (
-                <p className="mt-4">No results found</p>
-            )}
-        </div>
-    )
+        return <p className="mt-4">Unexpected error</p>
+    }
 }

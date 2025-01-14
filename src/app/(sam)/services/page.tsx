@@ -21,16 +21,28 @@ export default async function ServicesPage({
         )
     }
 
-    const results = await getServiceSearchResults(searchText)
+    try {
+        const results = await getServiceSearchResults(searchText)
 
-    return (
-        <div>
-            <ServiceSearch searchText={searchText} />
-            {results.length ? (
-                <ServiceTable data={results} />
-            ) : (
-                <p className="mt-4">No results found</p>
-            )}
-        </div>
-    )
+        return (
+            <div>
+                <ServiceSearch searchText={searchText} />
+                {results.length ? (
+                    <ServiceTable data={results} />
+                ) : (
+                    <p className="mt-4">No results found</p>
+                )}
+            </div>
+        )
+    } catch (error) {
+        if (error instanceof Error) {
+            if (error instanceof Error) {
+                if (error instanceof Error) {
+                    return <p className="mt-4">Error: ${error.message}</p>
+                }
+
+                return <p className="mt-4">Unexpected error</p>
+            }
+        }
+    }
 }
