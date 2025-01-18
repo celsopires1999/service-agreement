@@ -19,7 +19,6 @@ import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 
-
 type Props = {
     system?: selectSystemSchemaType
 }
@@ -33,6 +32,7 @@ export function SystemForm({ system }: Props) {
     const emptyValues: insertSystemSchemaType = {
         systemId: "(New)",
         name: "",
+        responsibleEmail: "",
         description: "",
         users: 0,
         applicationId: "",
@@ -40,12 +40,13 @@ export function SystemForm({ system }: Props) {
 
     const defaultValues: insertSystemSchemaType = hasSystemId
         ? {
-            systemId: system?.systemId ?? "",
-            name: system?.name ?? "",
-            description: system?.description ?? "",
-            users: system?.users ?? 0,
-            applicationId: system?.applicationId ?? "",
-        }
+              systemId: system?.systemId ?? "",
+              name: system?.name ?? "",
+              responsibleEmail: system?.responsibleEmail ?? "",
+              description: system?.description ?? "",
+              users: system?.users ?? 0,
+              applicationId: system?.applicationId ?? "",
+          }
         : emptyValues
 
     const form = useForm<insertSystemSchemaType>({
@@ -73,12 +74,11 @@ export function SystemForm({ system }: Props) {
                 })
             }
         },
-        // onError({ error }) {
-        onError() {
+        onError({ error }) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "Save Failed",
+                description: error.serverError,
             })
         },
     })
@@ -104,7 +104,6 @@ export function SystemForm({ system }: Props) {
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
                     {system?.systemId ? "Edit" : "New"} System Form
-
                 </h2>
             </div>
 
@@ -120,6 +119,11 @@ export function SystemForm({ system }: Props) {
                         />
 
                         <InputWithLabel<insertSystemSchemaType>
+                            fieldTitle="Responsible Email"
+                            nameInSchema="responsibleEmail"
+                        />
+
+                        <InputWithLabel<insertSystemSchemaType>
                             fieldTitle="Application ID"
                             nameInSchema="applicationId"
                         />
@@ -128,19 +132,20 @@ export function SystemForm({ system }: Props) {
                             fieldTitle="Users"
                             nameInSchema="users"
                             type="number"
-                            valueAsNumber
+                            step={1}
+                            min={0}
+                            max={99999}
+                            // valueAsNumber TODO: review this - is this needed?
                         />
-
-
                     </div>
-                    <div className="flex w-full max-w-xs flex-col gap-4">
+                    <div className="flex w-full max-w-2xl flex-col gap-4">
                         <TextAreaWithLabel<insertSystemSchemaType>
                             fieldTitle="Description"
                             nameInSchema="description"
-                            className="h-40"
+                            className="h-60 max-w-2xl"
                         />
 
-                        <div className="flex gap-2">
+                        <div className="flex max-w-xs gap-2">
                             <Button
                                 type="submit"
                                 className="w-3/4"

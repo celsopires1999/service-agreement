@@ -1,5 +1,5 @@
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { agreements } from "@/db/schema"
+import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const insertAgreementSchema = createInsertSchema(agreements, {
@@ -77,6 +77,9 @@ export const insertAgreementSchema = createInsertSchema(agreements, {
         schema
             .min(1, "Name is required")
             .max(100, "Name must be 100 characters or less"),
+
+    providerPlanId: z.string().uuid("invalid UUID"),
+    localPlanId: z.string().uuid("invalid UUID"),
     description: (schema) =>
         schema
             .min(1, "Description is required")

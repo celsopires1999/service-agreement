@@ -15,6 +15,21 @@ import {
 
 import { relations } from "drizzle-orm"
 
+export const plans = pgTable(
+    "plans",
+    {
+        planId: uuid("plan_id").defaultRandom().primaryKey(),
+        code: varchar("code").notNull(),
+        description: text("description").notNull(),
+        createdAt: timestamp("created_at").notNull().defaultNow(),
+        updatedAt: timestamp("updated_at")
+            .notNull()
+            .defaultNow()
+            .$onUpdate(() => new Date()),
+    },
+    (t) => [unique().on(t.code)],
+)
+
 export const agreements = pgTable(
     "agreements",
     {
@@ -24,6 +39,12 @@ export const agreements = pgTable(
         revision: integer("revision").notNull().default(1),
         isRevised: boolean("is_revised").notNull().default(false),
         revisionDate: date("revision_date", { mode: "string" }).notNull(),
+        providerPlanId: uuid("provider_plan_id")
+            .notNull()
+            .references(() => plans.planId),
+        localPlanId: uuid("local_plan_id")
+            .notNull()
+            .references(() => plans.planId),
         name: varchar("name").notNull(),
         description: text("description").notNull(),
         contactEmail: varchar("contact_email").notNull(),
@@ -69,6 +90,7 @@ export const systems = pgTable("systems", {
     description: text("description").notNull(),
     users: integer("users").notNull(),
     applicationId: varchar("application_id").unique().notNull(),
+    responsibleEmail: varchar("responsible_email").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
         .notNull()

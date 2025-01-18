@@ -109,13 +109,9 @@ export default async function ServicePage({
         }
     } catch (error) {
         if (error instanceof Error) {
-            if (error instanceof Error) {
-                if (error instanceof Error) {
-                    return <p className="mt-4">Error: ${error.message}</p>
-                }
-
-                return <p className="mt-4">Unexpected error</p>
-            }
+            return <p className="mt-4">Error: ${error.message}</p>
         }
+
+        return <p className="mt-4">Unexpected error</p>
     }
 }

@@ -1,4 +1,6 @@
-export const currenciesData = [
+import { insertCurrencySchemaType } from "@/zod-schemas/currency"
+
+export const currenciesData: insertCurrencySchemaType[] = [
     {
         year: 2024,
         currency: "EUR" as const,

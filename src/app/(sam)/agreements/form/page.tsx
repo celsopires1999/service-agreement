@@ -1,8 +1,9 @@
 import { BackButton } from "@/components/BackButton"
 import { getAgreement } from "@/lib/queries/agreement"
 // import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
-import { AgreementForm } from "./AgreementForm"
+import { getPlans } from "@/lib/queries/plan"
 import { countServicesByAgreementId } from "@/lib/queries/service"
+import { AgreementForm } from "./AgreementForm"
 
 export async function generateMetadata({
     searchParams,
@@ -33,6 +34,11 @@ export default async function AgreementFormPage({
         // const isManager = managerPermission?.isGranted
 
         const { agreementId } = await searchParams
+        const planModels = await getPlans()
+        const plans = planModels.map((plan) => ({
+            id: plan.planId,
+            description: plan.code,
+        }))
 
         // Edit customer form
         if (agreementId) {
@@ -54,21 +60,18 @@ export default async function AgreementFormPage({
                     key={agreementId}
                     agreement={agreement}
                     hasServices={count > 0}
+                    plans={plans}
                 />
             )
         } else {
             // new agreement form component
-            return <AgreementForm key="new" />
+            return <AgreementForm key="new" plans={plans} />
         }
     } catch (error) {
         if (error instanceof Error) {
-            if (error instanceof Error) {
-                if (error instanceof Error) {
-                    return <p className="mt-4">Error: ${error.message}</p>
-                }
-
-                return <p className="mt-4">Unexpected error</p>
-            }
+            return <p className="mt-4">Error: ${error.message}</p>
         }
+
+        return <p className="mt-4">Unexpected error</p>
     }
 }

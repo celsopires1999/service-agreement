@@ -4,6 +4,7 @@ import { saveAgreementAction } from "@/actions/saveAgreementAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
+import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
@@ -24,9 +25,13 @@ import { useForm } from "react-hook-form"
 type Props = {
     agreement?: selectAgreementSchemaType
     hasServices?: boolean
+    plans: {
+        id: string
+        description: string
+    }[]
 }
 
-export function AgreementForm({ agreement, hasServices }: Props) {
+export function AgreementForm({ agreement, hasServices, plans }: Props) {
     const { toast } = useToast()
 
     const searchParams = useSearchParams()
@@ -40,6 +45,8 @@ export function AgreementForm({ agreement, hasServices }: Props) {
         isRevised: false,
         revisionDate: new Date().toISOString().slice(0, 10),
         name: "",
+        providerPlanId: "",
+        localPlanId: "",
         description: "",
         contactEmail: "",
         comment: "",
@@ -60,6 +67,8 @@ export function AgreementForm({ agreement, hasServices }: Props) {
                   year: "numeric",
               }),
               name: agreement?.name ?? "",
+              providerPlanId: agreement?.providerPlanId ?? "",
+              localPlanId: agreement?.localPlanId ?? "",
               description: agreement?.description ?? "",
               contactEmail: agreement?.contactEmail ?? "",
               comment: agreement?.comment ?? "",
@@ -170,6 +179,25 @@ export function AgreementForm({ agreement, hasServices }: Props) {
                             nameInSchema="name"
                         />
 
+                        <SelectWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Provider Plan"
+                            nameInSchema="providerPlanId"
+                            data={plans ?? []}
+                        />
+
+                        <SelectWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Local Plan"
+                            nameInSchema="localPlanId"
+                            data={plans ?? []}
+                        />
+
+                        <InputWithLabel<insertAgreementSchemaType>
+                            fieldTitle="Contact Email"
+                            nameInSchema="contactEmail"
+                        />
+                    </div>
+
+                    <div className="flex w-full max-w-2xl flex-col gap-4">
                         <InputWithLabel<insertAgreementSchemaType>
                             fieldTitle="Revision"
                             nameInSchema="revision"
@@ -186,13 +214,6 @@ export function AgreementForm({ agreement, hasServices }: Props) {
                             type="date"
                         />
 
-                        <InputWithLabel<insertAgreementSchemaType>
-                            fieldTitle="Contact Email"
-                            nameInSchema="contactEmail"
-                        />
-                    </div>
-
-                    <div className="flex w-full max-w-2xl flex-col gap-4">
                         <CheckboxWithLabel<insertAgreementSchemaType>
                             fieldTitle="Revised?"
                             nameInSchema="isRevised"

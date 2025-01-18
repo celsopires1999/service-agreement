@@ -22,6 +22,13 @@
       "when": 1736541796856,
       "tag": "0002_faulty_fantastic_four",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1737218043312,
+      "tag": "0003_sudden_greymalkin",
+      "breakpoints": true
     }
   ]
 }

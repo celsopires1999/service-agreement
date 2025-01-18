@@ -40,6 +40,8 @@ export const saveAgreementAction = actionClient
                         isRevised: agreement.isRevised,
                         revisionDate: agreement.revisionDate.trim(),
                         name: agreement.name.trim(),
+                        providerPlanId: agreement.providerPlanId,
+                        localPlanId: agreement.localPlanId,
                         description: agreement.description.trim(),
                         contactEmail: agreement.contactEmail.trim(),
                         ...(agreement.comment
@@ -66,6 +68,8 @@ export const saveAgreementAction = actionClient
                     isRevised: agreement.isRevised,
                     revisionDate: agreement.revisionDate.trim(),
                     name: agreement.name.trim(),
+                    providerPlanId: agreement.providerPlanId,
+                    localPlanId: agreement.localPlanId,
                     description: agreement.description.trim(),
                     contactEmail: agreement.contactEmail.trim(),
                     comment: agreement.comment?.trim() ?? null,

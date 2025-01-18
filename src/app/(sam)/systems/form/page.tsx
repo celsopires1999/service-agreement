@@ -42,20 +42,16 @@ export default async function SystemPage({
                 )
             }
 
-            return (
-                <SystemForm
-                    key={systemId}
-                    system={system}
-                />
-            )
+            return <SystemForm key={systemId} system={system} />
         } else {
             // new system form component
             return <SystemForm key="new" />
         }
-    } catch (e) {
-        if (e instanceof Error) {
-            console.error(e)
-            throw e
+    } catch (error) {
+        if (error instanceof Error) {
+            return <p className="mt-4">Error: ${error.message}</p>
         }
+
+        return <p className="mt-4">Unexpected error</p>
     }
 }
