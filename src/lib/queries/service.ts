@@ -1,8 +1,8 @@
 import "server-only"
 
 import { db } from "@/db"
-import { agreements, services, serviceSystems } from "@/db/schema"
-import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm"
+import { agreements, plans, services, serviceSystems } from "@/db/schema"
+import { and, asc, count, desc, eq, ilike, or, sum } from "drizzle-orm"
 
 export async function getService(serviceId: string) {
     const service = await db
@@ -14,14 +14,37 @@ export async function getService(serviceId: string) {
     return service[0]
 }
 
-export async function countServicesByAgreementId(agreementId: string) {
-    const result = await db
-        .select({ count: count() })
+type countServicesByAgreementIdType = {
+    totalNumberOfServices: number
+    servicesAmount: {
+        numberOfServices: number
+        amount: string | null
+        currency: "EUR" | "USD"
+    }[]
+}
+export async function countServicesByAgreementId(
+    agreementId: string,
+): Promise<countServicesByAgreementIdType> {
+    const total = await db
+        .select({ totalNumberOfServices: count() })
         .from(services)
         .where(eq(services.agreementId, agreementId))
         .limit(1)
 
-    return result[0].count
+    const result = await db
+        .select({
+            numberOfServices: count(),
+            amount: sum(services.amount),
+            currency: services.currency,
+        })
+        .from(services)
+        .where(eq(services.agreementId, agreementId))
+        .groupBy(services.currency)
+
+    return {
+        totalNumberOfServices: total[0].totalNumberOfServices,
+        servicesAmount: result,
+    }
 }
 
 export async function getServicesBySystemId(systemId: string, year: number) {
@@ -70,9 +93,11 @@ export async function getServiceSearchResults(searchText: string) {
             revision: agreements.revision,
             revisionDate: agreements.revisionDate,
             isRevised: agreements.isRevised,
+            localPlan: plans.code,
         })
         .from(services)
         .innerJoin(agreements, eq(services.agreementId, agreements.agreementId))
+        .innerJoin(plans, eq(plans.planId, agreements.localPlanId))
         .where(
             or(
                 ilike(services.name, `%${searchText}%`),

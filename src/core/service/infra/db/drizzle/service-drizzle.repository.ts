@@ -74,4 +74,47 @@ export class ServiceDrizzleRepository {
             return service.serviceId
         })
     }
+
+    async findManyByAgreementId(
+        agreementId: string,
+    ): Promise<Service[] | null> {
+        const serviceModels = await db.query.services.findMany({
+            where: eq(services.agreementId, agreementId),
+        })
+
+        if (!serviceModels.length) {
+            return null
+        }
+
+        const serviceEntities = await Promise.all(
+            serviceModels.map(async (serviceModel) => {
+                const serviceSystemEntities = await db.query.serviceSystems
+                    .findMany({
+                        where: eq(
+                            serviceSystems.serviceId,
+                            serviceModel.serviceId,
+                        ),
+                    })
+                    .then((serviceSystemModels) =>
+                        serviceSystemModels.map(
+                            (serviceSystemModel) =>
+                                new ServiceSystem({
+                                    serviceId: serviceSystemModel.serviceId,
+                                    systemId: serviceSystemModel.systemId,
+                                    allocation: serviceSystemModel.allocation,
+                                    amount: serviceSystemModel.amount,
+                                    currency: serviceSystemModel.currency,
+                                }),
+                        ),
+                    )
+
+                return new Service({
+                    ...serviceModel,
+                    serviceSystems: serviceSystemEntities,
+                })
+            }),
+        )
+
+        return serviceEntities
+    }
 }

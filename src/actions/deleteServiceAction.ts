@@ -1,9 +1,7 @@
 "use server"
 
-import { db } from "@/db"
-import { services } from "@/db/schema"
+import { DeleteServiceUseCase } from "@/core/service/application/use-cases/delete-service.use-case"
 import { actionClient } from "@/lib/safe-action"
-import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -26,15 +24,15 @@ export const deleteServiceAction = actionClient
         }: {
             parsedInput: deleteServiceSchemaType
         }) => {
-            const result = await db
-                .delete(services)
-                .where(eq(services.serviceId, params.serviceId))
-                .returning({ deletedId: services.serviceId })
+            const uc = new DeleteServiceUseCase()
+            const result = await uc.execute({
+                serviceId: params.serviceId,
+            })
 
             revalidatePath(`/services/`)
 
             return {
-                message: `Service ID #${result[0].deletedId} deleted successfully.`,
+                message: `Service ID #${result.serviceId} deleted successfully.`,
             }
         },
     )

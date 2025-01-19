@@ -29,9 +29,19 @@ type Props = {
         id: string
         description: string
     }[]
+    servicesAmount?: {
+        numberOfServices: number
+        amount: string | null
+        currency: "EUR" | "USD"
+    }[]
 }
 
-export function AgreementForm({ agreement, hasServices, plans }: Props) {
+export function AgreementForm({
+    agreement,
+    hasServices,
+    plans,
+    servicesAmount,
+}: Props) {
     const { toast } = useToast()
 
     const searchParams = useSearchParams()
@@ -142,12 +152,12 @@ export function AgreementForm({ agreement, hasServices, plans }: Props) {
                         </Link>
                     )}
                 {!!agreement?.agreementId && hasServices && (
-                    <Link href={`/services?searchText=${agreement.name}`}>
+                    <Link href={`/services?searchText=${agreement.code}`}>
                         <h2>Go to Services List</h2>
                     </Link>
                 )}
                 {!!agreement?.agreementId && !hasServices && (
-                    <Link href={`/agreements?searchText=${agreement.name}`}>
+                    <Link href={`/agreements?searchText=${agreement.code}`}>
                         <h2>Go to Agreements List</h2>
                     </Link>
                 )}
@@ -166,6 +176,7 @@ export function AgreementForm({ agreement, hasServices, plans }: Props) {
                             step={1}
                             min={2024}
                             max={2125}
+                            disabled={hasAgreementId}
                             // valueAsNumber TODO: review this - remove this from component
                         />
 
@@ -195,6 +206,46 @@ export function AgreementForm({ agreement, hasServices, plans }: Props) {
                             fieldTitle="Contact Email"
                             nameInSchema="contactEmail"
                         />
+
+                        <div className="mt-4 space-y-2">
+                            <h3 className="text-lg">Services Info</h3>
+                            <hr className="w-full" />
+
+                            {servicesAmount && servicesAmount?.length > 0 ? (
+                                servicesAmount.map((s) => {
+                                    let value = "0.00"
+
+                                    if (s.amount) {
+                                        value = s.amount
+                                    }
+
+                                    return (
+                                        <div
+                                            key={s.currency}
+                                            className="flex items-center justify-between gap-2"
+                                        >
+                                            <p className="w-full">
+                                                {new Intl.NumberFormat(
+                                                    "pt-BR",
+                                                    {
+                                                        style: "decimal",
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    },
+                                                ).format(+value) +
+                                                    " " +
+                                                    s.currency +
+                                                    " (" +
+                                                    s.numberOfServices +
+                                                    " services)"}
+                                            </p>
+                                        </div>
+                                    )
+                                })
+                            ) : (
+                                <p>There are no services yet</p>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex w-full max-w-2xl flex-col gap-4">
@@ -205,6 +256,7 @@ export function AgreementForm({ agreement, hasServices, plans }: Props) {
                             step={1}
                             min={1}
                             max={100}
+                            disabled
                             // valueAsNumber TODO: review this - remove this from component
                         />
 

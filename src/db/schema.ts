@@ -55,7 +55,7 @@ export const agreements = pgTable(
             .defaultNow()
             .$onUpdate(() => new Date()),
     },
-    (t) => [unique().on(t.year, t.code, t.revision)],
+    (t) => [unique().on(t.year, t.code, t.localPlanId)],
 )
 
 export const currencyEnum = pgEnum("currency", ["EUR", "USD"])

@@ -131,7 +131,7 @@ export function SystemsToServiceForm({
                     {service?.isActive ? "(Active)" : "(Inactive)"}
                 </h2>
                 {!!agreement?.agreementId && (
-                    <Link href={`/services?searchText=${agreement.name}`}>
+                    <Link href={`/services?searchText=${agreement.code}`}>
                         <h2>Go to Services List</h2>
                     </Link>
                 )}

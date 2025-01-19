@@ -20,7 +20,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { toast } from "@/hooks/use-toast"
-import type { selectAgreementSchemaType } from "@/zod-schemas/agreement"
+import { getAgreementSearchResultsType } from "@/lib/queries/agreement"
 import {
     CellContext,
     createColumnHelper,
@@ -44,7 +44,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
 
 type Props = {
-    data: selectAgreementSchemaType[]
+    data: getAgreementSearchResultsType[]
 }
 
 export function AgreementTable({ data }: Props) {
@@ -54,9 +54,11 @@ export function AgreementTable({ data }: Props) {
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
     const [agreementToDelete, setAgreementToDelete] =
-        useState<selectAgreementSchemaType | null>(null)
+        useState<getAgreementSearchResultsType | null>(null)
 
-    const handleDeleteAgreement = (agreement: selectAgreementSchemaType) => {
+    const handleDeleteAgreement = (
+        agreement: getAgreementSearchResultsType,
+    ) => {
         setAgreementToDelete(agreement)
         setShowDeleteConfirmation(true)
     }
@@ -110,10 +112,11 @@ export function AgreementTable({ data }: Props) {
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const columnHeadersArray: Array<keyof selectAgreementSchemaType> = [
+    const columnHeadersArray: Array<keyof getAgreementSearchResultsType> = [
         "code",
         "name",
         "contactEmail",
+        "localPlan",
         "year",
         "revision",
         "isRevised",
@@ -121,11 +124,12 @@ export function AgreementTable({ data }: Props) {
     ]
 
     const columnLabels: Partial<{
-        [K in keyof selectAgreementSchemaType]: string
+        [K in keyof getAgreementSearchResultsType]: string
     }> = {
         code: "Code",
         name: "Agreement",
         contactEmail: "Contact Email",
+        localPlan: "Local Plan",
         year: "Year",
         revision: "Revision",
         isRevised: "Revised",
@@ -135,17 +139,18 @@ export function AgreementTable({ data }: Props) {
     const columnWidths: Partial<{
         [K in keyof typeof columnLabels]: number
     }> = {
+        localPlan: 150,
         year: 150,
         revision: 150,
         isRevised: 150,
         revisionDate: 150,
     }
 
-    const columnHelper = createColumnHelper<selectAgreementSchemaType>()
+    const columnHelper = createColumnHelper<getAgreementSearchResultsType>()
 
     const ActionsCell = ({
         row,
-    }: CellContext<selectAgreementSchemaType, unknown>) => {
+    }: CellContext<getAgreementSearchResultsType, unknown>) => {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -168,13 +173,14 @@ export function AgreementTable({ data }: Props) {
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Link
-                            href={`/services?searchText=${row.original.name}`}
+                            href={`/services?searchText=${row.original.code}`}
                             className="w-full"
                             prefetch={false}
                         >
                             List Services
                         </Link>
                     </DropdownMenuItem>
+
                     <DropdownMenuItem>
                         <Link
                             href={`/services/form?agreementId=${row.original.agreementId}`}
@@ -182,6 +188,16 @@ export function AgreementTable({ data }: Props) {
                             prefetch={false}
                         >
                             Add Service
+                        </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem>
+                        <Link
+                            href={`/agreements/${row.original.agreementId}/new-revision`}
+                            className="w-full"
+                            prefetch={false}
+                        >
+                            New Revision
                         </Link>
                     </DropdownMenuItem>
 
@@ -363,7 +379,7 @@ export function AgreementTable({ data }: Props) {
                 setOpen={setShowDeleteConfirmation}
                 confirmationAction={confirmDeleteAgreement}
                 title="Are you sure you want to delete this Agreement?"
-                message={`This action cannot be undone. This will permanently delete the agreement ${agreementToDelete?.name}.`}
+                message={`This action cannot be undone. This will permanently delete the agreement ${agreementToDelete?.code} of year ${agreementToDelete?.year} revsion ${agreementToDelete?.revision}.`}
             />
             {isDeleting && <Deleting />}
         </div>

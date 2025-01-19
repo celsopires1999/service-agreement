@@ -54,13 +54,14 @@ export default async function AgreementFormPage({
                     </>
                 )
             }
-            const count = await countServicesByAgreementId(agreementId)
+            const servicesInfo = await countServicesByAgreementId(agreementId)
             return (
                 <AgreementForm
                     key={agreementId}
                     agreement={agreement}
-                    hasServices={count > 0}
+                    hasServices={servicesInfo.totalNumberOfServices > 0}
                     plans={plans}
+                    servicesAmount={servicesInfo.servicesAmount}
                 />
             )
         } else {

@@ -94,3 +94,13 @@ export const selectAgreementSchema = createSelectSchema(agreements)
 export type insertAgreementSchemaType = typeof insertAgreementSchema._type
 
 export type selectAgreementSchemaType = typeof selectAgreementSchema._type
+
+export const createAgreementRevisionSchema = z.object({
+    agreementId: z.string().uuid("invalid UUID"),
+    revisionDate: z.string().date("Invalid revision date"),
+    providerPlanId: z.string().uuid("provider plan is invalid"),
+    localPlanId: z.string().uuid("local plan is invalid"),
+})
+
+export type createAgreementRevisionSchemaType =
+    typeof createAgreementRevisionSchema._type

@@ -116,6 +116,7 @@ export function ServiceTable({ data }: Props) {
         "currency",
         "agreementCode",
         "agreementName",
+        "localPlan",
         "year",
         "revision",
         "isRevised",
@@ -130,6 +131,7 @@ export function ServiceTable({ data }: Props) {
         currency: "Currency",
         agreementCode: "Agreement",
         agreementName: "Name",
+        localPlan: "Local Plan",
         year: "Year",
         revision: "Revision",
         isRevised: "Revised",
@@ -141,6 +143,7 @@ export function ServiceTable({ data }: Props) {
     }> = {
         amount: 150,
         currency: 150,
+        localPlan: 150,
         year: 150,
         revision: 150,
         isRevised: 150,

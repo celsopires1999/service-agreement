@@ -1,7 +1,7 @@
 import "server-only"
 
 import { db } from "@/db"
-import { agreements, services, serviceSystems } from "@/db/schema"
+import { agreements, plans, services, serviceSystems } from "@/db/schema"
 import { asc, desc, eq, ilike, or } from "drizzle-orm"
 
 export async function getAgreement(agreementId: string) {
@@ -16,7 +16,21 @@ export async function getAgreement(agreementId: string) {
 
 export async function getAgreementSearchResults(searchText: string) {
     return db
-        .select()
+        .select({
+            agreementId: agreements.agreementId,
+            year: agreements.year,
+            code: agreements.code,
+            revision: agreements.revision,
+            isRevised: agreements.isRevised,
+            revisionDate: agreements.revisionDate,
+            providerPlanId: agreements.providerPlanId,
+            localPlanId: agreements.localPlanId,
+            name: agreements.name,
+            description: agreements.description,
+            contactEmail: agreements.contactEmail,
+            comment: agreements.comment,
+            localPlan: plans.code,
+        })
         .from(agreements)
         .where(
             or(
@@ -25,6 +39,7 @@ export async function getAgreementSearchResults(searchText: string) {
                 ilike(agreements.contactEmail, `%${searchText}%`),
             ),
         )
+        .innerJoin(plans, eq(plans.planId, agreements.localPlanId))
         .orderBy(
             asc(agreements.code),
             desc(agreements.year),
@@ -32,10 +47,15 @@ export async function getAgreementSearchResults(searchText: string) {
         )
 }
 
+export type getAgreementSearchResultsType = Awaited<
+    ReturnType<typeof getAgreementSearchResults>
+>[number]
+
 export async function getLastYearBySystemId(systemId: string) {
     return db
         .selectDistinct({
             year: agreements.year,
+            localPlanId: agreements.localPlanId,
         })
         .from(agreements)
         .innerJoin(services, eq(services.agreementId, agreements.agreementId))
@@ -44,6 +64,6 @@ export async function getLastYearBySystemId(systemId: string) {
             eq(serviceSystems.serviceId, services.serviceId),
         )
         .where(eq(serviceSystems.systemId, systemId))
-        .orderBy(desc(agreements.year))
+        .orderBy(desc(agreements.year), desc(agreements.localPlanId))
         .limit(1)
 }

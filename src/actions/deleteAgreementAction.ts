@@ -1,9 +1,7 @@
 "use server"
 
-import { db } from "@/db"
-import { agreements } from "@/db/schema"
+import { DeleteAgreementUseCase } from "@/core/agreement/application/use-cases/delete-agreement.use-case"
 import { actionClient } from "@/lib/safe-action"
-import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -26,15 +24,15 @@ export const deleteAgreementAction = actionClient
         }: {
             parsedInput: deleteAgreementSchemaType
         }) => {
-            const result = await db
-                .delete(agreements)
-                .where(eq(agreements.agreementId, params.agreementId))
-                .returning({ deletedId: agreements.agreementId })
+            const uc = new DeleteAgreementUseCase()
+            const result = await uc.execute({
+                agreementId: params.agreementId,
+            })
 
             revalidatePath(`/agreements/`)
 
             return {
-                message: `Agreement ID #${result[0].deletedId} deleted successfully.`,
+                message: `Agreement ID #${result.agreementId} deleted successfully.`,
             }
         },
     )

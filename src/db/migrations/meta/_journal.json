@@ -29,6 +29,13 @@
       "when": 1737218043312,
       "tag": "0003_sudden_greymalkin",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737316979729,
+      "tag": "0004_swift_eternity",
+      "breakpoints": true
     }
   ]
 }
