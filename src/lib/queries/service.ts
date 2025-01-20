@@ -47,7 +47,11 @@ export async function countServicesByAgreementId(
     }
 }
 
-export async function getServicesBySystemId(systemId: string, year: number) {
+export async function getServicesBySystemId(
+    systemId: string,
+    year: number,
+    localPlanId: string,
+) {
     return db
         .select({
             year: agreements.year,
@@ -69,6 +73,7 @@ export async function getServicesBySystemId(systemId: string, year: number) {
             and(
                 eq(serviceSystems.systemId, systemId),
                 eq(agreements.year, year),
+                eq(agreements.localPlanId, localPlanId),
             ),
         )
         .orderBy(desc(agreements.year), asc(services.name))

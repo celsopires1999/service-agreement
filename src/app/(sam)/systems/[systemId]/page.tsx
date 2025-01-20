@@ -1,12 +1,12 @@
 import { BackButton } from "@/components/BackButton"
-import { getSystem } from "@/lib/queries/system"
 import { getServicesBySystemId } from "@/lib/queries/service"
+import { getSystem } from "@/lib/queries/system"
 import Decimal from "decimal.js"
+import { Suspense } from "react"
 import { validate as uuidValidate } from "uuid"
 import { SystemServiceHeader } from "./SystemServiceHeader"
 import { SystemServicesSearch } from "./SystemServicesSearch"
 import { SystemServicesTable } from "./SystemServicesTable"
-import { Suspense } from "react"
 
 export async function generateMetadata({
     params,
@@ -34,7 +34,7 @@ export default async function SystemsToServiceFormPage({
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
     const { systemId } = await params
-    const { exchangeRate, year } = await searchParams
+    const { exchangeRate, year, localPlanId } = await searchParams
 
     if (!uuidValidate(systemId)) {
         return (
@@ -115,8 +115,13 @@ export default async function SystemsToServiceFormPage({
         }
 
         const yearFilter = +year
+        const localPlanIdFilter = localPlanId ?? ""
 
-        const result = await getServicesBySystemId(systemId, yearFilter)
+        const result = await getServicesBySystemId(
+            systemId,
+            yearFilter,
+            localPlanIdFilter,
+        )
         const services = result.map((service) => {
             return {
                 ...service,

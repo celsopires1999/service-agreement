@@ -3,17 +3,40 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getLastYearBySystemId } from "@/lib/queries/agreement"
 import { getCurrency } from "@/lib/queries/currency"
+import { getPlans } from "@/lib/queries/plan"
 import Form from "next/form"
+import { SelectPlan } from "./SelectPlan"
 
 type Props = {
     systemId: string
     year?: string
     exchangeRate?: string
+    localPlanId?: string
 }
-export async function SystemServicesSearch({ systemId, year, exchangeRate }: Props) {
-
+export async function SystemServicesSearch({
+    systemId,
+    year,
+    exchangeRate,
+    localPlanId,
+}: Props) {
     let searchYear: string
+    let searchLocalPlanId: string
     let searchExchangeRate: string
+    let plans: { id: string; description: string }[]
+
+    try {
+        const result = await getPlans()
+        if (result) {
+            plans = result.map((plan) => ({
+                id: plan.planId,
+                description: plan.code,
+            }))
+        } else {
+            plans = []
+        }
+    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+        plans = []
+    }
 
     if (year) {
         searchYear = year
@@ -21,9 +44,15 @@ export async function SystemServicesSearch({ systemId, year, exchangeRate }: Pro
         try {
             const result = await getLastYearBySystemId(systemId)
             searchYear = result[0].year.toString()
-        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+        } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
             searchYear = new Date().getFullYear().toString()
         }
+    }
+
+    if (localPlanId) {
+        searchLocalPlanId = localPlanId
+    } else {
+        searchLocalPlanId = ""
     }
 
     if (exchangeRate) {
@@ -32,14 +61,17 @@ export async function SystemServicesSearch({ systemId, year, exchangeRate }: Pro
         try {
             const result = await getCurrency(+searchYear, "EUR")
             searchExchangeRate = result[0].value
-        } catch (error) { /* eslint-disable-line  @typescript-eslint/no-unused-vars */
+        } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
             searchExchangeRate = "1"
         }
     }
 
     return (
-        <Form action={`/systems/${systemId}`} className="flex items-center gap-10">
-            <div className="flex items-center align-middle gap-2">
+        <Form
+            action={`/systems/${systemId}`}
+            className="flex items-center gap-10"
+        >
+            <div className="flex items-center gap-2 align-middle">
                 <Label htmlFor="year">Year</Label>
                 <Input
                     type="number"
@@ -52,6 +84,8 @@ export async function SystemServicesSearch({ systemId, year, exchangeRate }: Pro
                     className="w-24"
                 />
             </div>
+
+            <SelectPlan localPlanId={searchLocalPlanId} data={plans} />
 
             <div className="flex items-center gap-2">
                 <Label htmlFor="exchangeRate">EUR / USD</Label>
