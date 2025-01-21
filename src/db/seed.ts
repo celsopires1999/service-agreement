@@ -1,18 +1,10 @@
 import { agreementsData } from "./data/agreements"
-import { currenciesData } from "./data/currencies"
 import { plansData } from "./data/plans"
 import { servicesData } from "./data/services"
 import { serviceSystemsData } from "./data/serviceSystems"
 import { systemsData } from "./data/systems"
 import { db } from "./index"
-import {
-    agreements,
-    currencies,
-    plans,
-    services,
-    serviceSystems,
-    systems,
-} from "./schema"
+import { agreements, plans, services, serviceSystems, systems } from "./schema"
 
 const main = async () => {
     console.log("Seeding...")
@@ -21,11 +13,9 @@ const main = async () => {
         await db.delete(services)
         await db.delete(systems)
         await db.delete(agreements)
-        await db.delete(currencies)
         await db.delete(plans)
 
         await db.insert(plans).values(plansData)
-        await db.insert(currencies).values(currenciesData)
         await db.insert(systems).values(systemsData)
         await db.insert(agreements).values(agreementsData)
         await db.insert(services).values(servicesData)

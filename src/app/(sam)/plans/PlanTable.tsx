@@ -1,4 +1,7 @@
 "use client"
+import { deletePlanAction } from "@/actions/deletePlanAction"
+import { AlertConfirmation } from "@/components/AlertConfirmation"
+import Deleting from "@/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -16,7 +19,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import type { getAllEURValuesType } from "@/lib/queries/currency"
+import { toast } from "@/hooks/use-toast"
+import { getPlansType } from "@/lib/queries/plan"
 import {
     CellContext,
     createColumnHelper,
@@ -29,51 +33,104 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import { MoreHorizontal, TableOfContents } from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 
 type Props = {
-    data: getAllEURValuesType[]
-    handleUpdateCurrency: (
-        year: number,
-        currency: "EUR" | "USD",
-        value: string,
+    data: getPlansType[]
+    handleUpdatePlan: (
+        planId: string,
+        code: string,
+        description: string,
+        euro: string,
     ) => void
 }
 
-export function CurrencyTable({ data, handleUpdateCurrency }: Props) {
+export function PlanTable({ data, handleUpdatePlan }: Props) {
     const router = useRouter()
 
     const searchParams = useSearchParams()
+
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+    const [planToDelete, setPlanToDelete] = useState<getPlansType | null>(null)
+
+    const handleDeletePlan = (agreement: getPlansType) => {
+        setPlanToDelete(agreement)
+        setShowDeleteConfirmation(true)
+    }
+
+    const confirmDeletePlan = async () => {
+        if (planToDelete) {
+            resetDeleteAction()
+            try {
+                await executeDelete({
+                    planId: planToDelete.planId,
+                })
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: `Action error: ${error.message}`,
+                    })
+                }
+            }
+        }
+        setShowDeleteConfirmation(false)
+        setPlanToDelete(null)
+    }
+
+    const {
+        executeAsync: executeDelete,
+        isPending: isDeleting,
+        reset: resetDeleteAction,
+    } = useAction(deletePlanAction, {
+        onSuccess({ data }) {
+            if (data?.message) {
+                toast({
+                    variant: "default",
+                    title: "Success! 🎉",
+                    description: data.message,
+                })
+            }
+        },
+        onError({ error }) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.serverError,
+            })
+        },
+    })
 
     const pageIndex = useMemo(() => {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const columnHeadersArray: Array<keyof getAllEURValuesType> = [
-        "year",
-        "value",
+    const columnHeadersArray: Array<keyof getPlansType> = [
+        "code",
+        "description",
+        "euro",
     ]
 
-    const columnLabels: Partial<{ [K in keyof getAllEURValuesType]: string }> =
-        {
-            year: "Year",
-            value: "Value in USD",
-        }
+    const columnLabels: Partial<{ [K in keyof getPlansType]: string }> = {
+        code: "Code",
+        description: "Description",
+        euro: "EUR / USD",
+    }
 
     const columnWidths: Partial<{
         [K in keyof typeof columnLabels]: number
     }> = {
-        year: 150,
-        value: 150,
+        code: 150,
+        euro: 150,
     }
 
-    const columnHelper = createColumnHelper<getAllEURValuesType>()
+    const columnHelper = createColumnHelper<getPlansType>()
 
-    const ActionsCell = ({
-        row,
-    }: CellContext<getAllEURValuesType, unknown>) => {
+    const ActionsCell = ({ row }: CellContext<getPlansType, unknown>) => {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -88,14 +145,21 @@ export function CurrencyTable({ data, handleUpdateCurrency }: Props) {
 
                     <DropdownMenuItem
                         onClick={() =>
-                            handleUpdateCurrency(
-                                row.original.year,
-                                row.original.currency,
-                                row.original.value,
+                            handleUpdatePlan(
+                                row.original.planId,
+                                row.original.code,
+                                row.original.description,
+                                row.original.euro,
                             )
                         }
                     >
-                        Edit EUR
+                        Edit Plan
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                        onClick={() => handleDeletePlan(row.original)}
+                    >
+                        Delete Plan
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -115,7 +179,7 @@ export function CurrencyTable({ data, handleUpdateCurrency }: Props) {
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "value") {
+                    if (columnName === "euro") {
                         return new Intl.NumberFormat("pt-BR", {
                             style: "decimal",
                             minimumFractionDigits: 4,
@@ -142,7 +206,7 @@ export function CurrencyTable({ data, handleUpdateCurrency }: Props) {
         state: {
             pagination: {
                 pageIndex,
-                pageSize: 3,
+                pageSize: 20,
             },
         },
         getCoreRowModel: getCoreRowModel(),
@@ -164,9 +228,9 @@ export function CurrencyTable({ data, handleUpdateCurrency }: Props) {
     }
 
     return (
-        <div className="flex min-h-[350px] w-[400px] flex-col gap-2 rounded-xl border bg-card p-4 shadow">
+        <div className="flex min-h-[350px] w-full flex-col gap-2 rounded-xl border bg-card p-4 shadow">
             <h2 className="text-2xl font-bold">List</h2>
-            <div className="mt-4 rounded-lg border border-border">
+            <div className="mt-4 overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -238,6 +302,14 @@ export function CurrencyTable({ data, handleUpdateCurrency }: Props) {
                     </div>
                 </div>
             </div>
+            <AlertConfirmation
+                open={showDeleteConfirmation}
+                setOpen={setShowDeleteConfirmation}
+                confirmationAction={confirmDeletePlan}
+                title="Are you sure you want to delete this Plan?"
+                message={`This action cannot be undone. This will permanently delete the plan ${planToDelete?.code}.`}
+            />
+            {isDeleting && <Deleting />}
         </div>
     )
 }

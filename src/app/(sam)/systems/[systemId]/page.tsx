@@ -34,7 +34,7 @@ export default async function SystemsToServiceFormPage({
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
     const { systemId } = await params
-    const { exchangeRate, year, localPlanId } = await searchParams
+    const { exchangeRate, localPlanId } = await searchParams
 
     if (!uuidValidate(systemId)) {
         return (
@@ -61,7 +61,7 @@ export default async function SystemsToServiceFormPage({
             )
         }
 
-        if (!year || !exchangeRate) {
+        if (!exchangeRate || !localPlanId) {
             return (
                 <div className="flex flex-col gap-1 sm:px-8">
                     <SystemServiceHeader
@@ -74,13 +74,12 @@ export default async function SystemsToServiceFormPage({
                     <Suspense key={systemId} fallback={<p>Loading...</p>}>
                         <SystemServicesSearch
                             systemId={systemId}
-                            year={year}
                             exchangeRate={exchangeRate}
+                            localPlanId={localPlanId}
                         />
                     </Suspense>
                     <p className="mt-4">
-                        Please check whether the provided year and exchange rate
-                        (EUR / USD) are valid.
+                        Please check whether the provided Local Plan is valid.
                     </p>
                     <p>
                         Click on <span className="font-bold">Search</span> when
@@ -105,23 +104,9 @@ export default async function SystemsToServiceFormPage({
             )
         }
 
-        if (!Number.isInteger(+year)) {
-            return (
-                <>
-                    <h2 className="mb-2 text-2xl">Year {year} is not valid</h2>
-                    <BackButton title="Go Back" variant="default" />
-                </>
-            )
-        }
-
-        const yearFilter = +year
         const localPlanIdFilter = localPlanId ?? ""
 
-        const result = await getServicesBySystemId(
-            systemId,
-            yearFilter,
-            localPlanIdFilter,
-        )
+        const result = await getServicesBySystemId(systemId, localPlanIdFilter)
         const services = result.map((service) => {
             return {
                 ...service,
@@ -146,8 +131,8 @@ export default async function SystemsToServiceFormPage({
                 <Suspense key={systemId} fallback={<p>Loading...</p>}>
                     <SystemServicesSearch
                         systemId={systemId}
-                        year={year}
                         exchangeRate={exchangeRate}
+                        localPlanId={localPlanId}
                     />
                 </Suspense>
                 <SystemServicesTable data={services} />

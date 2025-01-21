@@ -12,7 +12,6 @@ ALTER TABLE "agreements" ADD COLUMN "local_plan_id" uuid ;--> statement-breakpoi
 ALTER TABLE "systems" ADD COLUMN "responsible_email" varchar ;--> statement-breakpoint
 
 --- DML Changes
--- GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO servagre;
 -- INSERT INTO plans (plan_id, code, description) VALUES
 --     ('7b114469-6290-48fb-8d4a-bf49a6051800', 'BP25', 'Business Plan 2025');
 -- INSERT INTO plans (plan_id, code, description) VALUES

@@ -49,7 +49,6 @@ export async function countServicesByAgreementId(
 
 export async function getServicesBySystemId(
     systemId: string,
-    year: number,
     localPlanId: string,
 ) {
     return db
@@ -72,7 +71,6 @@ export async function getServicesBySystemId(
         .where(
             and(
                 eq(serviceSystems.systemId, systemId),
-                eq(agreements.year, year),
                 eq(agreements.localPlanId, localPlanId),
             ),
         )

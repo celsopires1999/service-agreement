@@ -36,6 +36,13 @@
       "when": 1737316979729,
       "tag": "0004_swift_eternity",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1737425361551,
+      "tag": "0005_foamy_saracen",
+      "breakpoints": true
     }
   ]
 }

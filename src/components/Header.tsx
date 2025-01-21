@@ -63,8 +63,8 @@ export function Header() {
 
                     <NavButton
                         icon={EuroIcon}
-                        label="Euro Exchange Rate"
-                        href="/currencies"
+                        label="Company Plans"
+                        href="/plans"
                     />
 
                     <ModeToggle />

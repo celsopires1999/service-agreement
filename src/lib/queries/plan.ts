@@ -9,5 +9,15 @@ export async function getPlan(planId: string) {
 }
 
 export async function getPlans() {
-    return db.select().from(plans).orderBy(desc(plans.code))
+    return db
+        .select({
+            planId: plans.planId,
+            code: plans.code,
+            description: plans.description,
+            euro: plans.euro,
+        })
+        .from(plans)
+        .orderBy(desc(plans.code))
 }
+
+export type getPlansType = Awaited<ReturnType<typeof getPlans>>[number]
