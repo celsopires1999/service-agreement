@@ -124,3 +124,15 @@ export async function getServiceSearchResults(searchText: string) {
 export type getServiceSearchResultsType = Awaited<
     ReturnType<typeof getServiceSearchResults>
 >[number]
+
+export async function getServicesByAgreementId(agreementId: string) {
+    return db
+        .select()
+        .from(services)
+        .where(eq(services.agreementId, agreementId))
+        .orderBy(asc(services.name))
+}
+
+export type getServicesByAgreementIdType = Awaited<
+    ReturnType<typeof getServicesByAgreementId>
+>[number]
