@@ -23,7 +23,7 @@ export default async function AgreementsPage({
                     <ul className="-mt-2 list-disc pl-6">
                         <li>Agreement Code</li>
                         <li>Agreement Name</li>
-                        <li>Provider contact person's email address</li>
+                        <li>Provider contact person&apos;s email address</li>
                     </ul>
                 </div>
             </div>
