@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -34,7 +35,13 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import Decimal from "decimal.js"
-import { MoreHorizontal, TableOfContents } from "lucide-react"
+import {
+    DollarSignIcon,
+    Edit,
+    MoreHorizontal,
+    TableOfContents,
+    Trash,
+} from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -161,53 +168,62 @@ export function SystemsToServiceTable({
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuLabel>Allocation</DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                        {isEditable && (
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    handleUpdateServiceSystem(
+                                        row.original.systemId,
+                                        row.original.allocation,
+                                    )
+                                }
+                            >
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
+                            </DropdownMenuItem>
+                        )}
+
+                        {isEditable && (
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    handleDeleteServiceSystem(
+                                        row.original.serviceId,
+                                        row.original.systemId,
+                                    )
+                                }
+                            >
+                                <Trash className="mr-2 h-4 w-4" />
+                                <span>Delete</span>
+                            </DropdownMenuItem>
+                        )}
+                    </DropdownMenuGroup>
+
                     <DropdownMenuSeparator />
-                    {isEditable && (
-                        <DropdownMenuItem
-                            onClick={() =>
-                                handleUpdateServiceSystem(
-                                    row.original.systemId,
-                                    row.original.allocation,
-                                )
-                            }
-                        >
-                            Edit Allocation
+                    <DropdownMenuLabel>System</DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/systems/form?systemId=${row.original.systemId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
+                            </Link>
                         </DropdownMenuItem>
-                    )}
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/systems/form?systemId=${row.original.systemId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            System
-                        </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/systems/${row.original.systemId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            System Costs
-                        </Link>
-                    </DropdownMenuItem>
-
-                    {isEditable && (
-                        <DropdownMenuItem
-                            onClick={() =>
-                                handleDeleteServiceSystem(
-                                    row.original.serviceId,
-                                    row.original.systemId,
-                                )
-                            }
-                        >
-                            Remove System
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/systems/${row.original.systemId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <DollarSignIcon className="mr-2 h-4 w-4" />
+                                <span>Cost</span>
+                            </Link>
                         </DropdownMenuItem>
-                    )}
+                    </DropdownMenuGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
         )

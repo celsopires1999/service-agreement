@@ -38,10 +38,10 @@ import {
     CircleXIcon,
     Edit,
     Eye,
+    HandCoinsIcon,
     MoreHorizontal,
     Plus,
     TableOfContents,
-    TablePropertiesIcon,
     Trash,
 } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
@@ -242,8 +242,8 @@ export function ServiceTable({ data }: Props) {
                                 className="flex w-full"
                                 prefetch={false}
                             >
-                                <TablePropertiesIcon className="mr-2 h-4 w-4" />
-                                <span>List</span>
+                                <HandCoinsIcon className="mr-2 h-4 w-4" />
+                                <span>Allocation</span>
                             </Link>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
