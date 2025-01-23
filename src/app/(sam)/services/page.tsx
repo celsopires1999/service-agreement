@@ -17,6 +17,15 @@ export default async function ServicesPage({
         return (
             <div>
                 <ServiceSearch searchText="" />
+                <div className="mt-6 flex flex-col gap-4">
+                    <h2 className="text-2xl font-bold">Services List</h2>
+                    <p className="mt-2">You can search by:</p>
+                    <ul className="-mt-2 list-disc pl-6">
+                        <li>Service Name</li>
+                        <li>Agreement Code</li>
+                        <li>Agreement Name</li>
+                    </ul>
+                </div>
             </div>
         )
     }

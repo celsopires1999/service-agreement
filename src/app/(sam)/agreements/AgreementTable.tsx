@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -35,8 +36,13 @@ import {
 import {
     CircleCheckIcon,
     CircleXIcon,
+    Edit,
+    Eye,
     MoreHorizontal,
+    Plus,
     TableOfContents,
+    TablePropertiesIcon,
+    Trash,
 } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
@@ -160,52 +166,62 @@ export function AgreementTable({ data }: Props) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Edit Agreement
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services?searchText=${row.original.code}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            List Services
-                        </Link>
-                    </DropdownMenuItem>
+                    <DropdownMenuLabel>Agreement</DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/agreements/form?agreementId=${row.original.agreementId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
+                            </Link>
+                        </DropdownMenuItem>
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Add Service
-                        </Link>
-                    </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/agreements/${row.original.agreementId}/new-revision`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <Eye className="mr-2 h-4 w-4" />
+                                <span>Revision</span>
+                            </Link>
+                        </DropdownMenuItem>
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/agreements/${row.original.agreementId}/new-revision`}
-                            className="w-full"
-                            prefetch={false}
+                        <DropdownMenuItem
+                            onClick={() => handleDeleteAgreement(row.original)}
                         >
-                            New Revision
-                        </Link>
-                    </DropdownMenuItem>
+                            <Trash className="mr-2 h-4 w-4" />
+                            <span>Delete</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
 
-                    <DropdownMenuItem
-                        onClick={() => handleDeleteAgreement(row.original)}
-                    >
-                        Delete Agreement
-                    </DropdownMenuItem>
+                    <DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>Service</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/services?searchText=${row.original.code}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <TablePropertiesIcon className="mr-2 h-4 w-4" />
+                                <span>List</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/services/form?agreementId=${row.original.agreementId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <Plus className="mr-2 h-4 w-4" />
+                                <span>Add</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
         )

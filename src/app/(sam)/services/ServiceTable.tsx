@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -35,8 +36,13 @@ import {
 import {
     CircleCheckIcon,
     CircleXIcon,
+    Edit,
+    Eye,
     MoreHorizontal,
+    Plus,
     TableOfContents,
+    TablePropertiesIcon,
+    Trash,
 } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
@@ -164,60 +170,83 @@ export function ServiceTable({ data }: Props) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel>Agreement</DropdownMenuLabel>
 
-                    {!row.original.isRevised && (
-                        <DropdownMenuItem>
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
                             <Link
-                                href={`/services/form?agreementId=${row.original.agreementId}`}
-                                className="w-full"
+                                href={`/agreements/form?agreementId=${row.original.agreementId}`}
+                                className="flex w-full"
                                 prefetch={false}
                             >
-                                New Service
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
                             </Link>
                         </DropdownMenuItem>
-                    )}
+                    </DropdownMenuGroup>
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services/form?serviceId=${row.original.serviceId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            {!row.original.isRevised
-                                ? "Edit Service"
-                                : "View Service"}
-                        </Link>
-                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel>Service</DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                        {!row.original.isRevised && (
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={`/services/form?agreementId=${row.original.agreementId}`}
+                                    className="flex w-full"
+                                    prefetch={false}
+                                >
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    <span>Add</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        )}
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services/${row.original.serviceId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Systems
-                        </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Edit Agreement
-                        </Link>
-                    </DropdownMenuItem>
-
-                    {!row.original.isRevised && (
-                        <DropdownMenuItem
-                            onClick={() => handleDeleteService(row.original)}
-                        >
-                            Delete Service
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/services/form?serviceId=${row.original.serviceId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                {!row.original.isRevised ? (
+                                    <>
+                                        <Edit className="mr-2 h-4 w-4" />
+                                        <span>Edit</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Eye className="mr-2 h-4 w-4" />
+                                        <span>View</span>
+                                    </>
+                                )}
+                            </Link>
                         </DropdownMenuItem>
-                    )}
+
+                        {!row.original.isRevised && (
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    handleDeleteService(row.original)
+                                }
+                            >
+                                <Trash className="mr-2 h-4 w-4" />
+                                <span>Delete</span>
+                            </DropdownMenuItem>
+                        )}
+                    </DropdownMenuGroup>
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel>System</DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/services/${row.original.serviceId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <TablePropertiesIcon className="mr-2 h-4 w-4" />
+                                <span>List</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
         )

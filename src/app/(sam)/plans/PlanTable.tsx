@@ -32,7 +32,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { MoreHorizontal, TableOfContents } from "lucide-react"
+import { Edit, MoreHorizontal, TableOfContents, Trash } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
@@ -140,7 +140,7 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuLabel>Plan</DropdownMenuLabel>
                     <DropdownMenuSeparator />
 
                     <DropdownMenuItem
@@ -153,13 +153,15 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                             )
                         }
                     >
-                        Edit Plan
+                        <Edit className="mr-2 h-4 w-4" />
+                        <span>Edit</span>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
                         onClick={() => handleDeletePlan(row.original)}
                     >
-                        Delete Plan
+                        <Trash className="mr-2 h-4 w-4" />
+                        <span>Delete</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

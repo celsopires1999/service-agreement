@@ -17,6 +17,15 @@ export default async function SystemsPage({
         return (
             <div>
                 <SystemSearch searchText="" />
+                <div className="mt-6 flex flex-col gap-4">
+                    <h2 className="text-2xl font-bold">Systems List</h2>
+                    <p className="mt-2">You can search by:</p>
+                    <ul className="-mt-2 list-disc pl-6">
+                        <li>System Name</li>
+                        <li>Application ID</li>
+                        <li>System Description</li>
+                    </ul>
+                </div>
             </div>
         )
     }

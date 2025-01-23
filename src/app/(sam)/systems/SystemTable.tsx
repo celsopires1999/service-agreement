@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -32,7 +33,13 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { MoreHorizontal, TableOfContents } from "lucide-react"
+import {
+    DollarSignIcon,
+    Edit,
+    MoreHorizontal,
+    TableOfContents,
+    Trash,
+} from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -139,33 +146,38 @@ export function SystemTable({ data }: Props) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/systems/form?systemId=${row.original.systemId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Edit System
-                        </Link>
-                    </DropdownMenuItem>
+                    <DropdownMenuLabel>System</DropdownMenuLabel>
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/systems/${row.original.systemId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            System Cost
-                        </Link>
-                    </DropdownMenuItem>
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/systems/form?systemId=${row.original.systemId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>Edit</span>
+                            </Link>
+                        </DropdownMenuItem>
 
-                    <DropdownMenuItem
-                        onClick={() => handleDeleteSystem(row.original)}
-                    >
-                        Delete System
-                    </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/systems/${row.original.systemId}`}
+                                className="flex w-full"
+                                prefetch={false}
+                            >
+                                <DollarSignIcon className="mr-2 h-4 w-4" />
+                                <span>Cost</span>
+                            </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onClick={() => handleDeleteSystem(row.original)}
+                        >
+                            <Trash className="mr-2 h-4 w-4" />
+                            <span>Delete</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
         )
