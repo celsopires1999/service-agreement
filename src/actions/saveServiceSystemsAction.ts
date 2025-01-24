@@ -3,15 +3,15 @@
 import { SaveServiceSystemUseCase } from "@/core/service/application/use-cases/save-service-system.use-case"
 import { actionClient } from "@/lib/safe-action"
 import {
-    insertServiceSystemsSchema,
-    type insertServiceSystemsSchemaType,
+    saveServiceSystemsSchema,
+    saveServiceSystemsSchemaType,
 } from "@/zod-schemas/service_systems"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
 
 export const saveServiceSystemsAction = actionClient
     .metadata({ actionName: "saveServiceSystemsAction" })
-    .schema(insertServiceSystemsSchema, {
+    .schema(saveServiceSystemsSchema, {
         handleValidationErrorsShape: async (ve) =>
             flattenValidationErrors(ve).fieldErrors,
     })
@@ -19,7 +19,7 @@ export const saveServiceSystemsAction = actionClient
         async ({
             parsedInput: serviceSystem,
         }: {
-            parsedInput: insertServiceSystemsSchemaType
+            parsedInput: saveServiceSystemsSchemaType
         }) => {
             const uc = new SaveServiceSystemUseCase()
             await uc.execute(serviceSystem)

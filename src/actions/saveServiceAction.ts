@@ -1,8 +1,7 @@
 "use server"
 
+import { CreateServiceUseCase } from "@/core/service/application/use-cases/create-service.use-case"
 import { SaveServiceUseCase } from "@/core/service/application/use-cases/save-service.use-case"
-import { db } from "@/db"
-import { services } from "@/db/schema"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertServiceSchema,
@@ -27,30 +26,18 @@ export const saveServiceAction = actionClient
             // createdAt and updatedAt are set by the database
 
             if (service.serviceId === "(New)") {
-                const result = await db
-                    .insert(services)
-                    .values({
-                        agreementId: service.agreementId,
-                        name: service.name.trim(),
-                        description: service.description.trim(),
-                        amount: service.amount.trim(),
-                        currency: service.currency,
-                        responsibleEmail: service.responsibleEmail.trim(),
-                        providerAllocation: service.providerAllocation.trim(),
-                        localAllocation: service.localAllocation.trim(),
-                    })
-                    .returning({ insertedId: services.serviceId })
+                const uc = new CreateServiceUseCase()
+                const result = await uc.execute(service)
 
                 revalidatePath("/services")
 
                 return {
-                    message: `Service ID #${result[0].insertedId} created successfully`,
-                    serviceId: result[0].insertedId,
+                    message: `Service ID #${result.serviceId} created successfully`,
+                    serviceId: result.serviceId,
                 }
             }
             // Existing service
             const uc = new SaveServiceUseCase()
-
             const result = await uc.execute(service)
 
             revalidatePath("/services")

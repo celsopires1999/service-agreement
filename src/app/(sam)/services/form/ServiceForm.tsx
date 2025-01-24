@@ -8,7 +8,7 @@ import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
-import { selectAgreementSchemaType } from "@/zod-schemas/agreement"
+import { getAgreementType } from "@/lib/queries/agreement"
 import {
     insertServiceSchema,
     type insertServiceSchemaType,
@@ -17,11 +17,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import { useForm } from "react-hook-form"
 import Link from "next/link"
+import { useForm } from "react-hook-form"
 
 type Props = {
-    agreement: selectAgreementSchemaType
+    agreement: getAgreementType
     service?: selectServiceSchemaType
     currencies?: {
         id: string
@@ -43,7 +43,8 @@ export function ServiceForm({
         agreementId: service?.agreementId ?? agreement.agreementId,
         name: service?.name ?? "",
         description: service?.description ?? "",
-        amount: service?.amount.replace(".", ",") ?? "",
+        runAmount: service?.runAmount.replace(".", ",") ?? "",
+        chgAmount: service?.chgAmount.replace(".", ",") ?? "",
         currency: service?.currency ?? "USD",
         responsibleEmail: service?.responsibleEmail ?? "",
         providerAllocation: service?.providerAllocation ?? "",
@@ -120,7 +121,7 @@ export function ServiceForm({
                 )}
                 {!!service?.serviceId && (
                     <Link href={`/services/${service.serviceId}`}>
-                        <h2>Go to Systems Form</h2>
+                        <h2>Go to Cost Allocation</h2>
                     </Link>
                 )}
             </div>
@@ -138,8 +139,14 @@ export function ServiceForm({
                         />
 
                         <InputWithLabel<insertServiceSchemaType>
-                            fieldTitle="Amount"
-                            nameInSchema="amount"
+                            fieldTitle="Run Amount"
+                            nameInSchema="runAmount"
+                            disabled={!isEditable}
+                        />
+
+                        <InputWithLabel<insertServiceSchemaType>
+                            fieldTitle="Change Amount"
+                            nameInSchema="chgAmount"
                             disabled={!isEditable}
                         />
 
@@ -167,10 +174,10 @@ export function ServiceForm({
                             <h3 className="text-lg">Agreement Info</h3>
                             <hr className="w-4/5" />
                             <p>{agreement.code}</p>
-                            <p>{agreement.name}</p>
+                            <p className="truncate">{agreement.name}</p>
                             <p>
-                                Valid for {agreement.year}, Revision{" "}
-                                {agreement.revision} on {agreement.revisionDate}
+                                Valid for {agreement.year} with Local Plan{" "}
+                                {agreement.localPlan}
                             </p>
                             <p>
                                 {agreement.isRevised

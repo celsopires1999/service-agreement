@@ -1,11 +1,13 @@
 import Decimal from "decimal.js"
-import { validateDecimal } from "./utils"
 import { currecyType } from "./service"
+import { validateDecimal } from "./utils"
 
 export type ServiceSystemConstructorProps = {
     serviceId: string
     systemId: string
     allocation: string
+    runAmount: string
+    chgAmount: string
     amount: string
     currency: currecyType
 }
@@ -14,7 +16,8 @@ export type ServiceSystemCreateCommand = {
     serviceId: string
     systemId: string
     allocation: string
-    totalAmount: string
+    totalRunAmount: string
+    totalChgAmount: string
     currency: currecyType
 }
 
@@ -22,6 +25,8 @@ export class ServiceSystem {
     serviceId: string
     systemId: string
     allocation: string
+    runAmount: string
+    chgAmount: string
     amount: string
     currency: currecyType
 
@@ -29,34 +34,52 @@ export class ServiceSystem {
         this.serviceId = props.serviceId
         this.systemId = props.systemId
         this.allocation = props.allocation
+        this.runAmount = props.runAmount
+        this.chgAmount = props.chgAmount
         this.amount = props.amount
         this.currency = props.currency
     }
     static create(props: ServiceSystemCreateCommand) {
-        const amount = ServiceSystem.calculateAmount(
-            props.totalAmount,
+        const { runAmount, chgAmount, amount } = ServiceSystem.calculateAmount(
+            props.totalRunAmount,
+            props.totalChgAmount,
             props.allocation,
         )
         return new ServiceSystem({
             serviceId: props.serviceId,
             systemId: props.systemId,
             allocation: props.allocation,
-            currency: props.currency,
             amount,
+            runAmount,
+            chgAmount,
+            currency: props.currency,
         })
     }
 
-    changeAllocation(totalAmount: string, allocation: string) {
-        const amount = ServiceSystem.calculateAmount(totalAmount, allocation)
+    changeAllocation(
+        totalRunAmount: string,
+        totalChgAmount: string,
+        allocation: string,
+    ) {
+        const { runAmount, chgAmount, amount } = ServiceSystem.calculateAmount(
+            totalRunAmount,
+            totalChgAmount,
+            allocation,
+        )
+        this.runAmount = runAmount
+        this.chgAmount = chgAmount
         this.amount = amount
         this.allocation = allocation
     }
 
-    changeAmount(totalAmount: string) {
-        const amount = ServiceSystem.calculateAmount(
-            totalAmount,
+    changeAmount(totalRunAmount: string, totalChgAmount: string) {
+        const { runAmount, chgAmount, amount } = ServiceSystem.calculateAmount(
+            totalRunAmount,
+            totalChgAmount,
             this.allocation,
         )
+        this.runAmount = runAmount
+        this.chgAmount = chgAmount
         this.amount = amount
     }
 
@@ -64,17 +87,33 @@ export class ServiceSystem {
         this.currency = currency
     }
 
-    static calculateAmount(totalAmount: string, allocation: string) {
-        if (!validateDecimal(totalAmount, 12, 2)) {
+    static calculateAmount(
+        totalRunAmount: string,
+        totalChgAmount: string,
+        allocation: string,
+    ) {
+        if (!validateDecimal(totalRunAmount, 12, 2)) {
             throw new Error(
-                "total amount to be allocated is not a valid decimal",
+                "total run amount to be allocated is not a valid decimal",
             )
         }
 
-        const amount = new Decimal(totalAmount)
+        if (!validateDecimal(totalChgAmount, 12, 2)) {
+            throw new Error(
+                "total change amount to be allocated is not a valid decimal",
+            )
+        }
+
+        const runAmount = new Decimal(totalRunAmount)
             .mul(new Decimal(allocation).div(100))
             .toFixed(2)
 
-        return amount
+        const chgAmount = new Decimal(totalChgAmount)
+            .mul(new Decimal(allocation).div(100))
+            .toFixed(2)
+
+        const amount = new Decimal(runAmount).add(chgAmount).toFixed(2)
+
+        return { runAmount, chgAmount, amount }
     }
 }

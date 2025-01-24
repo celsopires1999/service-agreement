@@ -6,25 +6,23 @@ import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
+import { getAgreementType } from "@/lib/queries/agreement"
 import { getServiceSystemsSearchResultsType } from "@/lib/queries/serviceSystem"
-import { selectAgreementSchemaType } from "@/zod-schemas/agreement"
 import { selectServiceSchemaType } from "@/zod-schemas/service"
 import {
-    insertServiceSystemsSchema,
-    type insertServiceSystemsSchemaType,
+    saveServiceSystemsSchema,
+    saveServiceSystemsSchemaType,
 } from "@/zod-schemas/service_systems"
 import { zodResolver } from "@hookform/resolvers/zod"
-import Decimal from "decimal.js"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
-import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { SystemsToServiceTable } from "./SystemsToServiceTable"
 
 type Props = {
     service: selectServiceSchemaType
-    agreement: selectAgreementSchemaType
+    agreement: getAgreementType
     serviceSystems?: getServiceSystemsSearchResultsType[]
     systems?: {
         id: string
@@ -42,21 +40,18 @@ export function SystemsToServiceForm({
 }: Props) {
     const { toast } = useToast()
 
-    const defaultValues: insertServiceSystemsSchemaType = {
+    const defaultValues: saveServiceSystemsSchemaType = {
         systemId: "",
         serviceId: service.serviceId,
         allocation: "",
-        amount: "",
-        currency: service.currency,
     }
 
-    const form = useForm<insertServiceSystemsSchemaType>({
+    const form = useForm<saveServiceSystemsSchemaType>({
         mode: "onSubmit",
-        resolver: zodResolver(insertServiceSystemsSchema),
+        resolver: zodResolver(saveServiceSystemsSchema),
         defaultValues,
     })
-    const { watch, setValue } = form
-    const allocation = watch("allocation")
+    const { setValue } = form
 
     const handleUpdateServiceSystem = (
         systemId: string,
@@ -65,21 +60,6 @@ export function SystemsToServiceForm({
         setValue("systemId", systemId)
         setValue("allocation", allocation)
     }
-
-    useEffect(() => {
-        const decimalAllocation = allocation.replace(",", ".")
-        try {
-            new Decimal(decimalAllocation)
-        } catch (error) /* eslint-disable-line @typescript-eslint/no-unused-vars */ {
-            setValue("amount", "")
-            return
-        }
-
-        const value = new Decimal(service.amount)
-            .mul(new Decimal(decimalAllocation).div(100))
-            .toFixed(2)
-        setValue("amount", value.replace(".", ","))
-    }, [allocation]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const {
         executeAsync: executeSave,
@@ -106,7 +86,7 @@ export function SystemsToServiceForm({
         },
     })
 
-    async function submitForm(data: insertServiceSystemsSchemaType) {
+    async function submitForm(data: saveServiceSystemsSchemaType) {
         resetSaveAction()
         try {
             await executeSave(data)
@@ -131,10 +111,20 @@ export function SystemsToServiceForm({
                     {service?.isActive ? "(Active)" : "(Inactive)"}
                 </h2>
                 {!!agreement?.agreementId && (
-                    <Link href={`/services?searchText=${agreement.code}`}>
+                    <Link href={`/services?searchText=${service.name}`}>
                         <h2>Go to Services List</h2>
                     </Link>
                 )}
+            </div>
+
+            <div className="mb-1 space-y-2">
+                <h2>{`${agreement.code}`}</h2>
+                <p className="truncate">{agreement.name}</p>
+                <p>
+                    Valid for {agreement.year} with Local Plan{" "}
+                    {agreement.localPlan}
+                </p>
+                <hr className="w-full" />
             </div>
 
             {isEditable && (
@@ -144,49 +134,38 @@ export function SystemsToServiceForm({
                         className="flex flex-row gap-4 md:gap-8"
                     >
                         <div className="mt-4 flex w-full flex-col gap-4">
-                            <div className="flex w-full justify-between gap-4">
-                                <SelectWithLabel<insertServiceSystemsSchemaType>
+                            <div className="flex w-full gap-4">
+                                <SelectWithLabel<saveServiceSystemsSchemaType>
                                     fieldTitle="System"
                                     nameInSchema="systemId"
                                     data={systems ?? []}
-                                    className="min-w-48"
+                                    className="min-w-64"
                                 />
+                                <div className="flex items-center gap-8">
+                                    <InputWithLabel<saveServiceSystemsSchemaType>
+                                        fieldTitle="Allocation (%)"
+                                        nameInSchema="allocation"
+                                        type="number"
+                                        step="0.01"
+                                    />
 
-                                <InputWithLabel<insertServiceSystemsSchemaType>
-                                    fieldTitle="Allocation (%)"
-                                    nameInSchema="allocation"
-                                    type="number"
-                                    step="0.01"
-                                />
-
-                                <InputWithLabel<insertServiceSystemsSchemaType>
-                                    fieldTitle="Amount"
-                                    nameInSchema="amount"
-                                    disabled
-                                />
-
-                                <InputWithLabel<insertServiceSystemsSchemaType>
-                                    fieldTitle="Currency"
-                                    nameInSchema="currency"
-                                    disabled
-                                />
-
-                                <div className="mt-8">
-                                    <Button
-                                        type="submit"
-                                        variant="default"
-                                        title="Save"
-                                        disabled={isSaving}
-                                    >
-                                        {isSaving ? (
-                                            <>
-                                                <LoaderCircle className="animate-spin" />{" "}
-                                                Saving
-                                            </>
-                                        ) : (
-                                            "Save"
-                                        )}
-                                    </Button>
+                                    <div className="mt-8">
+                                        <Button
+                                            type="submit"
+                                            variant="default"
+                                            title="Save"
+                                            disabled={isSaving}
+                                        >
+                                            {isSaving ? (
+                                                <>
+                                                    <LoaderCircle className="animate-spin" />{" "}
+                                                    Saving
+                                                </>
+                                            ) : (
+                                                "Save"
+                                            )}
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,5 +1,5 @@
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
-import { insertServiceSystemsSchemaType } from "@/zod-schemas/service_systems"
+import { saveServiceSystemsSchemaType } from "@/zod-schemas/service_systems"
 
 export class SaveServiceSystemUseCase {
     async execute(
@@ -32,7 +32,7 @@ export class SaveServiceSystemUseCase {
     }
 }
 
-export type SaveServiceSystemInput = insertServiceSystemsSchemaType
+export type SaveServiceSystemInput = saveServiceSystemsSchemaType
 
 export type SaveServiceSystemOutput = {
     serviceId: string

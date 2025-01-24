@@ -9,10 +9,10 @@ import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
+import { getAgreementType } from "@/lib/queries/agreement"
 import {
     insertAgreementSchema,
     type insertAgreementSchemaType,
-    type selectAgreementSchemaType,
 } from "@/zod-schemas/agreement"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
@@ -23,7 +23,7 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 
 type Props = {
-    agreement?: selectAgreementSchemaType
+    agreement?: getAgreementType
     hasServices?: boolean
     plans: {
         id: string

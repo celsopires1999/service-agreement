@@ -7,10 +7,10 @@ import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
+import { getAgreementType } from "@/lib/queries/agreement"
 import {
     createAgreementRevisionSchema,
     createAgreementRevisionSchemaType,
-    type selectAgreementSchemaType,
 } from "@/zod-schemas/agreement"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
@@ -19,7 +19,7 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 
 type Props = {
-    agreement: selectAgreementSchemaType
+    agreement: getAgreementType
     servicesCount: number
     plans: {
         id: string

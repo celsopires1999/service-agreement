@@ -34,6 +34,9 @@ import Decimal from "decimal.js"
 import {
     CircleCheckIcon,
     CircleXIcon,
+    FileIcon,
+    HandCoinsIcon,
+    HandshakeIcon,
     MoreHorizontal,
     TableOfContents,
 } from "lucide-react"
@@ -116,36 +119,39 @@ export function SystemServicesTable({ data }: Props) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuLabel>Options</DropdownMenuLabel>
                     <DropdownMenuSeparator />
 
-                    <DropdownMenuItem>
-                        <Link
-                            href={`/services/form?serviceId=${row.original.serviceId}`}
-                            className="w-full"
-                            prefetch={false}
-                        >
-                            Service
-                        </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                         <Link
                             href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                            className="w-full"
+                            className="flex w-full"
                             prefetch={false}
                         >
-                            Agreement
+                            <HandshakeIcon className="mr-2 h-4 w-4" />
+                            <span>Agreement</span>
                         </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                         <Link
-                            href={`/services/${row.original.serviceId}`}
-                            className="w-full"
+                            href={`/services/form?serviceId=${row.original.serviceId}`}
+                            className="flex w-full"
                             prefetch={false}
                         >
-                            Service Systems
+                            <FileIcon className="mr-2 h-4 w-4" />
+                            <span>Service</span>
+                        </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={`/services/${row.original.serviceId}`}
+                            className="flex w-full"
+                            prefetch={false}
+                        >
+                            <HandCoinsIcon className="mr-2 h-4 w-4" />
+                            Allocation
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

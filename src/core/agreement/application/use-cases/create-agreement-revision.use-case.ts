@@ -60,12 +60,12 @@ export class CreateAgreementRevisionUseCase {
             for (const service of sourceServices) {
                 const newService = Service.create({
                     agreementId: newAgreement.agreementId,
-                    amount: service.amount,
                     name: service.name,
                     description: service.description,
+                    runAmount: service.runAmount,
+                    chgAmount: service.chgAmount,
                     currency: service.currency,
                     responsibleEmail: service.responsibleEmail,
-                    isActive: service.isActive,
                     providerAllocation: service.providerAllocation,
                     localAllocation: service.localAllocation,
                 })
@@ -84,6 +84,8 @@ export class CreateAgreementRevisionUseCase {
                         agreementId: newService.agreementId,
                         name: newService.name,
                         description: newService.description,
+                        runAmount: newService.runAmount,
+                        chgAmount: newService.chgAmount,
                         amount: newService.amount,
                         currency: newService.currency,
                         responsibleEmail: newService.responsibleEmail,
@@ -106,6 +108,8 @@ export class CreateAgreementRevisionUseCase {
                             serviceId: serviceSystem.serviceId,
                             systemId: serviceSystem.systemId,
                             allocation: serviceSystem.allocation,
+                            runAmount: serviceSystem.runAmount,
+                            chgAmount: serviceSystem.chgAmount,
                             amount: serviceSystem.amount,
                             currency: serviceSystem.currency,
                         })

@@ -5,6 +5,44 @@ import { services, serviceSystems } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
 export class ServiceDrizzleRepository {
+    async insert(service: Service) {
+        return await db.transaction(async (tx) => {
+            const result = await tx
+                .insert(services)
+                .values({
+                    serviceId: service.serviceId,
+                    agreementId: service.agreementId,
+                    name: service.name,
+                    description: service.description,
+                    runAmount: service.runAmount,
+                    chgAmount: service.chgAmount,
+                    amount: service.amount,
+                    currency: service.currency,
+                    responsibleEmail: service.responsibleEmail,
+                    isActive: service.isActive,
+                    providerAllocation: service.providerAllocation,
+                    localAllocation: service.localAllocation,
+                })
+                .returning({ insertedId: services.serviceId })
+
+            const serviceId = result[0].insertedId
+
+            for (const serviceSystem of service.serviceSystems) {
+                await tx.insert(serviceSystems).values({
+                    serviceId,
+                    systemId: serviceSystem.systemId,
+                    allocation: serviceSystem.allocation,
+                    runAmount: serviceSystem.runAmount,
+                    chgAmount: serviceSystem.chgAmount,
+                    amount: serviceSystem.amount,
+                    currency: serviceSystem.currency,
+                })
+            }
+
+            return serviceId
+        })
+    }
+
     async findById(serviceId: string): Promise<Service | null> {
         const serviceModel = await db.query.services.findFirst({
             where: eq(services.serviceId, serviceId),
@@ -24,6 +62,8 @@ export class ServiceDrizzleRepository {
                     serviceId: serviceSystemModel.serviceId,
                     systemId: serviceSystemModel.systemId,
                     allocation: serviceSystemModel.allocation,
+                    runAmount: serviceSystemModel.runAmount,
+                    chgAmount: serviceSystemModel.chgAmount,
                     amount: serviceSystemModel.amount,
                     currency: serviceSystemModel.currency,
                 })
@@ -43,6 +83,8 @@ export class ServiceDrizzleRepository {
                 .set({
                     name: service.name,
                     description: service.description,
+                    runAmount: service.runAmount,
+                    chgAmount: service.chgAmount,
                     amount: service.amount,
                     currency: service.currency,
                     responsibleEmail: service.responsibleEmail,
@@ -66,6 +108,8 @@ export class ServiceDrizzleRepository {
                     serviceId: serviceSystem.serviceId,
                     systemId: serviceSystem.systemId,
                     allocation: serviceSystem.allocation,
+                    runAmount: serviceSystem.runAmount,
+                    chgAmount: serviceSystem.chgAmount,
                     amount: serviceSystem.amount,
                     currency: serviceSystem.currency,
                 })
@@ -102,6 +146,8 @@ export class ServiceDrizzleRepository {
                                     serviceId: serviceSystemModel.serviceId,
                                     systemId: serviceSystemModel.systemId,
                                     allocation: serviceSystemModel.allocation,
+                                    runAmount: serviceSystemModel.runAmount,
+                                    chgAmount: serviceSystemModel.chgAmount,
                                     amount: serviceSystemModel.amount,
                                     currency: serviceSystemModel.currency,
                                 }),

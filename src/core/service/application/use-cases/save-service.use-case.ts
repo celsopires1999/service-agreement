@@ -13,7 +13,7 @@ export class SaveServiceUseCase {
         entity.changeName(input.name)
         entity.changeDescription(input.description)
         entity.changeResponsibleEmail(input.responsibleEmail)
-        entity.changeAmount(input.amount)
+        entity.changeAmount(input.runAmount, input.chgAmount)
         entity.changeCurrency(input.currency)
         entity.changeProviderAllocation(input.providerAllocation)
         entity.changeLocalAllocation(input.localAllocation)

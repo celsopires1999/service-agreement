@@ -1,6 +1,5 @@
 import { BackButton } from "@/components/BackButton"
 import { getAgreement } from "@/lib/queries/agreement"
-// import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { getPlans } from "@/lib/queries/plan"
 import { countServicesByAgreementId } from "@/lib/queries/service"
 import { AgreementForm } from "./AgreementForm"
@@ -29,10 +28,6 @@ export default async function AgreementFormPage({
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
     try {
-        // const { getPermission } = getKindeServerSession()
-        // const managerPermission = await getPermission("manager")
-        // const isManager = managerPermission?.isGranted
-
         const { agreementId } = await searchParams
         const planModels = await getPlans()
         const plans = planModels.map((plan) => ({
@@ -40,7 +35,6 @@ export default async function AgreementFormPage({
             description: plan.code,
         }))
 
-        // Edit customer form
         if (agreementId) {
             const agreement = await getAgreement(agreementId)
 

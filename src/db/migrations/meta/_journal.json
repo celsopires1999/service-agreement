@@ -43,6 +43,13 @@
       "when": 1737425361551,
       "tag": "0005_foamy_saracen",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1737677167561,
+      "tag": "0006_dazzling_king_bedlam",
+      "breakpoints": true
     }
   ]
 }

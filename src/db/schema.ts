@@ -70,7 +70,11 @@ export const services = pgTable(
             .references(() => agreements.agreementId),
         name: varchar("name").notNull(),
         description: text("description").notNull(),
-        amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
+        runAmount: decimal("run_amount", { precision: 12, scale: 2 }).notNull(),
+        chgAmount: decimal("chg_amount", { precision: 12, scale: 2 }).notNull(),
+        amount: decimal("amount", { precision: 12, scale: 2 })
+            .notNull()
+            .default("0.00"),
         currency: currencyEnum("currency").notNull(),
         responsibleEmail: varchar("responsible_email").notNull(),
         providerAllocation: text("provider_allocation").notNull(),
@@ -109,6 +113,8 @@ export const serviceSystems = pgTable(
             .notNull()
             .references(() => systems.systemId),
         allocation: decimal("allocation", { precision: 5, scale: 2 }).notNull(),
+        runAmount: decimal("run_amount", { precision: 12, scale: 2 }).notNull(),
+        chgAmount: decimal("chg_amount", { precision: 12, scale: 2 }).notNull(),
         amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
         currency: currencyEnum("currency").notNull(),
         createdAt: timestamp("created_at").notNull().defaultNow(),

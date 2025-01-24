@@ -14,7 +14,8 @@ export const insertServiceSchema = createInsertSchema(services, {
         schema
             .min(1, "Description is required")
             .max(500, "Description must be 500 characters or less"),
-    amount: (schema) =>
+
+    runAmount: (schema) =>
         schema
             .refine(
                 (value) => {
@@ -22,7 +23,19 @@ export const insertServiceSchema = createInsertSchema(services, {
                     return isValidDecimalWithPrecision(decimalValue, 12, 2)
                 },
                 {
-                    message: "Invalid amount",
+                    message: "Invalid run amount",
+                },
+            )
+            .transform((value) => value.replace(",", ".")),
+    chgAmount: (schema) =>
+        schema
+            .refine(
+                (value) => {
+                    const decimalValue = value.replace(",", ".")
+                    return isValidDecimalWithPrecision(decimalValue, 12, 2)
+                },
+                {
+                    message: "Invalid change amount",
                 },
             )
             .transform((value) => value.replace(",", ".")),

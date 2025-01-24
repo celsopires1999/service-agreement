@@ -1,7 +1,7 @@
+import { toDecimal } from "@/lib/utils"
+import Decimal from "decimal.js"
 import { v4 as uuidv4 } from "uuid"
 import { ServiceSystem } from "./serviceSystems"
-import Decimal from "decimal.js"
-import { toDecimal } from "@/lib/utils"
 
 export type currecyType = "EUR" | "USD"
 
@@ -10,6 +10,8 @@ export type ServiceConstructorProps = {
     agreementId: string
     name: string
     description: string
+    runAmount: string
+    chgAmount: string
     amount: string
     currency: currecyType
     responsibleEmail: string
@@ -19,13 +21,18 @@ export type ServiceConstructorProps = {
     serviceSystems?: ServiceSystem[]
 }
 
-export type ServiceCreateCommand = Omit<ServiceConstructorProps, "serviceId">
+export type ServiceCreateCommand = Omit<
+    ServiceConstructorProps,
+    "serviceId" | "amount" | "isActive"
+>
 
 export class Service {
     serviceId: string
     agreementId: string
     name: string
     description: string
+    runAmount: string
+    chgAmount: string
     amount: string
     currency: currecyType
     responsibleEmail: string
@@ -39,22 +46,26 @@ export class Service {
         this.agreementId = props.agreementId.trim()
         this.name = props.name.trim()
         this.description = props.description.trim()
+        this.runAmount = props.runAmount
+        this.chgAmount = props.chgAmount
         this.amount = props.amount
         this.currency = props.currency
         this.responsibleEmail = props.responsibleEmail.trim().toLowerCase()
         this.isActive = props.isActive
-        this.providerAllocation = props.providerAllocation
-        this.localAllocation = props.localAllocation
+        this.providerAllocation = props.providerAllocation.trim()
+        this.localAllocation = props.localAllocation.trim()
         this.serviceSystems = props.serviceSystems ?? []
     }
 
     static create(props: ServiceCreateCommand) {
-        const service = new Service({
-            serviceId: uuidv4(),
+        return new Service({
             ...props,
+            serviceId: uuidv4(),
+            amount: toDecimal(props.runAmount)
+                .add(toDecimal(props.chgAmount))
+                .toFixed(2),
+            isActive: false,
         })
-
-        return service
     }
 
     changeName(name: string) {
@@ -76,10 +87,13 @@ export class Service {
         })
     }
 
-    changeAmount(amount: string) {
+    changeAmount(runAmount: string, chgAmount: string) {
+        const amount = toDecimal(runAmount).add(toDecimal(chgAmount)).toFixed(2)
+        this.runAmount = runAmount
+        this.chgAmount = chgAmount
         this.amount = amount
         this.serviceSystems.forEach((serviceSystem) => {
-            serviceSystem.changeAmount(amount)
+            serviceSystem.changeAmount(runAmount, chgAmount)
         })
     }
 
@@ -100,7 +114,8 @@ export class Service {
             serviceId: this.serviceId,
             systemId,
             allocation,
-            totalAmount: this.amount,
+            totalRunAmount: this.runAmount,
+            totalChgAmount: this.chgAmount,
             currency: this.currency,
         })
 
@@ -116,8 +131,12 @@ export class Service {
             throw new Error(`systemId #${systemId} not found to be updated`)
         }
 
-        serviceSystem.changeAllocation(this.amount, allocation)
-        serviceSystem.changeAmount(this.amount)
+        serviceSystem.changeAllocation(
+            this.runAmount,
+            this.chgAmount,
+            allocation,
+        )
+        // serviceSystem.changeAmount(this.amount)
     }
 
     removeServiceSystem(systemId: string) {
