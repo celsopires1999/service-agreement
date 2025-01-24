@@ -5,7 +5,6 @@ type Props = {
     name: string
     description: string
     users: number
-    applicationId: string
 }
 
 export function SystemServiceHeader({
@@ -13,7 +12,6 @@ export function SystemServiceHeader({
     name,
     description,
     users,
-    applicationId,
 }: Props) {
     return (
         <>
@@ -27,9 +25,7 @@ export function SystemServiceHeader({
                 <h2 className="text-2xl font-bold">{`${name}`}</h2>
 
                 <p className="truncate">{description}</p>
-                <p>
-                    {users} users {`(${applicationId})`}
-                </p>
+                <p>{users} users</p>
                 <hr className="w-full" />
             </div>
         </>

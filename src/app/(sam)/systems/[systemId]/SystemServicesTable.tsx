@@ -53,7 +53,11 @@ export function SystemServicesTable({ data }: Props) {
 
     const searchParams = useSearchParams()
 
-    const [total, setTotal] = useState("0.00")
+    const [total, setTotal] = useState({
+        runSystem: "0.00",
+        chgSystem: "0.00",
+        amountSystem: "0.00",
+    })
 
     useEffect(() => {
         const amount = totalSystemAmount()
@@ -61,14 +65,35 @@ export function SystemServicesTable({ data }: Props) {
     }, [data]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const totalSystemAmount = () => {
-        const amount = data
+        const amountSystem = data
             .reduce(
                 (acc, item) =>
                     new Decimal(acc).add(toDecimal(item.systemAmount)),
                 new Decimal(0),
             )
             .toString()
-        return amount
+
+        const runSystem = data
+            .reduce(
+                (acc, item) =>
+                    new Decimal(acc).add(toDecimal(item.systemRunAmount)),
+                new Decimal(0),
+            )
+            .toString()
+
+        const chgSystem = data
+            .reduce(
+                (acc, item) =>
+                    new Decimal(acc).add(toDecimal(item.systemChgAmount)),
+                new Decimal(0),
+            )
+            .toString()
+
+        return {
+            runSystem,
+            chgSystem,
+            amountSystem,
+        }
     }
 
     const pageIndex = useMemo(() => {
@@ -81,6 +106,8 @@ export function SystemServicesTable({ data }: Props) {
         "serviceName",
         "serviceIsActive",
         "systemAllocation",
+        "systemRunAmount",
+        "systemChgAmount",
         "systemAmount",
         "serviceAmount",
         "serviceCurrency",
@@ -93,7 +120,9 @@ export function SystemServicesTable({ data }: Props) {
         serviceName: "Service",
         serviceIsActive: "Active",
         systemAllocation: "Alloc (%)",
-        systemAmount: "Amount (USD)",
+        systemRunAmount: "Run (USD)",
+        systemChgAmount: "Change  (USD)",
+        systemAmount: "Total (USD)",
         serviceAmount: "Service Amount",
         serviceCurrency: "Currency",
     }
@@ -173,6 +202,8 @@ export function SystemServicesTable({ data }: Props) {
                     // transformational
                     const value = row[columnName]
                     if (
+                        columnName === "systemRunAmount" ||
+                        columnName === "systemChgAmount" ||
                         columnName === "systemAmount" ||
                         columnName === "systemAllocation" ||
                         columnName === "serviceAmount"
@@ -195,6 +226,8 @@ export function SystemServicesTable({ data }: Props) {
                     cell: (info) => {
                         // presentational
                         if (
+                            columnName === "systemRunAmount" ||
+                            columnName === "systemChgAmount" ||
                             columnName === "systemAmount" ||
                             columnName === "systemAllocation" ||
                             columnName === "serviceAmount"
@@ -299,13 +332,27 @@ export function SystemServicesTable({ data }: Props) {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={5}>Total</TableCell>
+                            <TableCell colSpan={5}>Grand Total</TableCell>
                             <TableCell className="text-right">
                                 {new Intl.NumberFormat("pt-BR", {
                                     style: "decimal",
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
-                                }).format(+total)}
+                                }).format(+total.runSystem)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                                {new Intl.NumberFormat("pt-BR", {
+                                    style: "decimal",
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                }).format(+total.chgSystem)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                                {new Intl.NumberFormat("pt-BR", {
+                                    style: "decimal",
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                }).format(+total.amountSystem)}
                             </TableCell>
                             <TableCell colSpan={2}></TableCell>
                         </TableRow>

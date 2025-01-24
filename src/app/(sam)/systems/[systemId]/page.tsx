@@ -69,7 +69,6 @@ export default async function SystemsToServiceFormPage({
                         name={system.name}
                         description={system.description}
                         users={system.users}
-                        applicationId={system.applicationId}
                     />
                     <Suspense key={systemId} fallback={<p>Loading...</p>}>
                         <SystemServicesSearch
@@ -116,6 +115,18 @@ export default async function SystemsToServiceFormPage({
                               .mul(exchangeRateDecimal)
                               .toFixed(2)
                         : service.systemAmount,
+                runAmount:
+                    service.serviceCurrency === "EUR"
+                        ? new Decimal(service.systemRunAmount)
+                              .mul(exchangeRateDecimal)
+                              .toFixed(2)
+                        : service.systemRunAmount,
+                chgAmount:
+                    service.serviceCurrency === "EUR"
+                        ? new Decimal(service.systemChgAmount)
+                              .mul(exchangeRateDecimal)
+                              .toFixed(2)
+                        : service.systemChgAmount,
             }
         })
 
@@ -126,7 +137,6 @@ export default async function SystemsToServiceFormPage({
                     name={system.name}
                     description={system.description}
                     users={system.users}
-                    applicationId={system.applicationId}
                 />
                 <Suspense key={systemId} fallback={<p>Loading...</p>}>
                     <SystemServicesSearch
