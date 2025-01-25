@@ -2,6 +2,7 @@
 
 import { saveServiceAction } from "@/actions/saveServiceAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
+import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
@@ -43,8 +44,8 @@ export function ServiceForm({
         agreementId: service?.agreementId ?? agreement.agreementId,
         name: service?.name ?? "",
         description: service?.description ?? "",
-        runAmount: service?.runAmount.replace(".", ",") ?? "",
-        chgAmount: service?.chgAmount.replace(".", ",") ?? "",
+        runAmount: service?.runAmount ?? "",
+        chgAmount: service?.chgAmount ?? "",
         currency: service?.currency ?? "USD",
         responsibleEmail: service?.responsibleEmail ?? "",
         providerAllocation: service?.providerAllocation ?? "",
@@ -116,7 +117,7 @@ export function ServiceForm({
                 </h2>
                 {!!saveResult?.data?.serviceId && !service?.serviceId && (
                     <Link href={`/services/${saveResult.data.serviceId}`}>
-                        <h2>Go to Systems Form</h2>
+                        <h2>Go to Cost Allocation</h2>
                     </Link>
                 )}
                 {!!service?.serviceId && (
@@ -138,15 +139,19 @@ export function ServiceForm({
                             disabled={!isEditable}
                         />
 
-                        <InputWithLabel<insertServiceSchemaType>
+                        <InputDecimalWithLabel<insertServiceSchemaType>
                             fieldTitle="Run Amount"
                             nameInSchema="runAmount"
+                            type="number"
+                            step="0.01"
                             disabled={!isEditable}
                         />
 
-                        <InputWithLabel<insertServiceSchemaType>
+                        <InputDecimalWithLabel<insertServiceSchemaType>
                             fieldTitle="Change Amount"
                             nameInSchema="chgAmount"
+                            type="number"
+                            step="0.01"
                             disabled={!isEditable}
                         />
 
