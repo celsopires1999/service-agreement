@@ -29,7 +29,7 @@
     "@tanstack/react-table": "^8.20.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cmdk": "^1.0.0",
+    "cmdk": "^1.0.4",
     "decimal.js": "^10.4.3",
     "drizzle-orm": "^0.38.3",
     "drizzle-zod": "^0.6.1",

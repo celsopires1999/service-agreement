@@ -3,8 +3,8 @@
 import { saveAgreementAction } from "@/actions/saveAgreementAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
+import { ComboboxWithLabel } from "@/components/inputs/ComboboxWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
-import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
@@ -177,7 +177,6 @@ export function AgreementForm({
                             min={2024}
                             max={2125}
                             disabled={hasAgreementId}
-                            // valueAsNumber TODO: review this - remove this from component
                         />
 
                         <InputWithLabel<insertAgreementSchemaType>
@@ -190,13 +189,13 @@ export function AgreementForm({
                             nameInSchema="name"
                         />
 
-                        <SelectWithLabel<insertAgreementSchemaType>
+                        <ComboboxWithLabel<insertAgreementSchemaType>
                             fieldTitle="Provider Plan"
                             nameInSchema="providerPlanId"
                             data={plans ?? []}
                         />
 
-                        <SelectWithLabel<insertAgreementSchemaType>
+                        <ComboboxWithLabel<insertAgreementSchemaType>
                             fieldTitle="Local Plan"
                             nameInSchema="localPlanId"
                             data={plans ?? []}
@@ -257,7 +256,6 @@ export function AgreementForm({
                             min={1}
                             max={100}
                             disabled
-                            // valueAsNumber TODO: review this - remove this from component
                         />
 
                         <InputWithLabel<insertAgreementSchemaType>

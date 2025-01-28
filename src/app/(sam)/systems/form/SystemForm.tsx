@@ -135,7 +135,6 @@ export function SystemForm({ system }: Props) {
                             step={1}
                             min={0}
                             max={99999}
-                            // valueAsNumber TODO: review this - is this needed?
                         />
                     </div>
                     <div className="flex w-full max-w-2xl flex-col gap-4">
