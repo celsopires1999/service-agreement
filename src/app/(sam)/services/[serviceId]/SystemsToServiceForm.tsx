@@ -1,8 +1,8 @@
 "use client"
 
 import { saveServiceSystemsAction } from "@/actions/saveServiceSystemsAction"
+import { ComboboxWithLabel } from "@/components/inputs/ComboboxWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
-import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
@@ -19,6 +19,13 @@ import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { SystemsToServiceTable } from "./SystemsToServiceTable"
+import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
+import { useEffect } from "react"
+import Decimal from "decimal.js"
+
+type extendedSaveServiceSystemsSchemaType = saveServiceSystemsSchemaType & {
+    amount: string
+}
 
 type Props = {
     service: selectServiceSchemaType
@@ -40,18 +47,37 @@ export function SystemsToServiceForm({
 }: Props) {
     const { toast } = useToast()
 
-    const defaultValues: saveServiceSystemsSchemaType = {
+    const defaultValues: extendedSaveServiceSystemsSchemaType = {
         systemId: "",
         serviceId: service.serviceId,
         allocation: "",
+        amount: "",
     }
 
-    const form = useForm<saveServiceSystemsSchemaType>({
+    const form = useForm<extendedSaveServiceSystemsSchemaType>({
         mode: "onSubmit",
         resolver: zodResolver(saveServiceSystemsSchema),
         defaultValues,
     })
-    const { setValue } = form
+    const { watch, setValue } = form
+    const amount = watch("amount")
+
+    useEffect(() => {
+        const decimalAmount = amount.replace(",", ".")
+        try {
+            new Decimal(decimalAmount)
+        } catch (error) /* eslint-disable-line @typescript-eslint/no-unused-vars */ {
+            setValue("allocation", "")
+            return
+        }
+
+        const value = new Decimal(decimalAmount)
+            .div(new Decimal(service.amount))
+            .mul(100)
+            .toFixed(2)
+
+        setValue("allocation", value)
+    }, [amount]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
     const handleUpdateServiceSystem = (
         systemId: string,
@@ -135,16 +161,25 @@ export function SystemsToServiceForm({
                     >
                         <div className="mt-4 flex w-full flex-col gap-4">
                             <div className="flex w-full gap-4">
-                                <SelectWithLabel<saveServiceSystemsSchemaType>
+                                <ComboboxWithLabel<extendedSaveServiceSystemsSchemaType>
                                     fieldTitle="System"
                                     nameInSchema="systemId"
                                     data={systems ?? []}
                                     className="min-w-64"
                                 />
+
                                 <div className="flex items-center gap-8">
-                                    <InputWithLabel<saveServiceSystemsSchemaType>
+                                    <InputWithLabel<extendedSaveServiceSystemsSchemaType>
                                         fieldTitle="Allocation (%)"
                                         nameInSchema="allocation"
+                                        type="number"
+                                        step="0.01"
+                                        disabled={!!amount}
+                                    />
+
+                                    <InputDecimalWithLabel<extendedSaveServiceSystemsSchemaType>
+                                        fieldTitle="Amount"
+                                        nameInSchema="amount"
                                         type="number"
                                         step="0.01"
                                     />
