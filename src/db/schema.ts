@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm/pg-core"
 
 import { relations } from "drizzle-orm"
+import { year } from "drizzle-orm/mysql-core"
 
 export const plans = pgTable(
     "plans",
@@ -124,6 +125,53 @@ export const serviceSystems = pgTable(
             .$onUpdate(() => new Date()),
     },
     (t) => [primaryKey({ columns: [t.serviceId, t.systemId] })],
+)
+
+export const usersLists = pgTable(
+    "users_lists",
+    {
+        usersListId: uuid("users_list_id").defaultRandom().primaryKey(),
+        systemId: uuid("system_id")
+            .notNull()
+            .references(() => systems.systemId),
+        year: integer("year").notNull(),
+        revision: integer("revision").notNull().default(1),
+        revisionDate: date("revision_date", { mode: "string" }).notNull(),
+        isRevised: boolean("is_revised").notNull().default(false),
+        localPlanId: uuid("local_plan_id")
+            .notNull()
+            .references(() => plans.planId),
+        usersNumber: integer("users_number").notNull(),
+        createdAt: timestamp("created_at").notNull().defaultNow(),
+        updatedAt: timestamp("updated_at")
+            .notNull()
+            .defaultNow()
+            .$onUpdate(() => new Date()),
+    },
+    (t) => [unique().on(t.systemId, t.localPlanId)],
+)
+
+export const usersListItems = pgTable(
+    "users_list_items",
+    {
+        usersListItemId: uuid("users_list_item_id")
+            .defaultRandom()
+            .primaryKey(),
+        usersListId: uuid("users_list_id")
+            .notNull()
+            .references(() => usersLists.usersListId),
+        name: varchar("name").notNull(),
+        email: varchar("email").notNull(),
+        corpUserId: varchar("corp_user_id").notNull(),
+        area: varchar("area").notNull(),
+        costCenter: varchar("cost_center").notNull(),
+        createdAt: timestamp("created_at").notNull().defaultNow(),
+        updatedAt: timestamp("updated_at")
+            .notNull()
+            .defaultNow()
+            .$onUpdate(() => new Date()),
+    },
+    (t) => [unique().on(t.usersListId, t.email)],
 )
 
 // Create relations
