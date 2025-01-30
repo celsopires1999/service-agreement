@@ -134,7 +134,7 @@ export function SystemsToServiceForm({
                     {service?.name
                         ? `${service.name}`
                         : "Service Allocation Form"}{" "}
-                    {service?.isActive ? "(Active)" : "(Inactive)"}
+                    {service?.isActive ? "✅" : "❌"}
                 </h2>
                 {!!agreement?.agreementId && (
                     <Link href={`/services?searchText=${service.name}`}>

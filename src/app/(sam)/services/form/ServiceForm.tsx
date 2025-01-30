@@ -111,8 +111,8 @@ export function ServiceForm({
                     Service Form{" "}
                     {service?.serviceId
                         ? service?.isActive
-                            ? "(Active)"
-                            : "(Inactive)"
+                            ? "✅"
+                            : "❌"
                         : null}
                 </h2>
                 {!!saveResult?.data?.serviceId && !service?.serviceId && (

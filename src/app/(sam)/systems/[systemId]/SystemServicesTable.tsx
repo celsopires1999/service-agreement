@@ -104,13 +104,13 @@ export function SystemServicesTable({ data }: Props) {
     const columnHeadersArray: Array<keyof getServicesBySystemIdType> = [
         "agreementName",
         "serviceName",
-        "serviceIsActive",
         "systemAllocation",
         "systemRunAmount",
         "systemChgAmount",
         "systemAmount",
         "serviceAmount",
         "serviceCurrency",
+        "serviceIsActive",
     ]
 
     const columnLabels: Partial<{
@@ -118,13 +118,13 @@ export function SystemServicesTable({ data }: Props) {
     }> = {
         agreementName: "Agreement",
         serviceName: "Service",
-        serviceIsActive: "Active",
         systemAllocation: "Alloc (%)",
         systemRunAmount: "Run (USD)",
         systemChgAmount: "Change  (USD)",
         systemAmount: "Total (USD)",
         serviceAmount: "Service Amount",
         serviceCurrency: "Currency",
+        serviceIsActive: "Allocated",
     }
 
     const columnWidths: Partial<{
@@ -332,7 +332,7 @@ export function SystemServicesTable({ data }: Props) {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={5}>Grand Total</TableCell>
+                            <TableCell colSpan={4}>Grand Total</TableCell>
                             <TableCell className="text-right">
                                 {new Intl.NumberFormat("pt-BR", {
                                     style: "decimal",
@@ -354,7 +354,7 @@ export function SystemServicesTable({ data }: Props) {
                                     maximumFractionDigits: 2,
                                 }).format(+total.amountSystem)}
                             </TableCell>
-                            <TableCell colSpan={2}></TableCell>
+                            <TableCell colSpan={3}></TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>

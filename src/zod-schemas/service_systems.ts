@@ -71,7 +71,7 @@ export const saveServiceSystemsSchema = z.object({
                     return false
                 }
 
-                if (+value > 100 || +value < 0.01) {
+                if (+value > 100 || +value < 0.0) {
                     return false
                 }
 
