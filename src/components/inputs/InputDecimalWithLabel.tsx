@@ -48,7 +48,7 @@ export function InputDecimalWithLabel<Schema>({
 
     useEffect(() => {
         setFormattedValue(formatter(form.getValues(nameInSchema)))
-    }, [form.getValues(nameInSchema)])
+    }, [form.getValues(nameInSchema)]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (isEditing) {
