@@ -36,8 +36,8 @@ import {
 import {
     CircleCheckIcon,
     CircleXIcon,
+    ClapperboardIcon,
     Edit,
-    Eye,
     MoreHorizontal,
     Plus,
     TableOfContents,
@@ -185,7 +185,7 @@ export function AgreementTable({ data }: Props) {
                                 className="flex w-full"
                                 prefetch={false}
                             >
-                                <Eye className="mr-2 h-4 w-4" />
+                                <ClapperboardIcon className="mr-2 h-4 w-4" />
                                 <span>Revision</span>
                             </Link>
                         </DropdownMenuItem>

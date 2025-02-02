@@ -3,7 +3,7 @@ import { plansData } from "./data/plans"
 import { servicesData } from "./data/services"
 import { serviceSystemsData } from "./data/serviceSystems"
 import { systemsData } from "./data/systems"
-import { usersListItemsData, usersListsData } from "./data/users-lists"
+import { userListItemsData, userListsData } from "./data/userLists"
 import { db } from "./index"
 import {
     agreements,
@@ -11,15 +11,15 @@ import {
     services,
     serviceSystems,
     systems,
-    usersListItems,
-    usersLists,
+    userListItems,
+    userLists,
 } from "./schema"
 
 const main = async () => {
     console.log("Seeding...")
     try {
-        await db.delete(usersListItems)
-        await db.delete(usersLists)
+        await db.delete(userListItems)
+        await db.delete(userLists)
         await db.delete(serviceSystems)
         await db.delete(services)
         await db.delete(systems)
@@ -31,8 +31,8 @@ const main = async () => {
         await db.insert(agreements).values(agreementsData)
         await db.insert(services).values(servicesData)
         await db.insert(serviceSystems).values(serviceSystemsData)
-        await db.insert(usersLists).values(usersListsData)
-        await db.insert(usersListItems).values(usersListItemsData)
+        await db.insert(userLists).values(userListsData)
+        await db.insert(userListItems).values(userListItemsData)
 
         console.log("Seed completed")
         process.exit(0)

@@ -68,7 +68,6 @@ export default async function SystemsToServiceFormPage({
                         systemId={systemId}
                         name={system.name}
                         description={system.description}
-                        users={system.users}
                     />
                     <Suspense key={systemId} fallback={<p>Loading...</p>}>
                         <SystemServicesSearch
@@ -136,7 +135,6 @@ export default async function SystemsToServiceFormPage({
                     systemId={systemId}
                     name={system.name}
                     description={system.description}
-                    users={system.users}
                 />
                 <Suspense key={systemId} fallback={<p>Loading...</p>}>
                     <SystemServicesSearch

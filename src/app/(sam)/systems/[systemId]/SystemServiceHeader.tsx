@@ -4,15 +4,9 @@ type Props = {
     systemId: string
     name: string
     description: string
-    users: number
 }
 
-export function SystemServiceHeader({
-    systemId,
-    name,
-    description,
-    users,
-}: Props) {
+export function SystemServiceHeader({ systemId, name, description }: Props) {
     return (
         <>
             <div className="flex items-center justify-between">
@@ -25,7 +19,6 @@ export function SystemServiceHeader({
                 <h2 className="text-2xl font-bold">{`${name}`}</h2>
 
                 <p className="truncate">{description}</p>
-                <p>{users} users</p>
                 <hr className="w-full" />
             </div>
         </>

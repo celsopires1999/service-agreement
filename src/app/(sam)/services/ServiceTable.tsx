@@ -1,4 +1,5 @@
 "use client"
+
 import { deleteServiceAction } from "@/actions/deleteServiceAction"
 import { AlertConfirmation } from "@/components/AlertConfirmation"
 import Deleting from "@/components/Deleting"
@@ -6,10 +7,12 @@ import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
+    DropdownMenuPortal,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -36,11 +39,15 @@ import {
 import {
     CircleCheckIcon,
     CircleXIcon,
+    CpuIcon,
     Edit,
     Eye,
+    FileIcon,
     HandCoinsIcon,
+    HandshakeIcon,
     MoreHorizontal,
     Plus,
+    SheetIcon,
     TableOfContents,
     Trash,
 } from "lucide-react"
@@ -160,97 +167,137 @@ export function ServiceTable({ data }: Props) {
 
     const ActionsCell = ({
         row,
-    }: CellContext<getServiceSearchResultsType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Agreement</DropdownMenuLabel>
+    }: CellContext<getServiceSearchResultsType, unknown>) => (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open Menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Options</DropdownMenuLabel>
 
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <Edit className="mr-2 h-4 w-4" />
-                                <span>Edit</span>
-                            </Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-
-                    <DropdownMenuSeparator />
-                    <DropdownMenuLabel>Service</DropdownMenuLabel>
-                    <DropdownMenuGroup>
-                        {!row.original.isRevised && (
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <HandshakeIcon className="mr-2 h-4 w-4" />
+                        <span>Agreement</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
                             <DropdownMenuItem asChild>
                                 <Link
-                                    href={`/services/form?agreementId=${row.original.agreementId}`}
+                                    href={`/agreements/form?agreementId=${row.original.agreementId}`}
                                     className="flex w-full"
                                     prefetch={false}
                                 >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    <span>Add</span>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    <span>Edit</span>
                                 </Link>
                             </DropdownMenuItem>
-                        )}
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
 
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/services/form?serviceId=${row.original.serviceId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                {!row.original.isRevised ? (
-                                    <>
-                                        <Edit className="mr-2 h-4 w-4" />
-                                        <span>Edit</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Eye className="mr-2 h-4 w-4" />
-                                        <span>View</span>
-                                    </>
-                                )}
-                            </Link>
-                        </DropdownMenuItem>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <FileIcon className="mr-2 h-4 w-4" />
+                        <span>Service</span>
+                    </DropdownMenuSubTrigger>
 
-                        {!row.original.isRevised && (
-                            <DropdownMenuItem
-                                onClick={() =>
-                                    handleDeleteService(row.original)
-                                }
-                            >
-                                <Trash className="mr-2 h-4 w-4" />
-                                <span>Delete</span>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            {!row.original.isRevised && (
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href={`/services/form?agreementId=${row.original.agreementId}`}
+                                        className="flex w-full"
+                                        prefetch={false}
+                                    >
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        <span>Add</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
+
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={`/services/form?serviceId=${row.original.serviceId}`}
+                                    className="flex w-full"
+                                    prefetch={false}
+                                >
+                                    {!row.original.isRevised ? (
+                                        <>
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            <span>Edit</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Eye className="mr-2 h-4 w-4" />
+                                            <span>View</span>
+                                        </>
+                                    )}
+                                </Link>
                             </DropdownMenuItem>
-                        )}
-                    </DropdownMenuGroup>
 
-                    <DropdownMenuSeparator />
-                    <DropdownMenuLabel>System</DropdownMenuLabel>
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/services/${row.original.serviceId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <HandCoinsIcon className="mr-2 h-4 w-4" />
-                                <span>Allocation</span>
-                            </Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
+                            {!row.original.isRevised && (
+                                <DropdownMenuItem
+                                    onClick={() =>
+                                        handleDeleteService(row.original)
+                                    }
+                                >
+                                    <Trash className="mr-2 h-4 w-4" />
+                                    <span>Delete</span>
+                                </DropdownMenuItem>
+                            )}
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <SheetIcon className="mr-2 h-4 w-4" />
+                        <span>User List</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={`/services/${row.original.serviceId}/users`}
+                                    className="flex w-full"
+                                    prefetch={false}
+                                >
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    <span>Edit</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <CpuIcon className="mr-2 h-4 w-4" />
+                        <span>Systems</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={`/services/${row.original.serviceId}`}
+                                    className="flex w-full"
+                                    prefetch={false}
+                                >
+                                    <HandCoinsIcon className="mr-2 h-4 w-4" />
+                                    <span>Allocation</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
 
     ActionsCell.displayName = "ActionsCell"
 

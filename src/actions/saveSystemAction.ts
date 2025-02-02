@@ -32,9 +32,7 @@ export const saveSystemAction = actionClient
                     .insert(systems)
                     .values({
                         name: system.name.trim(),
-                        responsibleEmail: system.responsibleEmail.trim(),
                         description: system.description.trim(),
-                        users: system.users,
                         applicationId: system.applicationId.trim(),
                     })
                     .returning({ insertedId: systems.systemId })
@@ -52,9 +50,7 @@ export const saveSystemAction = actionClient
                 .update(systems)
                 .set({
                     name: system.name.trim(),
-                    responsibleEmail: system.responsibleEmail.trim(),
                     description: system.description.trim(),
-                    users: system.users,
                     applicationId: system.applicationId.trim(),
                 })
                 .where(eq(systems.systemId, system.systemId!))

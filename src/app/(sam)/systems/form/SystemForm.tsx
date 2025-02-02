@@ -32,9 +32,7 @@ export function SystemForm({ system }: Props) {
     const emptyValues: insertSystemSchemaType = {
         systemId: "(New)",
         name: "",
-        responsibleEmail: "",
         description: "",
-        users: 0,
         applicationId: "",
     }
 
@@ -42,9 +40,7 @@ export function SystemForm({ system }: Props) {
         ? {
               systemId: system?.systemId ?? "",
               name: system?.name ?? "",
-              responsibleEmail: system?.responsibleEmail ?? "",
               description: system?.description ?? "",
-              users: system?.users ?? 0,
               applicationId: system?.applicationId ?? "",
           }
         : emptyValues
@@ -119,22 +115,8 @@ export function SystemForm({ system }: Props) {
                         />
 
                         <InputWithLabel<insertSystemSchemaType>
-                            fieldTitle="Responsible Email"
-                            nameInSchema="responsibleEmail"
-                        />
-
-                        <InputWithLabel<insertSystemSchemaType>
                             fieldTitle="Application ID"
                             nameInSchema="applicationId"
-                        />
-
-                        <InputWithLabel<insertSystemSchemaType>
-                            fieldTitle="Users"
-                            nameInSchema="users"
-                            type="number"
-                            step={1}
-                            min={0}
-                            max={99999}
                         />
                     </div>
                     <div className="flex w-full max-w-2xl flex-col gap-4">

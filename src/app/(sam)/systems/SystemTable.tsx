@@ -115,21 +115,18 @@ export function SystemTable({ data }: Props) {
     const columnHeadersArray: Array<keyof getSystemType> = [
         "name",
         "applicationId",
-        "users",
         "description",
     ]
 
     const columnLabels: Partial<{ [K in keyof getSystemType]: string }> = {
         name: "System",
         applicationId: "Application ID",
-        users: "Users",
         description: "Description",
     }
 
     const columnWidths: Partial<{
         [K in keyof typeof columnLabels]: number
     }> = {
-        users: 150,
         applicationId: 150,
     }
 

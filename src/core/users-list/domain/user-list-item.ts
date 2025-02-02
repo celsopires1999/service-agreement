@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
 
-export type UsersListItemContructorProps = {
-    usersListItemId: string
+export type UserListItemContructorProps = {
+    userListItemId: string
     name: string
     email: string
     corpUserId: string
@@ -9,20 +9,20 @@ export type UsersListItemContructorProps = {
     costCenter: string
 }
 
-export type UsersListItemCreateCommand = Omit<
-    UsersListItemContructorProps,
-    "usersListItemId"
+export type UserListItemCreateCommand = Omit<
+    UserListItemContructorProps,
+    "userListItemId"
 >
 
-export class UsersListItem {
-    usersListItemId: string
+export class UserListItem {
+    userListItemId: string
     name: string
     email: string
     corpUserId: string
     area: string
     costCenter: string
-    constructor(props: UsersListItemContructorProps) {
-        this.usersListItemId = props.usersListItemId
+    constructor(props: UserListItemContructorProps) {
+        this.userListItemId = props.userListItemId
         this.name = props.name.trim()
         this.email = props.email.trim().toLowerCase()
         this.corpUserId = props.corpUserId.trim()
@@ -30,10 +30,10 @@ export class UsersListItem {
         this.costCenter = props.costCenter.trim()
     }
 
-    static create(props: UsersListItemCreateCommand) {
-        return new UsersListItem({
+    static create(props: UserListItemCreateCommand) {
+        return new UserListItem({
             ...props,
-            usersListItemId: uuidv4(),
+            userListItemId: uuidv4(),
         })
     }
 
