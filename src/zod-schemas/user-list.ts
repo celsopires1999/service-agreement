@@ -41,25 +41,27 @@ export type selectUserListItemSchemaType = typeof selectUserListItemSchema._type
 // UserList Upload
 export const userListUploadSchema = z.object({
     serviceId: z.string().uuid("invalid service ID"),
-    items: z.array(
-        z.object({
-            name: z
-                .string()
-                .min(1, "Name is required")
-                .max(50, "Name must be 50 characters or less"),
-            email: z.string().email("Invalid email address"),
-            corpUserId: z
-                .string()
-                .min(1, "Corp User ID is required")
-                .max(8, "Corp User ID must be 8 characters or less"),
-            area: z
-                .string()
-                .min(1, "Area is required")
-                .max(8, "Area must be 8 characters or less"),
-            costCenter: z
-                .string()
-                .length(9, "Cost Center must be 9 characters"),
-        }),
-    ),
+    items: z
+        .array(
+            z.object({
+                name: z
+                    .string()
+                    .min(1, "Name is required")
+                    .max(50, "Name must be 50 characters or less"),
+                email: z.string().email("Invalid email address"),
+                corpUserId: z
+                    .string()
+                    .min(1, "Corp User ID is required")
+                    .max(8, "Corp User ID must be 8 characters or less"),
+                area: z
+                    .string()
+                    .min(1, "Area is required")
+                    .max(8, "Area must be 8 characters or less"),
+                costCenter: z
+                    .string()
+                    .length(9, "Cost Center must be 9 characters"),
+            }),
+        )
+        .min(1, "At least one item is required"),
 })
 export type userListUploadSchemaType = z.infer<typeof userListUploadSchema>

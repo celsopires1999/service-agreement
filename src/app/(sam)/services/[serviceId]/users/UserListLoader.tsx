@@ -105,7 +105,7 @@ export function UserListLoader({ serviceId }: Props) {
                 const data = event.target?.result
                 try {
                     const workbook = read(data, { type: "binary" })
-                    const sheetName = workbook.SheetNames[1]
+                    const sheetName = workbook.SheetNames[0]
                     const sheet = workbook.Sheets[sheetName]
                     const parsedData = utils.sheet_to_json(sheet, {
                         range: 1,
