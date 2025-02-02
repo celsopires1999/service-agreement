@@ -93,9 +93,7 @@ export const systems = pgTable("systems", {
     systemId: uuid("system_id").defaultRandom().primaryKey(),
     name: varchar("name").unique().notNull(),
     description: text("description").notNull(),
-    users: integer("users").notNull(),
     applicationId: varchar("application_id").unique().notNull(),
-    responsibleEmail: varchar("responsible_email").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
         .notNull()
@@ -125,6 +123,40 @@ export const serviceSystems = pgTable(
     },
     (t) => [primaryKey({ columns: [t.serviceId, t.systemId] })],
 )
+
+export const userLists = pgTable(
+    "user_lists",
+    {
+        userListId: uuid("user_list_id").defaultRandom().primaryKey(),
+        serviceId: uuid("service_id")
+            .notNull()
+            .references(() => services.serviceId),
+        usersNumber: integer("users_number").notNull(),
+        createdAt: timestamp("created_at").notNull().defaultNow(),
+        updatedAt: timestamp("updated_at")
+            .notNull()
+            .defaultNow()
+            .$onUpdate(() => new Date()),
+    },
+    (t) => [unique().on(t.serviceId)],
+)
+
+export const userListItems = pgTable("user_list_items", {
+    userListItemId: uuid("user_list_item_id").defaultRandom().primaryKey(),
+    userListId: uuid("user_list_id")
+        .notNull()
+        .references(() => userLists.userListId),
+    name: varchar("name").notNull(),
+    email: varchar("email").notNull(),
+    corpUserId: varchar("corp_user_id").notNull(),
+    area: varchar("area").notNull(),
+    costCenter: varchar("cost_center").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+        .notNull()
+        .defaultNow()
+        .$onUpdate(() => new Date()),
+})
 
 // Create relations
 export const agreementsRelations = relations(agreements, ({ many }) => ({

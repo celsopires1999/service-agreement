@@ -2,7 +2,7 @@ import "server-only"
 
 import { db } from "@/db"
 import { serviceSystems, systems } from "@/db/schema"
-import { and, asc, eq } from "drizzle-orm"
+import { and, asc, desc, eq } from "drizzle-orm"
 
 export async function getServiceSystemsSearchResults(serviceId: string) {
     const result = await db
@@ -18,7 +18,7 @@ export async function getServiceSystemsSearchResults(serviceId: string) {
         .from(serviceSystems)
         .innerJoin(systems, eq(systems.systemId, serviceSystems.systemId))
         .where(eq(serviceSystems.serviceId, serviceId))
-        .orderBy(asc(systems.name))
+        .orderBy(desc(serviceSystems.allocation), asc(systems.name))
 
     return result
 }

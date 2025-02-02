@@ -124,3 +124,26 @@ export async function getServiceSearchResults(searchText: string) {
 export type getServiceSearchResultsType = Awaited<
     ReturnType<typeof getServiceSearchResults>
 >[number]
+
+export async function getServiceWithRelations(serviceId: string) {
+    return db
+        .select({
+            serviceId: services.serviceId,
+            serviceName: services.name,
+            serviceAmount: services.amount,
+            currency: services.currency,
+            responsibleEmail: services.responsibleEmail,
+            agreementId: services.agreementId,
+            agreementCode: agreements.code,
+            agreementName: agreements.name,
+            agreementYear: agreements.year,
+            agreementRevision: agreements.revision,
+            agreementRevisionDate: agreements.revisionDate,
+            agreementIsRevised: agreements.isRevised,
+            localPlan: plans.code,
+        })
+        .from(services)
+        .innerJoin(agreements, eq(services.agreementId, agreements.agreementId))
+        .innerJoin(plans, eq(plans.planId, agreements.localPlanId))
+        .where(eq(services.serviceId, serviceId))
+}
