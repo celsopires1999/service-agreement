@@ -1,13 +1,21 @@
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
 import { db } from "@/db"
-import { agreements, services, serviceSystems } from "@/db/schema"
+import {
+    agreements,
+    services,
+    serviceSystems,
+    userListItems,
+    userLists,
+} from "@/db/schema"
 import { eq } from "drizzle-orm"
 
 export class DeleteAgreementUseCase {
     async execute(input: DeleteAgreementInput): Promise<DeleteAgreementOutput> {
         const agreementRepo = new AgreementDrizzleRepository()
         const serviceRepo = new ServiceDrizzleRepository()
+        const userListRepo = new UserListDrizzleRepository()
 
         const foundAgreement = await agreementRepo.findById(input.agreementId)
 
@@ -22,6 +30,29 @@ export class DeleteAgreementUseCase {
         await db.transaction(async (tx) => {
             if (foundServices) {
                 for (const service of foundServices) {
+                    const foundUserList = await userListRepo.findById(
+                        service.serviceId,
+                    )
+
+                    if (foundUserList) {
+                        await tx
+                            .delete(userListItems)
+                            .where(
+                                eq(
+                                    userListItems.userListId,
+                                    foundUserList.userListId,
+                                ),
+                            )
+                        await tx
+                            .delete(userLists)
+                            .where(
+                                eq(
+                                    userLists.userListId,
+                                    foundUserList.userListId,
+                                ),
+                            )
+                    }
+
                     await tx
                         .delete(serviceSystems)
                         .where(eq(serviceSystems.serviceId, service.serviceId))

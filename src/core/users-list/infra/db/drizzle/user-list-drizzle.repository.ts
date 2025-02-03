@@ -49,7 +49,7 @@ export class UserListDrizzleRepository {
         })
     }
 
-    async findById(userListId: string): Promise<UserList | null> {
+    async findById(serviceId: string): Promise<UserList | null> {
         const userListModel = await db
             .select({
                 userListId: userLists.userListId,
@@ -57,13 +57,14 @@ export class UserListDrizzleRepository {
                 usersNumber: userLists.usersNumber,
             })
             .from(userLists)
-            .where(eq(userLists.userListId, userListId))
+            .where(eq(userLists.serviceId, serviceId))
             .limit(1)
 
         if (!userListModel.length) {
             return null
         }
 
+        const userListId = userListModel[0].userListId
         const userListItemsModel = await db
             .select({
                 userListItemId: userListItems.userListItemId,

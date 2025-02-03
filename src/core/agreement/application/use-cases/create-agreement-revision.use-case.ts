@@ -1,8 +1,16 @@
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { Service } from "@/core/service/domain/service"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { UserList } from "@/core/users-list/domain/user-list"
+import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
 import { db } from "@/db"
-import { agreements, services, serviceSystems } from "@/db/schema"
+import {
+    agreements,
+    services,
+    serviceSystems,
+    userLists,
+    userListItems,
+} from "@/db/schema"
 
 export class CreateAgreementRevisionUseCase {
     async execute(
@@ -10,6 +18,7 @@ export class CreateAgreementRevisionUseCase {
     ): Promise<CreateAgreementRevisionOutput> {
         const agreementRepo = new AgreementDrizzleRepository()
         const serviceRepo = new ServiceDrizzleRepository()
+        const userListRepo = new UserListDrizzleRepository()
 
         const sourceAgreement = await agreementRepo.findById(input.agreementId)
 
@@ -77,6 +86,27 @@ export class CreateAgreementRevisionUseCase {
                     )
                 })
 
+                const sourceUserList = await userListRepo.findById(
+                    service.serviceId,
+                )
+
+                const newUserList = UserList.create({
+                    serviceId: newService.serviceId,
+                    items: [],
+                })
+
+                if (sourceUserList) {
+                    sourceUserList.items.forEach((item) => {
+                        newUserList.addItem({
+                            name: item.name,
+                            email: item.email,
+                            corpUserId: item.corpUserId,
+                            area: item.area,
+                            costCenter: item.costCenter,
+                        })
+                    })
+                }
+
                 const serviceResult = await tx
                     .insert(services)
                     .values({
@@ -119,6 +149,44 @@ export class CreateAgreementRevisionUseCase {
                         throw new Error(
                             `Error creating service system for agreement ID #${newAgreement.agreementId} and service ID #${newService.serviceId}`,
                         )
+                    }
+                }
+
+                if (newUserList.items.length > 0) {
+                    const resultUserList = await tx
+                        .insert(userLists)
+                        .values({
+                            userListId: newUserList.userListId,
+                            serviceId: newUserList.serviceId,
+                            usersNumber: newUserList.usersNumber,
+                        })
+                        .returning()
+
+                    if (resultUserList.length !== 1) {
+                        throw new Error(
+                            `Error creating user list for agreement ID #${newAgreement.agreementId} and service ID #${newService.serviceId}`,
+                        )
+                    }
+
+                    for (const item of newUserList.items) {
+                        const resultUserListItem = await tx
+                            .insert(userListItems)
+                            .values({
+                                userListItemId: item.userListItemId,
+                                userListId: newUserList.userListId,
+                                name: item.name,
+                                email: item.email,
+                                corpUserId: item.corpUserId,
+                                area: item.area,
+                                costCenter: item.costCenter,
+                            })
+                            .returning()
+
+                        if (resultUserListItem.length !== 1) {
+                            throw new Error(
+                                `Error creating user list item for agreement ID #${newAgreement.agreementId} and service ID #${newService.serviceId}`,
+                            )
+                        }
                     }
                 }
             }

@@ -132,6 +132,10 @@ export function UserListLoader({ serviceId }: Props) {
 
                     handleUserListUpload(validation.data)
                 } catch (error) {
+                    if (error instanceof Error) {
+                        setError(error.message)
+                        return
+                    }
                     console.log(error)
                 }
             }
