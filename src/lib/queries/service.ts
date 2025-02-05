@@ -85,7 +85,21 @@ export type getServicesBySystemIdType = Awaited<
     ReturnType<typeof getServicesBySystemId>
 >[number]
 
-export async function getServiceSearchResults(searchText: string) {
+export async function getServiceSearchResults(
+    localPlanId: string,
+    searchText: string,
+) {
+    let searchWithLocalPlan = true
+
+    if (
+        localPlanId === "all" ||
+        localPlanId === "" ||
+        localPlanId === null ||
+        localPlanId === undefined
+    ) {
+        searchWithLocalPlan = false
+    }
+
     const results = await db
         .select({
             serviceId: services.serviceId,
@@ -106,11 +120,20 @@ export async function getServiceSearchResults(searchText: string) {
         .innerJoin(agreements, eq(services.agreementId, agreements.agreementId))
         .innerJoin(plans, eq(plans.planId, agreements.localPlanId))
         .where(
-            or(
-                ilike(services.name, `%${searchText}%`),
-                ilike(agreements.code, `%${searchText}%`),
-                ilike(agreements.name, `%${searchText}%`),
-            ),
+            !searchWithLocalPlan
+                ? or(
+                      ilike(services.name, `%${searchText}%`),
+                      ilike(agreements.code, `%${searchText}%`),
+                      ilike(agreements.name, `%${searchText}%`),
+                  )
+                : and(
+                      or(
+                          ilike(services.name, `%${searchText}%`),
+                          ilike(agreements.code, `%${searchText}%`),
+                          ilike(agreements.name, `%${searchText}%`),
+                      ),
+                      eq(agreements.localPlanId, localPlanId),
+                  ),
         )
         .orderBy(
             asc(services.name),

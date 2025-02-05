@@ -1,4 +1,5 @@
 import { getServiceSearchResults } from "@/lib/queries/service"
+import { cookies } from "next/headers"
 import { ServiceSearch } from "./ServiceSearch"
 import { ServiceTable } from "./ServiceTable"
 
@@ -11,12 +12,25 @@ export default async function ServicesPage({
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
-    const { searchText } = await searchParams
+    const { localPlanId, searchText } = await searchParams
+
+    const cookieStore = await cookies()
+    const cookieLocalPlanId = cookieStore.get("localPlanId")?.value
+
+    let searchLocalPlanId: string
+
+    if (localPlanId) {
+        searchLocalPlanId = localPlanId
+    } else if (cookieLocalPlanId) {
+        searchLocalPlanId = cookieLocalPlanId
+    } else {
+        searchLocalPlanId = ""
+    }
 
     if (!searchText) {
         return (
             <div>
-                <ServiceSearch searchText="" />
+                <ServiceSearch localPlanId={searchLocalPlanId} searchText="" />
                 <div className="mt-6 flex flex-col gap-4">
                     <h2 className="text-2xl font-bold">Services List</h2>
                     <p className="mt-2">You can search by:</p>
@@ -31,11 +45,17 @@ export default async function ServicesPage({
     }
 
     try {
-        const results = await getServiceSearchResults(searchText)
+        const results = await getServiceSearchResults(
+            searchLocalPlanId,
+            searchText,
+        )
 
         return (
             <div>
-                <ServiceSearch searchText={searchText} />
+                <ServiceSearch
+                    localPlanId={searchLocalPlanId}
+                    searchText={searchText}
+                />
                 {results.length ? (
                     <ServiceTable data={results} />
                 ) : (
