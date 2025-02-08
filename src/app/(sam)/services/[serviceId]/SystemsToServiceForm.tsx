@@ -22,7 +22,6 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { ServiceHeader } from "./components/ServiceHeader"
 import { SystemsToServiceTable } from "./SystemsToServiceTable"
-// import { ServiceHeader } from "./ServiceHeader"
 
 type extendedSaveServiceSystemsSchemaType = saveServiceSystemsSchemaType & {
     amount: string
@@ -75,7 +74,7 @@ export function SystemsToServiceForm({
         const value = new Decimal(decimalAmount)
             .div(new Decimal(service.amount))
             .mul(100)
-            .toFixed(2)
+            .toFixed(6)
 
         setValue("allocation", value)
     }, [amount]) /* eslint-disable-line react-hooks/exhaustive-deps */

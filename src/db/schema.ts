@@ -110,7 +110,7 @@ export const serviceSystems = pgTable(
         systemId: uuid("system_id")
             .notNull()
             .references(() => systems.systemId),
-        allocation: decimal("allocation", { precision: 5, scale: 2 }).notNull(),
+        allocation: decimal("allocation", { precision: 9, scale: 6 }).notNull(),
         runAmount: decimal("run_amount", { precision: 12, scale: 2 }).notNull(),
         chgAmount: decimal("chg_amount", { precision: 12, scale: 2 }).notNull(),
         amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),

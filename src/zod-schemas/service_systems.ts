@@ -13,14 +13,14 @@ export const insertServiceSystemsSchema = createInsertSchema(serviceSystems, {
                     const decimalValue = value.replace(",", ".")
                     const isValid = isValidDecimalWithPrecision(
                         decimalValue,
-                        5,
-                        2,
+                        9,
+                        6,
                     )
                     if (!isValid) {
                         return false
                     }
 
-                    if (+value > 100 || +value < 0.01) {
+                    if (+value > 100 || +value < 0.000001) {
                         return false
                     }
 
@@ -66,7 +66,7 @@ export const saveServiceSystemsSchema = z.object({
         .refine(
             (value) => {
                 const decimalValue = value.replace(",", ".")
-                const isValid = isValidDecimalWithPrecision(decimalValue, 5, 2)
+                const isValid = isValidDecimalWithPrecision(decimalValue, 9, 6)
                 if (!isValid) {
                     return false
                 }

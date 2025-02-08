@@ -242,14 +242,18 @@ export function SystemsToServiceTable({
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (
-                        columnName === "amount" ||
-                        columnName === "allocation"
-                    ) {
+                    if (columnName === "amount") {
                         return new Intl.NumberFormat("pt-BR", {
                             style: "decimal",
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
+                        }).format(+value)
+                    }
+                    if (columnName === "allocation") {
+                        return new Intl.NumberFormat("pt-BR", {
+                            style: "decimal",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 6,
                         }).format(+value)
                     }
                     return value
@@ -358,7 +362,7 @@ export function SystemsToServiceTable({
                                 {new Intl.NumberFormat("pt-BR", {
                                     style: "decimal",
                                     minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
+                                    maximumFractionDigits: 6,
                                 }).format(+total.allocation)}
                             </TableCell>
                             <TableCell className="text-right">
