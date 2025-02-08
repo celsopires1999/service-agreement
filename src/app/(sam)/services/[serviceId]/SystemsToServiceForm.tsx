@@ -2,6 +2,7 @@
 
 import { saveServiceSystemsAction } from "@/actions/saveServiceSystemsAction"
 import { ComboboxWithLabel } from "@/components/inputs/ComboboxWithLabel"
+import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
@@ -14,14 +15,14 @@ import {
     saveServiceSystemsSchemaType,
 } from "@/zod-schemas/service_systems"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import Link from "next/link"
-import { useForm } from "react-hook-form"
-import { SystemsToServiceTable } from "./SystemsToServiceTable"
-import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
 import { useEffect } from "react"
-import Decimal from "decimal.js"
+import { useForm } from "react-hook-form"
+import { ServiceHeader } from "./components/ServiceHeader"
+import { SystemsToServiceTable } from "./SystemsToServiceTable"
+// import { ServiceHeader } from "./ServiceHeader"
 
 type extendedSaveServiceSystemsSchemaType = saveServiceSystemsSchemaType & {
     amount: string
@@ -129,30 +130,11 @@ export function SystemsToServiceForm({
 
     return (
         <div className="flex flex-col gap-1 sm:px-8">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">
-                    {service?.name
-                        ? `${service.name}`
-                        : "Service Allocation Form"}{" "}
-                    {service?.isActive ? "✅" : "❌"}
-                </h2>
-                {!!agreement?.agreementId && (
-                    <Link href={`/services?searchText=${service.name}`}>
-                        <h2>Go to Services List</h2>
-                    </Link>
-                )}
-            </div>
-
-            <div className="mb-1 space-y-2">
-                <h2>{`${agreement.code}`}</h2>
-                <p className="truncate">{agreement.name}</p>
-                <p>
-                    Valid for {agreement.year} with Local Plan{" "}
-                    {agreement.localPlan}
-                </p>
-                <hr className="w-full" />
-            </div>
-
+            <ServiceHeader
+                title="Cost Allocation"
+                service={service}
+                agreement={agreement}
+            />
             {isEditable && (
                 <Form {...form}>
                     <form
