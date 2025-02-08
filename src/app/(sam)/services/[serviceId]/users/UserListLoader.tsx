@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "@/hooks/use-toast"
 import {
-    userListUploadSchemaType,
     userListUploadSchema,
+    userListUploadSchemaType,
 } from "@/zod-schemas/user-list"
 import { SheetIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
@@ -126,7 +126,7 @@ export function UserListLoader({ serviceId }: Props) {
                     const validation = userListUploadSchema.safeParse(params)
                     if (!validation.success) {
                         const errors = validation.error.flatten().fieldErrors
-                        setError(Object.values(errors).flat().join(", "))
+                        setError(Object.values(errors).flat().join(", ") + ".")
                         return
                     }
 

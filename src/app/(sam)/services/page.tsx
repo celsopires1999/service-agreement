@@ -59,7 +59,7 @@ export default async function ServicesPage({
                 {results.length ? (
                     <ServiceTable data={results} />
                 ) : (
-                    <p className="mt-4">No results found</p>
+                    <p className="mt-4">No services found</p>
                 )}
             </div>
         )

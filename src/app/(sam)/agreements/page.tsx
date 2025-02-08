@@ -61,7 +61,7 @@ export default async function AgreementsPage({
                 {results.length ? (
                     <AgreementTable data={results} />
                 ) : (
-                    <p className="mt-4">No results found</p>
+                    <p className="mt-4">No agreements found</p>
                 )}
             </div>
         )

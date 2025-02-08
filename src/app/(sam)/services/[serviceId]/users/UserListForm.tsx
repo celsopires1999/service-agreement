@@ -92,18 +92,22 @@ export function UserListForm({ service, agreement, userListItems }: Props) {
                 <hr className="w-full" />
             </div>
             <div className="flex flex-row gap-1">
-                <UserListLoader serviceId={service.serviceId} />
-                <Button
-                    variant="outline"
-                    title="Delete User List"
-                    aria-label="Delete User List"
-                    onClick={() => {
-                        setShowDeleteConfirmation(true)
-                    }}
-                    disabled={isDeleting}
-                >
-                    Delete
-                </Button>
+                {!agreement.isRevised && (
+                    <UserListLoader serviceId={service.serviceId} />
+                )}
+                {!agreement.isRevised && (
+                    <Button
+                        variant="outline"
+                        title="Delete User List"
+                        aria-label="Delete User List"
+                        onClick={() => {
+                            setShowDeleteConfirmation(true)
+                        }}
+                        disabled={isDeleting}
+                    >
+                        Delete
+                    </Button>
+                )}
 
                 <Button
                     variant="outline"

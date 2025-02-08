@@ -267,8 +267,17 @@ export function ServiceTable({ data }: Props) {
                                     className="flex w-full"
                                     prefetch={false}
                                 >
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    <span>Edit</span>
+                                    {!row.original.isRevised ? (
+                                        <>
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            <span>Edit</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Eye className="mr-2 h-4 w-4" />
+                                            <span>View</span>
+                                        </>
+                                    )}
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuSubContent>

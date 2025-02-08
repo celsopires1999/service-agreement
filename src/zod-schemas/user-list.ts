@@ -29,7 +29,7 @@ export const insertUserListItemSchema = createInsertSchema(userListItems, {
     area: (schema) =>
         schema
             .min(1, "Area is required")
-            .max(8, "Area must be 8 characters or less"),
+            .max(15, "Area must be 15 characters or less"),
     costCenter: (schema) =>
         schema.length(9, "Cost Center must be 9 characters"),
 })
@@ -44,20 +44,20 @@ export const userListUploadSchema = z.object({
     items: z
         .array(
             z.object({
-                name: z
+                name: z.coerce
                     .string()
                     .min(1, "Name is required")
                     .max(50, "Name must be 50 characters or less"),
-                email: z.string().email("Invalid email address"),
-                corpUserId: z
+                email: z.coerce.string().email("Invalid email address"),
+                corpUserId: z.coerce
                     .string()
                     .min(1, "Corp User ID is required")
                     .max(8, "Corp User ID must be 8 characters or less"),
-                area: z
+                area: z.coerce
                     .string()
                     .min(1, "Area is required")
-                    .max(8, "Area must be 8 characters or less"),
-                costCenter: z
+                    .max(15, "Area must be 15 characters or less"),
+                costCenter: z.coerce
                     .string()
                     .length(9, "Cost Center must be 9 characters"),
             }),

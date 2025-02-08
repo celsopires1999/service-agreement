@@ -1,6 +1,6 @@
 "use server"
 
-import { eq } from "drizzle-orm"
+import { and, count, eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { db } from "@/db"
@@ -58,6 +58,41 @@ export const saveAgreementAction = actionClient
                 }
             }
             // Existing agreement
+
+            const currentAgreement = await db
+                .select({
+                    agreementId: agreements.agreementId,
+                    year: agreements.year,
+                    code: agreements.code,
+                })
+                .from(agreements)
+                .where(eq(agreements.agreementId, agreement.agreementId))
+                .limit(1)
+
+            const currentAgreementYear = currentAgreement[0].year
+            const currentAgreementCode = currentAgreement[0].code
+
+            const countYearCode = await db
+                .select({
+                    count: count(),
+                })
+                .from(agreements)
+                .where(
+                    and(
+                        eq(agreements.year, currentAgreementYear),
+                        eq(agreements.code, currentAgreementCode),
+                    ),
+                )
+
+            if (
+                countYearCode[0].count > 1 &&
+                currentAgreementCode !== agreement.code
+            ) {
+                throw new Error(
+                    `Agreement with year ${currentAgreementYear} and code ${currentAgreementCode} cannot be changed (${countYearCode[0].count} revisions found)`,
+                )
+            }
+
             // updatedAt is set by the database
             const result = await db
                 .update(agreements)
