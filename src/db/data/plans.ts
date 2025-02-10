@@ -6,11 +6,13 @@ export const plansData: insertPlanSchemaType[] = [
         code: "BP25",
         description: "Business Plan 2025",
         euro: "1.2345",
+        planDate: "2024-08-01",
     },
     {
         planId: "97696848-f502-4342-b277-fe586f982aa1",
         code: "FC0325",
         description: "Forecast 03 2025",
         euro: "1.2346",
+        planDate: "2025-03-01",
     },
 ]

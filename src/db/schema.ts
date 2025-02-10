@@ -22,6 +22,7 @@ export const plans = pgTable(
         code: varchar("code").notNull(),
         description: text("description").notNull(),
         euro: decimal("euro", { precision: 8, scale: 4 }).notNull(),
+        planDate: date("plan_date", { mode: "string" }).notNull(),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at")
             .notNull()

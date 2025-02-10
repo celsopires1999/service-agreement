@@ -15,6 +15,7 @@ export async function getPlans() {
             code: plans.code,
             description: plans.description,
             euro: plans.euro,
+            planDate: plans.planDate,
         })
         .from(plans)
         .orderBy(desc(plans.code))

@@ -28,6 +28,7 @@ export const savePlanAction = actionClient
                         code: plan.code,
                         description: plan.description,
                         euro: plan.euro,
+                        planDate: plan.planDate,
                     })
                     .returning({ createdAt: plans.createdAt })
 
@@ -46,6 +47,7 @@ export const savePlanAction = actionClient
                     code: plan.code,
                     description: plan.description,
                     euro: plan.euro,
+                    planDate: plan.planDate,
                 })
                 .where(eq(plans.planId, plan.planId))
                 .returning({ updatedAt: plans.updatedAt })

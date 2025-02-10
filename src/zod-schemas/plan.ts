@@ -28,6 +28,7 @@ export const insertPlanSchema = createInsertSchema(plans, {
                 message: "Value must be greater than zero",
             })
             .transform((value) => value.replace(",", ".")),
+    planDate: (schema) => schema.date("Invalid plan date"),
 })
 
 export const selectPlanSchema = createSelectSchema(plans)

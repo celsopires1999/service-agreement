@@ -44,6 +44,7 @@ type Props = {
         code: string,
         description: string,
         euro: string,
+        planDate: string,
     ) => void
 }
 
@@ -113,12 +114,14 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
         "code",
         "description",
         "euro",
+        "planDate",
     ]
 
     const columnLabels: Partial<{ [K in keyof getPlansType]: string }> = {
         code: "Code",
         description: "Description",
         euro: "EUR / USD",
+        planDate: "Plan Date",
     }
 
     const columnWidths: Partial<{
@@ -150,6 +153,7 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                                 row.original.code,
                                 row.original.description,
                                 row.original.euro,
+                                row.original.planDate,
                             )
                         }
                     >

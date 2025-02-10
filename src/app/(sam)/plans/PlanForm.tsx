@@ -26,6 +26,7 @@ export function PlanForm({ plans }: Props) {
         code: "",
         description: "",
         euro: "0.0000",
+        planDate: "",
     }
 
     const form = useForm<insertPlanSchemaType>({
@@ -40,11 +41,13 @@ export function PlanForm({ plans }: Props) {
         code: string,
         description: string,
         euro: string,
+        planDate: string,
     ) => {
         setValue("planId", planId)
         setValue("code", code)
         setValue("description", description)
         setValue("euro", euro)
+        setValue("planDate", planDate)
     }
 
     const {
@@ -73,6 +76,8 @@ export function PlanForm({ plans }: Props) {
     })
 
     async function submitForm(data: insertPlanSchemaType) {
+        console.log(data)
+
         resetSaveAction()
         try {
             await executeSave(data)
@@ -116,6 +121,12 @@ export function PlanForm({ plans }: Props) {
                                     min={0.0001}
                                     max={9999.9999}
                                     step="0.0001"
+                                />
+
+                                <InputWithLabel<insertPlanSchemaType>
+                                    fieldTitle="Plan Date"
+                                    nameInSchema="planDate"
+                                    type="date"
                                 />
 
                                 <div className="mt-4 flex gap-2">
