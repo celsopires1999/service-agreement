@@ -22,6 +22,8 @@ export class ServiceDrizzleRepository {
                     isActive: service.isActive,
                     providerAllocation: service.providerAllocation,
                     localAllocation: service.localAllocation,
+                    isValidated: service.isValidated,
+                    validatorEmail: service.validatorEmail,
                 })
                 .returning({ insertedId: services.serviceId })
 
@@ -91,6 +93,8 @@ export class ServiceDrizzleRepository {
                     isActive: service.isActive,
                     providerAllocation: service.providerAllocation,
                     localAllocation: service.localAllocation,
+                    isValidated: service.isValidated,
+                    validatorEmail: service.validatorEmail,
                 })
                 .where(eq(services.serviceId, service.serviceId))
                 .returning({ updatedId: services.serviceId })

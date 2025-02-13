@@ -3,6 +3,7 @@
 import { saveServiceAction } from "@/actions/saveServiceAction"
 import { BadgeWithTooltip } from "@/components/BadgeWithTooltip"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
+import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
 import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
@@ -51,6 +52,8 @@ export function ServiceForm({
         responsibleEmail: service?.responsibleEmail ?? "",
         providerAllocation: service?.providerAllocation ?? "",
         localAllocation: service?.localAllocation ?? "",
+        isValidated: service?.isValidated ?? false,
+        validatorEmail: service?.validatorEmail ?? "",
     }
 
     const form = useForm<insertServiceSchemaType>({
@@ -228,6 +231,21 @@ export function ServiceForm({
                             className="max-w-2xl"
                             disabled={!isEditable}
                         />
+
+                        <InputWithLabel<insertServiceSchemaType>
+                            fieldTitle="Validator Email"
+                            nameInSchema="validatorEmail"
+                            disabled={!isEditable}
+                        />
+                        {service?.serviceId && (
+                            <CheckboxWithLabel<insertServiceSchemaType>
+                                fieldTitle="Validated?"
+                                nameInSchema="isValidated"
+                                disabled={!isEditable}
+                                message="Yes"
+                                className="max-w-xs"
+                            />
+                        )}
 
                         {isEditable && (
                             <div className="flex max-w-xs gap-2">

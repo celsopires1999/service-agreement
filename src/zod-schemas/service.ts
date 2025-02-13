@@ -44,7 +44,8 @@ export const insertServiceSchema = createInsertSchema(services, {
         schema.refine((value) => ["EUR", "USD"].includes(value), {
             message: "Invalid currency",
         }),
-    responsibleEmail: (schema) => schema.email("Invalid email address"),
+    responsibleEmail: (schema) =>
+        schema.email("Invalid responsible email address"),
     providerAllocation: (schema) =>
         schema
             .min(1, "Provider Allocation is required")
@@ -53,6 +54,8 @@ export const insertServiceSchema = createInsertSchema(services, {
         schema
             .min(1, "Local Allocation is required")
             .max(500, "Local Allocation must be 500 characters or less"),
+    isValidated: z.boolean(),
+    validatorEmail: (schema) => schema.email("Invalid validator email address"),
 })
 
 export const selectServiceSchema = createSelectSchema(services)

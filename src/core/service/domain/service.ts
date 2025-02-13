@@ -18,12 +18,14 @@ export type ServiceConstructorProps = {
     isActive: boolean
     providerAllocation: string
     localAllocation: string
+    isValidated: boolean
+    validatorEmail: string
     serviceSystems?: ServiceSystem[]
 }
 
 export type ServiceCreateCommand = Omit<
     ServiceConstructorProps,
-    "serviceId" | "amount" | "isActive"
+    "serviceId" | "amount" | "isActive" | "isValidated"
 >
 
 export class Service {
@@ -39,6 +41,8 @@ export class Service {
     isActive: boolean
     providerAllocation: string
     localAllocation: string
+    isValidated: boolean
+    validatorEmail: string
     serviceSystems: ServiceSystem[]
 
     constructor(props: ServiceConstructorProps) {
@@ -54,6 +58,8 @@ export class Service {
         this.isActive = props.isActive
         this.providerAllocation = props.providerAllocation.trim()
         this.localAllocation = props.localAllocation.trim()
+        this.isValidated = props.isValidated
+        this.validatorEmail = props.validatorEmail.trim().toLowerCase()
         this.serviceSystems = props.serviceSystems ?? []
     }
 
@@ -65,6 +71,7 @@ export class Service {
                 .add(toDecimal(props.chgAmount))
                 .toFixed(2),
             isActive: false,
+            isValidated: false,
         })
     }
 
@@ -105,6 +112,14 @@ export class Service {
         this.localAllocation = allocation
     }
 
+    changeIsValidated(isValidate: boolean) {
+        this.isValidated = isValidate
+    }
+
+    changeValidatorEmail(validatorEmail: string) {
+        this.validatorEmail = validatorEmail.trim().toLowerCase()
+    }
+
     hasSystem(systemId: string) {
         return !!this.serviceSystems.find((item) => item.systemId === systemId)
     }
@@ -136,7 +151,6 @@ export class Service {
             this.chgAmount,
             allocation,
         )
-        // serviceSystem.changeAmount(this.amount)
     }
 
     removeServiceSystem(systemId: string) {
@@ -157,5 +171,19 @@ export class Service {
         }
 
         this.isActive = false
+    }
+
+    validate() {
+        if (this.isValidated === false) {
+            return
+        }
+
+        if (this.isValidated === true && this.isActive === true) {
+            return
+        }
+
+        throw new Error(
+            "Service cannot be validated when cost allocation to systems is not 100%",
+        )
     }
 }

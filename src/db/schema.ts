@@ -81,6 +81,8 @@ export const services = pgTable(
         providerAllocation: text("provider_allocation").notNull(),
         localAllocation: text("local_allocation").notNull(),
         isActive: boolean("is_active").notNull().default(false),
+        isValidated: boolean("is_validated").notNull().default(false),
+        validatorEmail: varchar("validator_email").notNull(),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at")
             .notNull()

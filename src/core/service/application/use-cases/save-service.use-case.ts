@@ -17,7 +17,11 @@ export class SaveServiceUseCase {
         entity.changeCurrency(input.currency)
         entity.changeProviderAllocation(input.providerAllocation)
         entity.changeLocalAllocation(input.localAllocation)
+        entity.changeIsValidated(input.isValidated)
+        entity.changeValidatorEmail(input.validatorEmail)
         entity.changeActivationStatusBasedOnAllocation()
+
+        entity.validate()
 
         const serviceId = await repo.update(entity)
 

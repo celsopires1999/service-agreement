@@ -4,7 +4,7 @@ import { and, count, eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { db } from "@/db"
-import { agreements } from "@/db/schema"
+import { agreements, services } from "@/db/schema"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertAgreementSchema,
@@ -57,8 +57,8 @@ export const saveAgreementAction = actionClient
                     agreementId: result[0].insertedId,
                 }
             }
-            // Existing agreement
 
+            // Agreement cannot have the code changed if there is another version with the same year and code
             const currentAgreement = await db
                 .select({
                     agreementId: agreements.agreementId,
@@ -90,6 +90,25 @@ export const saveAgreementAction = actionClient
             ) {
                 throw new Error(
                     `Agreement with year ${currentAgreementYear} and code ${currentAgreementCode} cannot be changed (${countYearCode[0].count} revisions found)`,
+                )
+            }
+
+            // Agreement can only be set to revised if all services are validated.
+            const resultNotValidated = await db
+                .select({
+                    totalNotValidatedServices: count(),
+                })
+                .from(services)
+                .where(
+                    and(
+                        eq(services.agreementId, agreement.agreementId),
+                        eq(services.isValidated, false),
+                    ),
+                )
+
+            if (resultNotValidated[0].totalNotValidatedServices > 0) {
+                throw new Error(
+                    `Agreement cannot be set to revised because ${resultNotValidated[0].totalNotValidatedServices} services are not validated`,
                 )
             }
 

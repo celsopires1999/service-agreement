@@ -77,7 +77,10 @@ export class CreateAgreementRevisionUseCase {
                     responsibleEmail: service.responsibleEmail,
                     providerAllocation: service.providerAllocation,
                     localAllocation: service.localAllocation,
+                    validatorEmail: service.validatorEmail,
                 })
+
+                newService.validate()
 
                 service.serviceSystems.forEach((serviceSystem) => {
                     newService.addServiceSystem(
@@ -85,6 +88,8 @@ export class CreateAgreementRevisionUseCase {
                         serviceSystem.allocation,
                     )
                 })
+
+                newService.changeActivationStatusBasedOnAllocation()
 
                 const sourceUserList = await userListRepo.findById(
                     service.serviceId,
@@ -122,6 +127,8 @@ export class CreateAgreementRevisionUseCase {
                         isActive: newService.isActive,
                         providerAllocation: newService.providerAllocation,
                         localAllocation: newService.localAllocation,
+                        isValidated: newService.isValidated,
+                        validatorEmail: newService.validatorEmail,
                     })
                     .returning()
 

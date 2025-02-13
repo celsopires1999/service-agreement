@@ -264,12 +264,14 @@ export function AgreementForm({
                             type="date"
                         />
 
-                        <CheckboxWithLabel<insertAgreementSchemaType>
-                            fieldTitle="Revised?"
-                            nameInSchema="isRevised"
-                            message="Yes"
-                            className="max-w-xs"
-                        />
+                        {agreement?.agreementId && (
+                            <CheckboxWithLabel<insertAgreementSchemaType>
+                                fieldTitle="Revised?"
+                                nameInSchema="isRevised"
+                                message="Yes"
+                                className="max-w-xs"
+                            />
+                        )}
 
                         <TextAreaWithLabel<insertAgreementSchemaType>
                             fieldTitle="Description"

@@ -10,6 +10,8 @@ export class CreateServiceUseCase {
             ...input,
         })
 
+        entity.validate()
+
         const serviceId = await repo.insert(entity)
 
         return {
@@ -20,7 +22,7 @@ export class CreateServiceUseCase {
 
 export type CreateServiceInput = Omit<
     insertServiceSchemaType,
-    "serviceId" | "amount" | "isActive"
+    "serviceId" | "amount" | "isActive" | "isValidated"
 >
 
 export type CreateServiceOutput = {
