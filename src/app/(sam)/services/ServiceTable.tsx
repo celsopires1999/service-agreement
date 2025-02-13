@@ -127,13 +127,12 @@ export function ServiceTable({ data }: Props) {
         "name",
         "amount",
         "currency",
+        "validatorEmail",
+        "isValidated",
         "agreementCode",
-        "agreementName",
         "localPlan",
         "year",
         "revision",
-        "isRevised",
-        "revisionDate",
     ]
 
     const columnLabels: Partial<{
@@ -142,13 +141,12 @@ export function ServiceTable({ data }: Props) {
         name: "Service",
         amount: "Amount",
         currency: "Currency",
+        validatorEmail: "Validator",
+        isValidated: "Validated",
         agreementCode: "Agreement",
-        agreementName: "Name",
         localPlan: "Local Plan",
         year: "Year",
         revision: "Revision",
-        isRevised: "Revised",
-        revisionDate: "Date",
     }
 
     const columnWidths: Partial<{
@@ -157,10 +155,9 @@ export function ServiceTable({ data }: Props) {
         amount: 150,
         currency: 150,
         localPlan: 150,
+        isValidated: 150,
         year: 150,
         revision: 150,
-        isRevised: 150,
-        revisionDate: 150,
     }
 
     const columnHelper = createColumnHelper<getServiceSearchResultsType>()
@@ -329,25 +326,6 @@ export function ServiceTable({ data }: Props) {
                         }).format(+value)
                     }
 
-                    if (
-                        columnName === "revisionDate" &&
-                        typeof value === "string"
-                    ) {
-                        return value
-                            ? new Intl.DateTimeFormat("pt-BR", {
-                                  year: "numeric",
-                                  month: "2-digit",
-                                  day: "2-digit",
-                              }).format(
-                                  new Date(
-                                      +value.substring(0, 4),
-                                      +value.substring(5, 7) - 1,
-                                      +value.substring(8, 10),
-                                  ),
-                              )
-                            : ""
-                    }
-
                     return value
                 },
                 {
@@ -366,7 +344,7 @@ export function ServiceTable({ data }: Props) {
                             )
                         }
 
-                        if (columnName === "isRevised") {
+                        if (columnName === "isValidated") {
                             return (
                                 <div className="grid place-content-center">
                                     {info.getValue() === false ? (

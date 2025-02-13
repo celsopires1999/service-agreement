@@ -36,8 +36,8 @@ export default async function ServicesPage({
                     <p className="mt-2">You can search by:</p>
                     <ul className="-mt-2 list-disc pl-6">
                         <li>Service Name</li>
+                        <li>Validator Email</li>
                         <li>Agreement Code</li>
-                        <li>Agreement Name</li>
                     </ul>
                 </div>
             </div>

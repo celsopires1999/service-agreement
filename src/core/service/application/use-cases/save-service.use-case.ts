@@ -1,10 +1,20 @@
+import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { insertServiceSchemaType } from "@/zod-schemas/service"
 
 export class SaveServiceUseCase {
     async execute(input: SaveServiceInput): Promise<SaveServiceOutput> {
-        const repo = new ServiceDrizzleRepository()
-        const entity = await repo.findById(input.serviceId)
+        const serviceRepo = new ServiceDrizzleRepository()
+        const agreementRepo = new AgreementDrizzleRepository()
+        const entity = await serviceRepo.findById(input.serviceId)
+
+        const agreement = await agreementRepo.findById(input.agreementId)
+
+        if (!!agreement && agreement.isRevised) {
+            throw new Error(
+                `Agreement ID #${input.agreementId} is already revised`,
+            )
+        }
 
         if (!entity) {
             throw new Error(`Service ID #${input.serviceId} not found`)
@@ -23,7 +33,7 @@ export class SaveServiceUseCase {
 
         entity.validate()
 
-        const serviceId = await repo.update(entity)
+        const serviceId = await serviceRepo.update(entity)
 
         return {
             serviceId,

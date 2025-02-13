@@ -107,6 +107,8 @@ export async function getServiceSearchResults(
             amount: services.amount,
             currency: services.currency,
             responsibleEmail: services.responsibleEmail,
+            isValidated: services.isValidated,
+            validatorEmail: services.validatorEmail,
             agreementId: services.agreementId,
             agreementCode: agreements.code,
             agreementName: agreements.name,
@@ -123,14 +125,14 @@ export async function getServiceSearchResults(
             !searchWithLocalPlan
                 ? or(
                       ilike(services.name, `%${searchText}%`),
+                      ilike(services.validatorEmail, `%${searchText}%`),
                       ilike(agreements.code, `%${searchText}%`),
-                      ilike(agreements.name, `%${searchText}%`),
                   )
                 : and(
                       or(
                           ilike(services.name, `%${searchText}%`),
+                          ilike(services.validatorEmail, `%${searchText}%`),
                           ilike(agreements.code, `%${searchText}%`),
-                          ilike(agreements.name, `%${searchText}%`),
                       ),
                       eq(agreements.localPlanId, localPlanId),
                   ),
