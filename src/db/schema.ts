@@ -159,6 +159,30 @@ export const userListItems = pgTable("user_list_items", {
         .$onUpdate(() => new Date()),
 })
 
+export const analyticsPlans = pgTable("analytics_plans", {
+    planId: uuid("plan_id")
+        .primaryKey()
+        .references(() => plans.planId),
+    agreementsCount: integer("agreements_count").notNull(),
+    agreementsRevisedCount: integer("agreements_revised_count").notNull(),
+    agreementsInProgressCount: integer(
+        "agreements_in_progress_count",
+    ).notNull(),
+    servicesCount: integer("services_count").notNull(),
+    allocatedServicesCount: integer("allocated_services_count").notNull(),
+    notAllocatedServicesCount: integer(
+        "not_allocated_services_count",
+    ).notNull(),
+    systemsCount: integer("systems_count").notNull(),
+    usersCount: integer("users_count").notNull(),
+    totalAmount: decimal("total_amount", { precision: 12, scale: 2 }).notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+        .notNull()
+        .defaultNow()
+        .$onUpdate(() => new Date()),
+})
+
 // Create relations
 export const agreementsRelations = relations(agreements, ({ many }) => ({
     services: many(services),
