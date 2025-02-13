@@ -1,6 +1,7 @@
 "use client"
 
 import { saveServiceAction } from "@/actions/saveServiceAction"
+import { BadgeWithTooltip } from "@/components/BadgeWithTooltip"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
@@ -102,19 +103,33 @@ export function ServiceForm({
         <div className="flex flex-col gap-1 sm:px-8">
             <DisplayServerActionResponse result={saveResult} />
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">
-                    {service?.serviceId && isEditable
-                        ? "Edit"
-                        : service?.serviceId
-                          ? "View"
-                          : "New"}{" "}
-                    Service Form{" "}
-                    {service?.serviceId
-                        ? service?.isActive
-                            ? "✅"
-                            : "❌"
-                        : null}
-                </h2>
+                <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-bold">
+                        {service?.serviceId && isEditable
+                            ? "Edit"
+                            : service?.serviceId
+                              ? "View"
+                              : "New"}{" "}
+                        Service Form{" "}
+                    </h2>
+                    {service?.serviceId ? (
+                        service?.isActive ? (
+                            <BadgeWithTooltip
+                                variant="default"
+                                text="cost allocation to systems is complete"
+                            >
+                                Allocation
+                            </BadgeWithTooltip>
+                        ) : (
+                            <BadgeWithTooltip
+                                variant="destructive"
+                                text="cost allocation to systems is not complete"
+                            >
+                                Allocation
+                            </BadgeWithTooltip>
+                        )
+                    ) : null}
+                </div>
                 {!!saveResult?.data?.serviceId && !service?.serviceId && (
                     <Link href={`/services/${saveResult.data.serviceId}`}>
                         <h2>Go to Cost Allocation</h2>
