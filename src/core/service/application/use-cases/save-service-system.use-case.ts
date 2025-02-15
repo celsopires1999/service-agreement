@@ -1,4 +1,5 @@
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { saveServiceSystemsSchemaType } from "@/zod-schemas/service_systems"
 
 export class SaveServiceSystemUseCase {
@@ -9,7 +10,21 @@ export class SaveServiceSystemUseCase {
         const entity = await repo.findById(input.serviceId)
 
         if (!entity) {
-            throw new Error(`Service ID #${input.serviceId} not found`)
+            throw new ValidationError(
+                `Service ID #${input.serviceId} not found`,
+            )
+        }
+
+        if (entity.status === "approved") {
+            throw new ValidationError(
+                `Service ID #${input.serviceId} is already approved`,
+            )
+        }
+
+        if (entity.status === "rejected") {
+            throw new ValidationError(
+                `Service ID #${input.serviceId} is already rejected`,
+            )
         }
 
         if (entity.hasSystem(input.systemId)) {

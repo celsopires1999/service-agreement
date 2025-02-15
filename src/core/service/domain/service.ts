@@ -1,9 +1,20 @@
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { toDecimal } from "@/lib/utils"
 import Decimal from "decimal.js"
 import { v4 as uuidv4 } from "uuid"
 import { ServiceSystem } from "./serviceSystems"
 
 export type currecyType = "EUR" | "USD"
+
+export const ServiceStatus = {
+    CREATED: "created",
+    ASSIGNED: "assigned",
+    REJECTED: "rejected",
+    APPROVED: "approved",
+} as const
+
+export type ServiceStatusType =
+    (typeof ServiceStatus)[keyof typeof ServiceStatus]
 
 export type ServiceConstructorProps = {
     serviceId: string
@@ -18,14 +29,14 @@ export type ServiceConstructorProps = {
     isActive: boolean
     providerAllocation: string
     localAllocation: string
-    isValidated: boolean
+    status: ServiceStatusType
     validatorEmail: string
     serviceSystems?: ServiceSystem[]
 }
 
 export type ServiceCreateCommand = Omit<
     ServiceConstructorProps,
-    "serviceId" | "amount" | "isActive" | "isValidated"
+    "serviceId" | "amount" | "isActive" | "status"
 >
 
 export class Service {
@@ -41,7 +52,7 @@ export class Service {
     isActive: boolean
     providerAllocation: string
     localAllocation: string
-    isValidated: boolean
+    status: ServiceStatusType
     validatorEmail: string
     serviceSystems: ServiceSystem[]
 
@@ -58,7 +69,7 @@ export class Service {
         this.isActive = props.isActive
         this.providerAllocation = props.providerAllocation.trim()
         this.localAllocation = props.localAllocation.trim()
-        this.isValidated = props.isValidated
+        this.status = props.status
         this.validatorEmail = props.validatorEmail.trim().toLowerCase()
         this.serviceSystems = props.serviceSystems ?? []
     }
@@ -71,7 +82,7 @@ export class Service {
                 .add(toDecimal(props.chgAmount))
                 .toFixed(2),
             isActive: false,
-            isValidated: false,
+            status: "created",
         })
     }
 
@@ -112,8 +123,8 @@ export class Service {
         this.localAllocation = allocation
     }
 
-    changeIsValidated(isValidate: boolean) {
-        this.isValidated = isValidate
+    changeStatus(status: ServiceStatusType) {
+        this.status = status
     }
 
     changeValidatorEmail(validatorEmail: string) {
@@ -143,7 +154,9 @@ export class Service {
         )
 
         if (!serviceSystem) {
-            throw new Error(`systemId #${systemId} not found to be updated`)
+            throw new ValidationError(
+                `systemId #${systemId} not found to be updated`,
+            )
         }
 
         serviceSystem.changeAllocation(
@@ -174,16 +187,20 @@ export class Service {
     }
 
     validate() {
-        if (this.isValidated === false) {
+        if (!Object.values(ServiceStatus).includes(this.status)) {
+            throw new ValidationError("Invalid status: " + this.status)
+        }
+
+        if (this.status !== "approved" && this.status !== "rejected") {
             return
         }
 
-        if (this.isValidated === true && this.isActive === true) {
+        if (this.isActive === true) {
             return
         }
 
-        throw new Error(
-            "Service cannot be validated when cost allocation to systems is not 100%",
+        throw new ValidationError(
+            "Service cannot be neither approved nor rejected when cost allocation to systems is not 100%",
         )
     }
 }

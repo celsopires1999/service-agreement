@@ -1,4 +1,5 @@
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
 import { db } from "@/db"
 import { services, serviceSystems, userListItems, userLists } from "@/db/schema"
@@ -12,7 +13,9 @@ export class DeleteServiceUseCase {
         const foundService = await serviceRepo.findById(input.serviceId)
 
         if (!foundService) {
-            throw new Error(`Service ID #${input.serviceId} not found`)
+            throw new ValidationError(
+                `Service ID #${input.serviceId} not found`,
+            )
         }
 
         const foundUserList = await userListRepo.findById(input.serviceId)

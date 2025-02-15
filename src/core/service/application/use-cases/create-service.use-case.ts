@@ -22,7 +22,7 @@ export class CreateServiceUseCase {
 
 export type CreateServiceInput = Omit<
     insertServiceSchemaType,
-    "serviceId" | "amount" | "isActive" | "isValidated"
+    "serviceId" | "amount" | "isActive" | "status"
 >
 
 export type CreateServiceOutput = {

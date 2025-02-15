@@ -6,6 +6,7 @@ type Props = {
         serverError?: string
         validationErrors?: Record<string, string[] | undefined>
     }
+    showErrorOnly?: boolean
 }
 
 const MessageBox = ({
@@ -22,12 +23,15 @@ const MessageBox = ({
     </div>
 )
 
-export function DisplayServerActionResponse({ result }: Props) {
+export function DisplayServerActionResponse({
+    result,
+    showErrorOnly = false,
+}: Props) {
     const { data, serverError, validationErrors } = result
 
     return (
         <div>
-            {data?.message && (
+            {!showErrorOnly && data?.message && (
                 <MessageBox
                     type="success"
                     content={`Success: ${data.message}`}

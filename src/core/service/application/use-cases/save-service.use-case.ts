@@ -1,5 +1,6 @@
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { insertServiceSchemaType } from "@/zod-schemas/service"
 
 export class SaveServiceUseCase {
@@ -11,13 +12,15 @@ export class SaveServiceUseCase {
         const agreement = await agreementRepo.findById(input.agreementId)
 
         if (!!agreement && agreement.isRevised) {
-            throw new Error(
+            throw new ValidationError(
                 `Agreement ID #${input.agreementId} is already revised`,
             )
         }
 
         if (!entity) {
-            throw new Error(`Service ID #${input.serviceId} not found`)
+            throw new ValidationError(
+                `Service ID #${input.serviceId} not found`,
+            )
         }
 
         entity.changeName(input.name)
@@ -27,7 +30,7 @@ export class SaveServiceUseCase {
         entity.changeCurrency(input.currency)
         entity.changeProviderAllocation(input.providerAllocation)
         entity.changeLocalAllocation(input.localAllocation)
-        entity.changeIsValidated(input.isValidated)
+        entity.changeStatus(input.status)
         entity.changeValidatorEmail(input.validatorEmail)
         entity.changeActivationStatusBasedOnAllocation()
 

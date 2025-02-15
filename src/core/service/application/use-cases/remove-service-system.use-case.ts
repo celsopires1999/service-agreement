@@ -1,5 +1,6 @@
-import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { deleteServiceSystemSchemaType } from "@/actions/deleteServiceSystemAction"
+import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 
 export class RemoveServiceSystemUseCase {
     async execute(
@@ -9,11 +10,13 @@ export class RemoveServiceSystemUseCase {
         const entity = await repo.findById(input.serviceId)
 
         if (!entity) {
-            throw new Error(`Service ID #${input.serviceId} not found`)
+            throw new ValidationError(
+                `Service ID #${input.serviceId} not found`,
+            )
         }
 
         if (!entity.hasSystem(input.systemId)) {
-            throw new Error(
+            throw new ValidationError(
                 `System ID #${input.systemId} for Service ID #${input.serviceId} not found`,
             )
         }

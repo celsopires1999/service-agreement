@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm/pg-core"
 
 import { relations } from "drizzle-orm"
+import { ServiceStatus } from "@/core/service/domain/service"
 
 export const plans = pgTable(
     "plans",
@@ -62,6 +63,17 @@ export const agreements = pgTable(
 
 export const currencyEnum = pgEnum("currency", ["EUR", "USD"])
 
+export function enumToPgEnum<T extends Record<string, any>>( // eslint-disable-line  @typescript-eslint/no-explicit-any
+    myEnum: T,
+): [T[keyof T], ...T[keyof T][]] {
+    return Object.values(myEnum).map((value: any) => `${value}`) as any // eslint-disable-line  @typescript-eslint/no-explicit-any
+}
+
+export const serviceStatusEnum = pgEnum(
+    "service_status",
+    enumToPgEnum(ServiceStatus),
+)
+
 export const services = pgTable(
     "services",
     {
@@ -81,8 +93,8 @@ export const services = pgTable(
         providerAllocation: text("provider_allocation").notNull(),
         localAllocation: text("local_allocation").notNull(),
         isActive: boolean("is_active").notNull().default(false),
-        isValidated: boolean("is_validated").notNull().default(false),
         validatorEmail: varchar("validator_email").notNull(),
+        status: serviceStatusEnum("status").notNull().default("created"),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at")
             .notNull()

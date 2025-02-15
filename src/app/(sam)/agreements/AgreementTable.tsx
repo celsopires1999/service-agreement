@@ -2,6 +2,8 @@
 import { deleteAgreementAction } from "@/actions/deleteAgreementAction"
 import { AlertConfirmation } from "@/components/AlertConfirmation"
 import Deleting from "@/components/Deleting"
+import { Filter } from "@/components/react-table/Filter"
+import { NoFilter } from "@/components/react-table/NoFilter"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -12,6 +14,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import {
     Table,
     TableBody,
@@ -21,6 +25,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { toast } from "@/hooks/use-toast"
+import { useTableStateHelper } from "@/hooks/useTableStateHelper"
 import { getAgreementSearchResultsType } from "@/lib/queries/agreement"
 import {
     CellContext,
@@ -34,6 +39,9 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import {
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
     CircleCheckIcon,
     CircleXIcon,
     ClapperboardIcon,
@@ -47,7 +55,7 @@ import {
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 
 type Props = {
     data: getAgreementSearchResultsType[]
@@ -62,11 +70,33 @@ export function AgreementTable({ data }: Props) {
     const [agreementToDelete, setAgreementToDelete] =
         useState<getAgreementSearchResultsType | null>(null)
 
+    const [
+        filterToggle,
+        pageIndex,
+        sorting,
+        setSorting,
+        columnFilters,
+        setColumnFilters,
+        handleFilterToggle,
+        handlePage,
+        handlePagination,
+        handleSorting,
+        handleColumnFilters,
+    ] = useTableStateHelper()
+
     const handleDeleteAgreement = (
         agreement: getAgreementSearchResultsType,
     ) => {
         setAgreementToDelete(agreement)
         setShowDeleteConfirmation(true)
+    }
+
+    const handleFilterToggleChange = (checked: boolean) => {
+        if (!checked) {
+            table.resetColumnFilters()
+        }
+
+        handleFilterToggle(checked)
     }
 
     const {
@@ -113,11 +143,6 @@ export function AgreementTable({ data }: Props) {
         setAgreementToDelete(null)
     }
 
-    const pageIndex = useMemo(() => {
-        const page = searchParams.get("page")
-        return page ? +page - 1 : 0
-    }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
-
     const columnHeadersArray: Array<keyof getAgreementSearchResultsType> = [
         "code",
         "name",
@@ -129,27 +154,22 @@ export function AgreementTable({ data }: Props) {
         "revisionDate",
     ]
 
-    const columnLabels: Partial<{
-        [K in keyof getAgreementSearchResultsType]: string
+    const columnDefs: Partial<{
+        [K in keyof getAgreementSearchResultsType]: {
+            label: string
+            align?: "left" | "center" | "right"
+            width?: number
+            filterable?: boolean
+        }
     }> = {
-        code: "Code",
-        name: "Agreement",
-        contactEmail: "Contact Email",
-        localPlan: "Local Plan",
-        year: "Year",
-        revision: "Revision",
-        isRevised: "Revised",
-        revisionDate: "Revision Date",
-    }
-
-    const columnWidths: Partial<{
-        [K in keyof typeof columnLabels]: number
-    }> = {
-        localPlan: 150,
-        year: 150,
-        revision: 150,
-        isRevised: 150,
-        revisionDate: 150,
+        code: { label: "Code", width: 255, filterable: true },
+        name: { label: "Agreement", width: 500, filterable: true },
+        contactEmail: { label: "Contact Email", width: 1, filterable: true },
+        localPlan: { label: "Local Plan", width: 1, filterable: true },
+        year: { label: "Year", width: 1 },
+        revision: { label: "Revision", width: 1 },
+        isRevised: { label: "Revised", width: 1 },
+        revisionDate: { label: "Revision Date", width: 1 },
     }
 
     const columnHelper = createColumnHelper<getAgreementSearchResultsType>()
@@ -263,10 +283,42 @@ export function AgreementTable({ data }: Props) {
                 {
                     id: columnName,
                     size:
-                        columnWidths[columnName as keyof typeof columnWidths] ??
-                        undefined,
-                    header: () =>
-                        columnLabels[columnName as keyof typeof columnLabels],
+                        columnDefs[columnName as keyof typeof columnDefs]
+                            ?.width ?? undefined,
+                    enableColumnFilter:
+                        columnDefs[columnName as keyof typeof columnDefs]
+                            ?.filterable ?? false,
+                    header: ({ column }) => {
+                        return (
+                            <Button
+                                variant="ghost"
+                                className="flex w-full justify-between pl-1"
+                                onClick={() =>
+                                    column.toggleSorting(
+                                        column.getIsSorted() === "asc",
+                                    )
+                                }
+                            >
+                                {
+                                    columnDefs[
+                                        columnName as keyof typeof columnDefs
+                                    ]?.label
+                                }
+                                {column.getIsSorted() === "asc" && (
+                                    <ArrowUp className="ml-2 h-4 w-4" />
+                                )}
+
+                                {column.getIsSorted() === "desc" && (
+                                    <ArrowDown className="ml-2 h-4 w-4" />
+                                )}
+
+                                {column.getIsSorted() !== "desc" &&
+                                    column.getIsSorted() !== "asc" && (
+                                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                                    )}
+                            </Button>
+                        )
+                    },
                     cell: (info) => {
                         // presentational
                         if (columnName === "isRevised") {
@@ -292,11 +344,15 @@ export function AgreementTable({ data }: Props) {
         data,
         columns,
         state: {
+            sorting,
+            columnFilters,
             pagination: {
                 pageIndex,
                 pageSize: 10,
             },
         },
+        onColumnFiltersChange: setColumnFilters,
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -305,19 +361,36 @@ export function AgreementTable({ data }: Props) {
     })
 
     const handlePageChange = (direction: "previous" | "next") => {
-        const index = direction === "previous" ? -1 : +1
-        const newIndex = table.getState().pagination.pageIndex + index
-        table.setPageIndex(newIndex)
-        const params = new URLSearchParams(searchParams.toString())
-        params.set("page", (newIndex + 1).toString())
-        router.replace(`?${params.toString()}`, {
-            scroll: false,
-        })
+        table.setPageIndex(handlePage(table.getState().pagination, direction))
     }
+
+    useEffect(() => {
+        handlePagination(table.getState().pagination, table.getPageCount())
+    }, [table.getState().pagination]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleSorting(table.getState().sorting)
+    }, [table.getState().sorting]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleColumnFilters(table.getState().columnFilters)
+    }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className="mt-6 flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">Agreements List</h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Agreements List</h2>
+                <div className="flex items-center space-x-2">
+                    <Switch
+                        id="filterToggle"
+                        checked={filterToggle}
+                        onCheckedChange={handleFilterToggleChange}
+                    />
+                    <Label htmlFor="filterToggle" className="font-semibold">
+                        Filter
+                    </Label>
+                </div>
+            </div>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
@@ -327,6 +400,13 @@ export function AgreementTable({ data }: Props) {
                                     <TableHead
                                         key={header.id}
                                         className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
+                                        style={
+                                            header.id !== "actions"
+                                                ? {
+                                                      width: header.getSize(),
+                                                  }
+                                                : undefined
+                                        }
                                     >
                                         <div
                                             className={`${header.id === "actions" ? "flex items-center justify-center" : ""}`}
@@ -339,6 +419,28 @@ export function AgreementTable({ data }: Props) {
                                                       header.getContext(),
                                                   )}
                                         </div>
+
+                                        {filterToggle ? (
+                                            header.column.getCanFilter() ? (
+                                                <div className="grid w-max place-content-center">
+                                                    <Filter
+                                                        column={header.column}
+                                                        filteredRows={table
+                                                            .getFilteredRowModel()
+                                                            .rows.map((row) =>
+                                                                row.getValue(
+                                                                    header
+                                                                        .column
+                                                                        .id,
+                                                                ),
+                                                            )}
+                                                    />
+                                                </div>
+                                            ) : header.id ===
+                                              "actions" ? null : (
+                                                <NoFilter />
+                                            )
+                                        ) : null}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -348,7 +450,12 @@ export function AgreementTable({ data }: Props) {
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="hover:bg-border/25 dark:hover:bg-ring/40"
+                                className="cursor-pointer hover:bg-border/25 dark:hover:bg-ring/40"
+                                onClick={() =>
+                                    router.push(
+                                        `/agreements/form?agreementId=${row.original.agreementId}`,
+                                    )
+                                }
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="border">
@@ -372,6 +479,37 @@ export function AgreementTable({ data }: Props) {
                     </p>
                 </div>
                 <div className="flex flex-row gap-1">
+                    <div className="flex flex-row gap-1">
+                        <Button
+                            variant="outline"
+                            onClick={() => router.refresh()}
+                        >
+                            Refresh Data
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => table.resetSorting()}
+                        >
+                            Reset Sorting
+                        </Button>
+                        {filterToggle && (
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    table.resetColumnFilters()
+                                    const params = new URLSearchParams(
+                                        searchParams.toString(),
+                                    )
+                                    params.delete("filter")
+                                    router.replace(`?${params.toString()}`, {
+                                        scroll: false,
+                                    })
+                                }}
+                            >
+                                Reset Filters
+                            </Button>
+                        )}
+                    </div>
                     <div className="flex flex-row gap-1">
                         <Button
                             variant="outline"

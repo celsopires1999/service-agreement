@@ -1,3 +1,4 @@
+import { ServiceStatus } from "@/core/service/domain/service"
 import { services } from "@/db/schema"
 import { isValidDecimalWithPrecision } from "@/lib/utils"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
@@ -54,7 +55,10 @@ export const insertServiceSchema = createInsertSchema(services, {
         schema
             .min(1, "Local Allocation is required")
             .max(500, "Local Allocation must be 500 characters or less"),
-    isValidated: z.boolean(),
+    status: (schema) =>
+        schema.refine((value) => Object.values(ServiceStatus).includes(value), {
+            message: "Invalid status",
+        }),
     validatorEmail: (schema) => schema.email("Invalid validator email address"),
 })
 

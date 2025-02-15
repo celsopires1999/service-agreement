@@ -1,3 +1,4 @@
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UserList } from "@/core/users-list/domain/user-list"
 import { db } from "@/db"
 import { userListItems, userLists } from "@/db/schema"
@@ -96,7 +97,9 @@ export class UserListDrizzleRepository {
             .limit(1)
 
         if (!existingUserList.length) {
-            throw new Error(`User List for service ID #${serviceId} not found`)
+            throw new ValidationError(
+                `User List for service ID #${serviceId} not found`,
+            )
         }
 
         return await db.transaction(async (tx) => {

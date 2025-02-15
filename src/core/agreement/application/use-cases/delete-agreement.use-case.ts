@@ -1,5 +1,6 @@
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
 import { db } from "@/db"
 import {
@@ -20,7 +21,9 @@ export class DeleteAgreementUseCase {
         const foundAgreement = await agreementRepo.findById(input.agreementId)
 
         if (!foundAgreement) {
-            throw new Error(`Agreement ID #${input.agreementId} not found`)
+            throw new ValidationError(
+                `Agreement ID #${input.agreementId} not found`,
+            )
         }
 
         const foundServices = await serviceRepo.findManyByAgreementId(

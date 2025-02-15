@@ -14,7 +14,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: true,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -30,7 +30,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: true,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -47,7 +47,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -64,7 +64,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -80,7 +80,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -96,7 +96,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -112,7 +112,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -128,7 +128,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -144,7 +144,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -160,7 +160,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -176,7 +176,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -192,7 +192,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -208,7 +208,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -224,7 +224,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -240,7 +240,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -256,7 +256,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -272,7 +272,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -288,7 +288,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -304,7 +304,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -320,7 +320,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -336,7 +336,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -352,7 +352,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -368,7 +368,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -384,7 +384,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -400,7 +400,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
     {
@@ -416,7 +416,7 @@ export const servicesData: insertServiceSchemaType[] = [
         isActive: false,
         providerAllocation: "Number of users",
         localAllocation: "Number of users",
-        isValidated: false,
+        status: "created",
         validatorEmail: "tbd@tbd.com",
     },
 ]

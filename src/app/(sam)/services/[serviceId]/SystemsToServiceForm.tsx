@@ -22,6 +22,7 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { ServiceHeader } from "./components/ServiceHeader"
 import { SystemsToServiceTable } from "./SystemsToServiceTable"
+import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 
 type extendedSaveServiceSystemsSchemaType = saveServiceSystemsSchemaType & {
     amount: string
@@ -89,6 +90,7 @@ export function SystemsToServiceForm({
 
     const {
         executeAsync: executeSave,
+        result: saveResult,
         isPending: isSaving,
         reset: resetSaveAction,
     } = useAction(saveServiceSystemsAction, {
@@ -129,6 +131,7 @@ export function SystemsToServiceForm({
 
     return (
         <div className="flex flex-col gap-1 sm:px-8">
+            <DisplayServerActionResponse result={saveResult} showErrorOnly />
             <ServiceHeader
                 title="Cost Allocation"
                 service={service}

@@ -1,3 +1,4 @@
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { createSafeActionClient } from "next-safe-action"
 import { DatabaseError } from "pg"
 import { z } from "zod"
@@ -19,6 +20,10 @@ export const actionClient = createSafeActionClient({
             if (code === "23505") {
                 return `Unique entry required. ${detail}`
             }
+        }
+
+        if (e instanceof ValidationError) {
+            return e.message
         }
 
         const log = {

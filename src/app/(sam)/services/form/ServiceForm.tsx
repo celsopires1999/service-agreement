@@ -3,7 +3,6 @@
 import { saveServiceAction } from "@/actions/saveServiceAction"
 import { BadgeWithTooltip } from "@/components/BadgeWithTooltip"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
-import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
 import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
@@ -22,6 +21,7 @@ import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
+import { ServiceStatusSelect } from "./ServiceStatusSelect"
 
 type Props = {
     agreement: getAgreementType
@@ -52,7 +52,7 @@ export function ServiceForm({
         responsibleEmail: service?.responsibleEmail ?? "",
         providerAllocation: service?.providerAllocation ?? "",
         localAllocation: service?.localAllocation ?? "",
-        isValidated: service?.isValidated ?? false,
+        status: service?.status ?? "created",
         validatorEmail: service?.validatorEmail ?? "",
     }
 
@@ -238,12 +238,10 @@ export function ServiceForm({
                             disabled={!isEditable}
                         />
                         {service?.serviceId && (
-                            <CheckboxWithLabel<insertServiceSchemaType>
-                                fieldTitle="Validated?"
-                                nameInSchema="isValidated"
+                            <ServiceStatusSelect<insertServiceSchemaType>
+                                fieldTitle="Status"
+                                nameInSchema="status"
                                 disabled={!isEditable}
-                                message="Yes"
-                                className="max-w-xs"
                             />
                         )}
 

@@ -266,7 +266,16 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="hover:bg-border/25 dark:hover:bg-ring/40"
+                                className="cursor-pointer hover:bg-border/25 dark:hover:bg-ring/40"
+                                onClick={() =>
+                                    handleUpdatePlan(
+                                        row.original.planId,
+                                        row.original.code,
+                                        row.original.description,
+                                        row.original.euro,
+                                        row.original.planDate,
+                                    )
+                                }
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="border">

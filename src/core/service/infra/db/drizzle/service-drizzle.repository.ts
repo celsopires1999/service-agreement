@@ -1,5 +1,6 @@
 import { Service } from "@/core/service/domain/service"
 import { ServiceSystem } from "@/core/service/domain/serviceSystems"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { services, serviceSystems } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -22,7 +23,7 @@ export class ServiceDrizzleRepository {
                     isActive: service.isActive,
                     providerAllocation: service.providerAllocation,
                     localAllocation: service.localAllocation,
-                    isValidated: service.isValidated,
+                    status: service.status,
                     validatorEmail: service.validatorEmail,
                 })
                 .returning({ insertedId: services.serviceId })
@@ -93,14 +94,16 @@ export class ServiceDrizzleRepository {
                     isActive: service.isActive,
                     providerAllocation: service.providerAllocation,
                     localAllocation: service.localAllocation,
-                    isValidated: service.isValidated,
+                    status: service.status,
                     validatorEmail: service.validatorEmail,
                 })
                 .where(eq(services.serviceId, service.serviceId))
                 .returning({ updatedId: services.serviceId })
 
             if (result[0].updatedId !== service.serviceId) {
-                throw new Error(`Service ID #${service.serviceId} not found`)
+                throw new ValidationError(
+                    `Service ID #${service.serviceId} not found`,
+                )
             }
 
             await tx

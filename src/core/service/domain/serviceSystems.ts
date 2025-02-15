@@ -1,3 +1,4 @@
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import Decimal from "decimal.js"
 import { currecyType } from "./service"
 import { validateDecimal } from "./utils"
@@ -93,13 +94,13 @@ export class ServiceSystem {
         allocation: string,
     ) {
         if (!validateDecimal(totalRunAmount, 12, 2)) {
-            throw new Error(
+            throw new ValidationError(
                 "total run amount to be allocated is not a valid decimal",
             )
         }
 
         if (!validateDecimal(totalChgAmount, 12, 2)) {
-            throw new Error(
+            throw new ValidationError(
                 "total change amount to be allocated is not a valid decimal",
             )
         }

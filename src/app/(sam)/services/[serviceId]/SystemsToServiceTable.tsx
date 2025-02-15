@@ -342,7 +342,13 @@ export function SystemsToServiceTable({
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="hover:bg-border/25 dark:hover:bg-ring/40"
+                                className="cursor-pointer hover:bg-border/25 dark:hover:bg-ring/40"
+                                onClick={() =>
+                                    handleUpdateServiceSystem(
+                                        row.original.systemId,
+                                        row.original.allocation,
+                                    )
+                                }
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="border">

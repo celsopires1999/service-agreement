@@ -14,12 +14,12 @@ export async function generateMetadata({
 
     if (!serviceId) {
         return {
-            title: "Systems to Service",
+            title: "Service Cost Allocation",
         }
     }
 
     return {
-        title: `Systems to Service #${serviceId}`,
+        title: `Service Cost Allocation #${serviceId}`,
     }
 }
 
@@ -49,6 +49,11 @@ export default async function SystemsToServiceFormPage({
                 </>
             )
         }
+
+        const isEditable =
+            !agreement.isRevised &&
+            !(service.status === "approved" || service.status === "rejected")
+
         return (
             <SystemsToServiceForm
                 key={serviceId}
@@ -56,7 +61,7 @@ export default async function SystemsToServiceFormPage({
                 agreement={agreement}
                 systems={systems}
                 serviceSystems={serviceSystems}
-                isEditable={!agreement.isRevised}
+                isEditable={isEditable}
             />
         )
     } catch (error) {

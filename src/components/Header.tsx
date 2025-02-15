@@ -29,7 +29,7 @@ export function Header() {
                         title="Home"
                     >
                         <h1 className="m-0 mt-1 hidden text-xl font-bold sm:block">
-                            Service Agreement Management
+                            Service Agreement Validation
                         </h1>
                     </Link>
                 </div>

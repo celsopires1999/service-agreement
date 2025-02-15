@@ -3,6 +3,8 @@
 import { deleteServiceAction } from "@/actions/deleteServiceAction"
 import { AlertConfirmation } from "@/components/AlertConfirmation"
 import Deleting from "@/components/Deleting"
+import { Filter } from "@/components/react-table/Filter"
+import { NoFilter } from "@/components/react-table/NoFilter"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -15,6 +17,8 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import {
     Table,
     TableBody,
@@ -24,6 +28,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { toast } from "@/hooks/use-toast"
+import { useTableStateHelper } from "@/hooks/useTableStateHelper"
 import { getServiceSearchResultsType } from "@/lib/queries/service"
 import {
     CellContext,
@@ -37,8 +42,9 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import {
-    CircleCheckIcon,
-    CircleXIcon,
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
     CpuIcon,
     Edit,
     Eye,
@@ -54,7 +60,7 @@ import {
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 
 type Props = {
     data: getServiceSearchResultsType[]
@@ -69,9 +75,31 @@ export function ServiceTable({ data }: Props) {
     const [serviceToDelete, setServiceToDelete] =
         useState<getServiceSearchResultsType | null>(null)
 
+    const [
+        filterToggle,
+        pageIndex,
+        sorting,
+        setSorting,
+        columnFilters,
+        setColumnFilters,
+        handleFilterToggle,
+        handlePage,
+        handlePagination,
+        handleSorting,
+        handleColumnFilters,
+    ] = useTableStateHelper()
+
     const handleDeleteService = (service: getServiceSearchResultsType) => {
         setServiceToDelete(service)
         setShowDeleteConfirmation(true)
+    }
+
+    const handleFilterToggleChange = (checked: boolean) => {
+        if (!checked) {
+            table.resetColumnFilters()
+        }
+
+        handleFilterToggle(checked)
     }
 
     const {
@@ -118,46 +146,35 @@ export function ServiceTable({ data }: Props) {
         setServiceToDelete(null)
     }
 
-    const pageIndex = useMemo(() => {
-        const page = searchParams.get("page")
-        return page ? +page - 1 : 0
-    }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
-
     const columnHeadersArray: Array<keyof getServiceSearchResultsType> = [
         "name",
         "amount",
         "currency",
         "validatorEmail",
-        "isValidated",
+        "status",
         "agreementCode",
         "localPlan",
         "year",
         "revision",
     ]
 
-    const columnLabels: Partial<{
-        [K in keyof getServiceSearchResultsType]: string
+    const columnDefs: Partial<{
+        [K in keyof getServiceSearchResultsType]: {
+            label: string
+            align?: "left" | "center" | "right"
+            width?: number
+            filterable?: boolean
+        }
     }> = {
-        name: "Service",
-        amount: "Amount",
-        currency: "Currency",
-        validatorEmail: "Validator",
-        isValidated: "Validated",
-        agreementCode: "Agreement",
-        localPlan: "Local Plan",
-        year: "Year",
-        revision: "Revision",
-    }
-
-    const columnWidths: Partial<{
-        [K in keyof typeof columnLabels]: number
-    }> = {
-        amount: 150,
-        currency: 150,
-        localPlan: 150,
-        isValidated: 150,
-        year: 150,
-        revision: 150,
+        name: { label: "Service", width: 500, filterable: true },
+        amount: { label: "Amount", width: 1 },
+        currency: { label: "Currency", width: 1, filterable: true },
+        validatorEmail: { label: "Validator", width: 1, filterable: true },
+        status: { label: "Status", width: 1, filterable: true },
+        agreementCode: { label: "Agreement", width: 1, filterable: true },
+        localPlan: { label: "Local Plan", width: 1, filterable: true },
+        year: { label: "Year", width: 1 },
+        revision: { label: "Rev", width: 1 },
     }
 
     const columnHelper = createColumnHelper<getServiceSearchResultsType>()
@@ -326,32 +343,60 @@ export function ServiceTable({ data }: Props) {
                         }).format(+value)
                     }
 
+                    if (columnName === "validatorEmail") {
+                        if (typeof value !== "string") {
+                            return value
+                        }
+
+                        return value?.split("@")[0]
+                    }
+
                     return value
                 },
                 {
                     id: columnName,
                     size:
-                        columnWidths[columnName as keyof typeof columnWidths] ??
-                        undefined,
-                    header: () =>
-                        columnLabels[columnName as keyof typeof columnLabels],
+                        columnDefs[columnName as keyof typeof columnDefs]
+                            ?.width ?? undefined,
+                    enableColumnFilter:
+                        columnDefs[columnName as keyof typeof columnDefs]
+                            ?.filterable ?? false,
+                    header: ({ column }) => {
+                        return (
+                            <Button
+                                variant="ghost"
+                                className="flex w-full justify-between pl-1"
+                                onClick={() =>
+                                    column.toggleSorting(
+                                        column.getIsSorted() === "asc",
+                                    )
+                                }
+                            >
+                                {
+                                    columnDefs[
+                                        columnName as keyof typeof columnDefs
+                                    ]?.label
+                                }
+                                {column.getIsSorted() === "asc" && (
+                                    <ArrowUp className="ml-2 h-4 w-4" />
+                                )}
+
+                                {column.getIsSorted() === "desc" && (
+                                    <ArrowDown className="ml-2 h-4 w-4" />
+                                )}
+
+                                {column.getIsSorted() !== "desc" &&
+                                    column.getIsSorted() !== "asc" && (
+                                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                                    )}
+                            </Button>
+                        )
+                    },
                     cell: (info) => {
                         if (columnName === "amount") {
                             return (
                                 <div className="text-right">
                                     {info.renderValue()}
-                                </div>
-                            )
-                        }
-
-                        if (columnName === "isValidated") {
-                            return (
-                                <div className="grid place-content-center">
-                                    {info.getValue() === false ? (
-                                        <CircleXIcon className="opacity-25" />
-                                    ) : (
-                                        <CircleCheckIcon className="text-green-600" />
-                                    )}
                                 </div>
                             )
                         }
@@ -367,11 +412,15 @@ export function ServiceTable({ data }: Props) {
         data,
         columns,
         state: {
+            sorting,
+            columnFilters,
             pagination: {
                 pageIndex,
                 pageSize: 10,
             },
         },
+        onColumnFiltersChange: setColumnFilters,
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -380,19 +429,36 @@ export function ServiceTable({ data }: Props) {
     })
 
     const handlePageChange = (direction: "previous" | "next") => {
-        const index = direction === "previous" ? -1 : +1
-        const newIndex = table.getState().pagination.pageIndex + index
-        table.setPageIndex(newIndex)
-        const params = new URLSearchParams(searchParams.toString())
-        params.set("page", (newIndex + 1).toString())
-        router.replace(`?${params.toString()}`, {
-            scroll: false,
-        })
+        table.setPageIndex(handlePage(table.getState().pagination, direction))
     }
+
+    useEffect(() => {
+        handlePagination(table.getState().pagination, table.getPageCount())
+    }, [table.getState().pagination]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleSorting(table.getState().sorting)
+    }, [table.getState().sorting]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleColumnFilters(table.getState().columnFilters)
+    }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className="mt-6 flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">Services List</h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Services List</h2>
+                <div className="flex items-center space-x-2">
+                    <Switch
+                        id="filterToggle"
+                        checked={filterToggle}
+                        onCheckedChange={handleFilterToggleChange}
+                    />
+                    <Label htmlFor="filterToggle" className="font-semibold">
+                        Filter
+                    </Label>
+                </div>
+            </div>
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
@@ -401,7 +467,14 @@ export function ServiceTable({ data }: Props) {
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
+                                        className={`bg-secondary p-1 ${header.id === "actions" ? "w-12" : ""}`}
+                                        style={
+                                            header.id !== "actions"
+                                                ? {
+                                                      width: header.getSize(),
+                                                  }
+                                                : undefined
+                                        }
                                     >
                                         <div
                                             className={`${header.id === "actions" ? "flex items-center justify-center" : ""}`}
@@ -414,16 +487,43 @@ export function ServiceTable({ data }: Props) {
                                                       header.getContext(),
                                                   )}
                                         </div>
+                                        {filterToggle ? (
+                                            header.column.getCanFilter() ? (
+                                                <div className="grid w-max place-content-center">
+                                                    <Filter
+                                                        column={header.column}
+                                                        filteredRows={table
+                                                            .getFilteredRowModel()
+                                                            .rows.map((row) =>
+                                                                row.getValue(
+                                                                    header
+                                                                        .column
+                                                                        .id,
+                                                                ),
+                                                            )}
+                                                    />
+                                                </div>
+                                            ) : header.id ===
+                                              "actions" ? null : (
+                                                <NoFilter />
+                                            )
+                                        ) : null}
                                     </TableHead>
                                 ))}
                             </TableRow>
                         ))}
                     </TableHeader>
+
                     <TableBody>
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="hover:bg-border/25 dark:hover:bg-ring/40"
+                                className="cursor-pointer hover:bg-border/25 dark:hover:bg-ring/40"
+                                onClick={() =>
+                                    router.push(
+                                        `/services/form?serviceId=${row.original.serviceId}`,
+                                    )
+                                }
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="border">
@@ -447,6 +547,37 @@ export function ServiceTable({ data }: Props) {
                     </p>
                 </div>
                 <div className="flex flex-row gap-1">
+                    <div className="flex flex-row gap-1">
+                        <Button
+                            variant="outline"
+                            onClick={() => router.refresh()}
+                        >
+                            Refresh Data
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => table.resetSorting()}
+                        >
+                            Reset Sorting
+                        </Button>
+                        {filterToggle && (
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    table.resetColumnFilters()
+                                    const params = new URLSearchParams(
+                                        searchParams.toString(),
+                                    )
+                                    params.delete("filter")
+                                    router.replace(`?${params.toString()}`, {
+                                        scroll: false,
+                                    })
+                                }}
+                            >
+                                Reset Filters
+                            </Button>
+                        )}
+                    </div>
                     <div className="flex flex-row gap-1">
                         <Button
                             variant="outline"

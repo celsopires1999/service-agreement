@@ -1,6 +1,7 @@
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { Service } from "@/core/service/domain/service"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UserList } from "@/core/users-list/domain/user-list"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
 import { db } from "@/db"
@@ -8,8 +9,8 @@ import {
     agreements,
     services,
     serviceSystems,
-    userLists,
     userListItems,
+    userLists,
 } from "@/db/schema"
 
 export class CreateAgreementRevisionUseCase {
@@ -23,7 +24,9 @@ export class CreateAgreementRevisionUseCase {
         const sourceAgreement = await agreementRepo.findById(input.agreementId)
 
         if (!sourceAgreement) {
-            throw new Error(`Agreement ID #${input.agreementId} not found`)
+            throw new ValidationError(
+                `Agreement ID #${input.agreementId} not found`,
+            )
         }
 
         const sourceServices = await serviceRepo.findManyByAgreementId(
@@ -55,7 +58,7 @@ export class CreateAgreementRevisionUseCase {
                 .returning({ insertedId: agreements.agreementId })
 
             if (result[0].insertedId !== newAgreement.agreementId) {
-                throw new Error(
+                throw new ValidationError(
                     `Agreement ID #${newAgreement.agreementId} not created`,
                 )
             }
@@ -127,13 +130,13 @@ export class CreateAgreementRevisionUseCase {
                         isActive: newService.isActive,
                         providerAllocation: newService.providerAllocation,
                         localAllocation: newService.localAllocation,
-                        isValidated: newService.isValidated,
+                        status: newService.status,
                         validatorEmail: newService.validatorEmail,
                     })
                     .returning()
 
                 if (serviceResult.length !== 1) {
-                    throw new Error(
+                    throw new ValidationError(
                         `Error creating service for agreement ID #${newAgreement.agreementId} and service ID #${newService.serviceId}`,
                     )
                 }
@@ -153,7 +156,7 @@ export class CreateAgreementRevisionUseCase {
                         .returning()
 
                     if (resultServiceSystem.length !== 1) {
-                        throw new Error(
+                        throw new ValidationError(
                             `Error creating service system for agreement ID #${newAgreement.agreementId} and service ID #${newService.serviceId}`,
                         )
                     }
@@ -170,7 +173,7 @@ export class CreateAgreementRevisionUseCase {
                         .returning()
 
                     if (resultUserList.length !== 1) {
-                        throw new Error(
+                        throw new ValidationError(
                             `Error creating user list for agreement ID #${newAgreement.agreementId} and service ID #${newService.serviceId}`,
                         )
                     }
@@ -190,7 +193,7 @@ export class CreateAgreementRevisionUseCase {
                             .returning()
 
                         if (resultUserListItem.length !== 1) {
-                            throw new Error(
+                            throw new ValidationError(
                                 `Error creating user list item for agreement ID #${newAgreement.agreementId} and service ID #${newService.serviceId}`,
                             )
                         }

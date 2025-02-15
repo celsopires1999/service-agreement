@@ -16,7 +16,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { usePooling } from "@/hooks/usePooling"
 import { getUserListItemsByServiceIdType } from "@/lib/queries/userList"
 import {
     CellContext,
@@ -54,8 +53,6 @@ export function UserListTable({ data }: Props) {
         const page = searchParams.get("page")
         return page ? +page - 1 : 0
     }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
-
-    usePooling(searchParams.get("searchText"), 300_000)
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 

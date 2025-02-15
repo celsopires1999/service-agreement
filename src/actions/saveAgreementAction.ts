@@ -1,6 +1,6 @@
 "use server"
 
-import { and, count, eq } from "drizzle-orm"
+import { and, count, eq, or } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { db } from "@/db"
@@ -11,6 +11,7 @@ import {
     type insertAgreementSchemaType,
 } from "@/zod-schemas/agreement"
 import { revalidatePath } from "next/cache"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 
 export const saveAgreementAction = actionClient
     .metadata({ actionName: "saveAgreementAction" })
@@ -88,7 +89,7 @@ export const saveAgreementAction = actionClient
                 countYearCode[0].count > 1 &&
                 currentAgreementCode !== agreement.code
             ) {
-                throw new Error(
+                throw new ValidationError(
                     `Agreement with year ${currentAgreementYear} and code ${currentAgreementCode} cannot be changed (${countYearCode[0].count} revisions found)`,
                 )
             }
@@ -102,12 +103,15 @@ export const saveAgreementAction = actionClient
                 .where(
                     and(
                         eq(services.agreementId, agreement.agreementId),
-                        eq(services.isValidated, false),
+                        or(
+                            eq(services.status, "created"),
+                            eq(services.status, "assigned"),
+                        ),
                     ),
                 )
 
             if (resultNotValidated[0].totalNotValidatedServices > 0) {
-                throw new Error(
+                throw new ValidationError(
                     `Agreement cannot be set to revised because ${resultNotValidated[0].totalNotValidatedServices} services are not validated`,
                 )
             }

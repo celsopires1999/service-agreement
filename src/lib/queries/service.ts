@@ -107,7 +107,7 @@ export async function getServiceSearchResults(
             amount: services.amount,
             currency: services.currency,
             responsibleEmail: services.responsibleEmail,
-            isValidated: services.isValidated,
+            status: services.status,
             validatorEmail: services.validatorEmail,
             agreementId: services.agreementId,
             agreementCode: agreements.code,
