@@ -184,8 +184,35 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
         references: [agreements.agreementId],
     }),
     systems: many(serviceSystems),
+    userLists: many(userLists),
 }))
 
 export const systemsRelations = relations(systems, ({ many }) => ({
     services: many(serviceSystems),
+}))
+
+export const serviceSystemsRelations = relations(serviceSystems, ({ one }) => ({
+    service: one(services, {
+        fields: [serviceSystems.serviceId],
+        references: [services.serviceId],
+    }),
+    system: one(systems, {
+        fields: [serviceSystems.systemId],
+        references: [systems.systemId],
+    }),
+}))
+
+export const userListsRelations = relations(userLists, ({ one, many }) => ({
+    service: one(services, {
+        fields: [userLists.serviceId],
+        references: [services.serviceId],
+    }),
+    items: many(userListItems),
+}))
+
+export const userListItemsRelations = relations(userListItems, ({ one }) => ({
+    userList: one(userLists, {
+        fields: [userListItems.userListId],
+        references: [userLists.userListId],
+    }),
 }))

@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db:studio": "env $(cat .env.drizzle | grep -v '^#' | xargs) drizzle-kit studio",
     "db:generate": "env $(cat .env.drizzle | grep -v '^#' | xargs) drizzle-kit generate",
     "db:push": "env $(cat .env.drizzle | grep -v '^#' | xargs) drizzle-kit push",
     "db:migrate": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/migrate.ts",
