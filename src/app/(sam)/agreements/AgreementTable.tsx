@@ -333,7 +333,14 @@ export function AgreementTable({ data }: Props) {
                             )
                         }
 
-                        return info.renderValue()
+                        return (
+                            <Link
+                                href={`/agreements/form?agreementId=${info.row.original.agreementId}`}
+                                prefetch={false}
+                            >
+                                {info.renderValue()}
+                            </Link>
+                        )
                     },
                 },
             )
@@ -450,12 +457,7 @@ export function AgreementTable({ data }: Props) {
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="cursor-pointer hover:bg-border/25 dark:hover:bg-ring/40"
-                                onClick={() =>
-                                    router.push(
-                                        `/agreements/form?agreementId=${row.original.agreementId}`,
-                                    )
-                                }
+                                className="hover:bg-border/25 dark:hover:bg-ring/40"
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="border">

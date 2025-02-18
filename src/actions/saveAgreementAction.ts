@@ -44,7 +44,9 @@ export const saveAgreementAction = actionClient
                         providerPlanId: agreement.providerPlanId,
                         localPlanId: agreement.localPlanId,
                         description: agreement.description.trim(),
-                        contactEmail: agreement.contactEmail.trim(),
+                        contactEmail: agreement.contactEmail
+                            .trim()
+                            .toLocaleLowerCase(),
                         ...(agreement.comment
                             ? { comment: agreement.comment.trim() }
                             : {}),
@@ -129,7 +131,9 @@ export const saveAgreementAction = actionClient
                     providerPlanId: agreement.providerPlanId,
                     localPlanId: agreement.localPlanId,
                     description: agreement.description.trim(),
-                    contactEmail: agreement.contactEmail.trim(),
+                    contactEmail: agreement.contactEmail
+                        .trim()
+                        .toLocaleLowerCase(),
                     comment: agreement.comment?.trim() ?? null,
                 })
                 .where(eq(agreements.agreementId, agreement.agreementId!))

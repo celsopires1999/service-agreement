@@ -401,7 +401,14 @@ export function ServiceTable({ data }: Props) {
                             )
                         }
 
-                        return info.renderValue()
+                        return (
+                            <Link
+                                href={`/services/form?serviceId=${info.row.original.serviceId}`}
+                                prefetch={false}
+                            >
+                                {info.renderValue()}
+                            </Link>
+                        )
                     },
                 },
             )
@@ -518,12 +525,7 @@ export function ServiceTable({ data }: Props) {
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="cursor-pointer hover:bg-border/25 dark:hover:bg-ring/40"
-                                onClick={() =>
-                                    router.push(
-                                        `/services/form?serviceId=${row.original.serviceId}`,
-                                    )
-                                }
+                                className="hover:bg-border/25 dark:hover:bg-ring/40"
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="border">

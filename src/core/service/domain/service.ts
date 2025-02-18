@@ -55,6 +55,8 @@ export class Service {
     status: ServiceStatusType
     validatorEmail: string
     serviceSystems: ServiceSystem[]
+    private prevStatus: ServiceStatusType
+    private isChanged = false
 
     constructor(props: ServiceConstructorProps) {
         this.serviceId = props.serviceId
@@ -72,6 +74,7 @@ export class Service {
         this.status = props.status
         this.validatorEmail = props.validatorEmail.trim().toLowerCase()
         this.serviceSystems = props.serviceSystems ?? []
+        this.prevStatus = props.status
     }
 
     static create(props: ServiceCreateCommand) {
@@ -87,18 +90,34 @@ export class Service {
     }
 
     changeName(name: string) {
+        if (this.name === name) {
+            return
+        }
+        this.isChanged = true
         this.name = name.trim()
     }
 
     changeDescription(description: string) {
+        if (this.description === description) {
+            return
+        }
+        this.isChanged = true
         this.description = description.trim()
     }
 
     changeResponsibleEmail(responsibleEmail: string) {
+        if (this.responsibleEmail === responsibleEmail) {
+            return
+        }
+        this.isChanged = true
         this.responsibleEmail = responsibleEmail.trim().toLowerCase()
     }
 
     changeCurrency(currency: currecyType) {
+        if (this.currency === currency) {
+            return
+        }
+        this.isChanged = true
         this.currency = currency
         this.serviceSystems.forEach((serviceSystem) => {
             serviceSystem.changeCurrency(currency)
@@ -106,6 +125,10 @@ export class Service {
     }
 
     changeAmount(runAmount: string, chgAmount: string) {
+        if (this.runAmount === runAmount && this.chgAmount === chgAmount) {
+            return
+        }
+        this.isChanged = true
         const amount = toDecimal(runAmount).add(toDecimal(chgAmount)).toFixed(2)
         this.runAmount = runAmount
         this.chgAmount = chgAmount
@@ -116,10 +139,18 @@ export class Service {
     }
 
     changeProviderAllocation(allocation: string) {
+        if (this.providerAllocation === allocation) {
+            return
+        }
+        this.isChanged = true
         this.providerAllocation = allocation
     }
 
     changeLocalAllocation(allocation: string) {
+        if (this.localAllocation === allocation) {
+            return
+        }
+        this.isChanged = true
         this.localAllocation = allocation
     }
 
@@ -128,6 +159,10 @@ export class Service {
     }
 
     changeValidatorEmail(validatorEmail: string) {
+        if (this.validatorEmail === validatorEmail) {
+            return
+        }
+        this.isChanged = true
         this.validatorEmail = validatorEmail.trim().toLowerCase()
     }
 
@@ -187,6 +222,15 @@ export class Service {
     }
 
     validate() {
+        if (
+            this.isChanged &&
+            (this.prevStatus === "approved" || this.prevStatus === "rejected")
+        ) {
+            throw new ValidationError(
+                "Service cannot be changed after it has been approved or rejected",
+            )
+        }
+
         if (!Object.values(ServiceStatus).includes(this.status)) {
             throw new ValidationError("Invalid status: " + this.status)
         }

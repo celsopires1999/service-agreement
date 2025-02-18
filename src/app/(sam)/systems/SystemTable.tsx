@@ -202,6 +202,16 @@ export function SystemTable({ data }: Props) {
                         undefined,
                     header: () =>
                         columnLabels[columnName as keyof typeof columnLabels],
+                    cell: (info) => {
+                        return (
+                            <Link
+                                href={`/systems/form?systemId=${info.row.original.systemId}`}
+                                prefetch={false}
+                            >
+                                {info.renderValue()?.toString()}
+                            </Link>
+                        )
+                    },
                 },
             )
         }),
