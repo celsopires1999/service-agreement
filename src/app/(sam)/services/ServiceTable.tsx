@@ -393,20 +393,18 @@ export function ServiceTable({ data }: Props) {
                         )
                     },
                     cell: (info) => {
-                        if (columnName === "amount") {
-                            return (
-                                <div className="text-right">
-                                    {info.renderValue()}
-                                </div>
-                            )
-                        }
-
                         return (
                             <Link
                                 href={`/services/form?serviceId=${info.row.original.serviceId}`}
                                 prefetch={false}
                             >
-                                {info.renderValue()}
+                                {columnName === "amount" ? (
+                                    <div className="text-right">
+                                        {info.renderValue()}
+                                    </div>
+                                ) : (
+                                    <div>{info.renderValue()}</div>
+                                )}
                             </Link>
                         )
                     },

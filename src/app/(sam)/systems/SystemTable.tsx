@@ -208,7 +208,7 @@ export function SystemTable({ data }: Props) {
                                 href={`/systems/form?systemId=${info.row.original.systemId}`}
                                 prefetch={false}
                             >
-                                {info.renderValue()?.toString()}
+                                <div>{info.renderValue()?.toString()}</div>
                             </Link>
                         )
                     },

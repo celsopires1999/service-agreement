@@ -201,6 +201,24 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                         undefined,
                     header: () =>
                         columnLabels[columnName as keyof typeof columnLabels],
+                    cell: (info) => {
+                        return (
+                            <div
+                                className="cursor-pointer text-left"
+                                onClick={() =>
+                                    handleUpdatePlan(
+                                        info.row.original.planId,
+                                        info.row.original.code,
+                                        info.row.original.description,
+                                        info.row.original.euro,
+                                        info.row.original.planDate,
+                                    )
+                                }
+                            >
+                                {info.renderValue()}
+                            </div>
+                        )
+                    },
                 },
             )
         }),
@@ -266,16 +284,7 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="cursor-pointer hover:bg-border/25 dark:hover:bg-ring/40"
-                                onClick={() =>
-                                    handleUpdatePlan(
-                                        row.original.planId,
-                                        row.original.code,
-                                        row.original.description,
-                                        row.original.euro,
-                                        row.original.planDate,
-                                    )
-                                }
+                                className="hover:bg-border/25 dark:hover:bg-ring/40"
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="border">

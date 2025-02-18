@@ -338,7 +338,7 @@ export function AgreementTable({ data }: Props) {
                                 href={`/agreements/form?agreementId=${info.row.original.agreementId}`}
                                 prefetch={false}
                             >
-                                {info.renderValue()}
+                                <div>{info.renderValue()}</div>
                             </Link>
                         )
                     },
