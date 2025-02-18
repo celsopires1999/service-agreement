@@ -40,6 +40,15 @@ export function isGreaterThanZero(value: string) {
     }
 }
 
+export function isGreaterThanOrEqualToZero(value: string) {
+    try {
+        const valueDecimal = new Decimal(value)
+        return valueDecimal.gte(0)
+    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+        return false
+    }
+}
+
 export function toDecimal(value: string) {
     try {
         const valueDecimal = new Decimal(value)
