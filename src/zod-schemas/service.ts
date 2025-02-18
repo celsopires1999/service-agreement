@@ -1,6 +1,6 @@
 import { ServiceStatus } from "@/core/service/domain/service"
 import { services } from "@/db/schema"
-import { isValidDecimalWithPrecision } from "@/lib/utils"
+import { isGreaterThanZero, isValidDecimalWithPrecision } from "@/lib/utils"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
 
@@ -27,6 +27,9 @@ export const insertServiceSchema = createInsertSchema(services, {
                     message: "Invalid run amount",
                 },
             )
+            .refine((value) => isGreaterThanZero(value), {
+                message: "Value must be greater than zero",
+            })
             .transform((value) => value.replace(",", ".")),
     chgAmount: (schema) =>
         schema
@@ -39,6 +42,9 @@ export const insertServiceSchema = createInsertSchema(services, {
                     message: "Invalid change amount",
                 },
             )
+            .refine((value) => isGreaterThanZero(value), {
+                message: "Value must be greater than zero",
+            })
             .transform((value) => value.replace(",", ".")),
 
     currency: (schema) =>
