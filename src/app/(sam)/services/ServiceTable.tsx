@@ -2,6 +2,7 @@
 
 import { deleteServiceAction } from "@/actions/deleteServiceAction"
 import { AlertConfirmation } from "@/components/AlertConfirmation"
+import { AmountPresenter } from "@/components/AmountPresenter"
 import Deleting from "@/components/Deleting"
 import { Filter } from "@/components/react-table/Filter"
 import { NoFilter } from "@/components/react-table/NoFilter"
@@ -30,6 +31,7 @@ import {
 import { toast } from "@/hooks/use-toast"
 import { useTableStateHelper } from "@/hooks/useTableStateHelper"
 import { getServiceSearchResultsType } from "@/lib/queries/service"
+import { amountFormatter, validatorEmailFormatter } from "@/lib/utils"
 import {
     CellContext,
     createColumnHelper,
@@ -44,10 +46,10 @@ import {
 import {
     ArrowDown,
     ArrowUp,
-    ArrowUpDown,
     CpuIcon,
     Edit,
-    Eye,
+    EditIcon,
+    EyeIcon,
     FileIcon,
     HandCoinsIcon,
     HandshakeIcon,
@@ -60,7 +62,7 @@ import {
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { JSX, useEffect, useState } from "react"
 
 type Props = {
     data: getServiceSearchResultsType[]
@@ -161,15 +163,26 @@ export function ServiceTable({ data }: Props) {
     const columnDefs: Partial<{
         [K in keyof getServiceSearchResultsType]: {
             label: string
-            align?: "left" | "center" | "right"
             width?: number
             filterable?: boolean
+            transform?: (value: unknown) => string
+            presenter?: ({ value }: { value: unknown }) => JSX.Element
         }
     }> = {
         name: { label: "Service", width: 500, filterable: true },
-        amount: { label: "Amount", width: 1 },
+        amount: {
+            label: "Amount",
+            width: 1,
+            transform: amountFormatter,
+            presenter: AmountPresenter,
+        },
         currency: { label: "Currency", width: 1, filterable: true },
-        validatorEmail: { label: "Validator", width: 1, filterable: true },
+        validatorEmail: {
+            label: "Validator",
+            width: 1,
+            filterable: true,
+            transform: validatorEmailFormatter,
+        },
         status: { label: "Status", width: 1, filterable: true },
         agreementCode: { label: "Agreement", width: 1, filterable: true },
         localPlan: { label: "Local Plan", width: 1, filterable: true },
@@ -242,12 +255,12 @@ export function ServiceTable({ data }: Props) {
                                 >
                                     {!row.original.isRevised ? (
                                         <>
-                                            <Edit className="mr-2 h-4 w-4" />
+                                            <EditIcon className="mr-2 h-4 w-4" />
                                             <span>Edit</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Eye className="mr-2 h-4 w-4" />
+                                            <EyeIcon className="mr-2 h-4 w-4" />
                                             <span>View</span>
                                         </>
                                     )}
@@ -283,12 +296,12 @@ export function ServiceTable({ data }: Props) {
                                 >
                                     {!row.original.isRevised ? (
                                         <>
-                                            <Edit className="mr-2 h-4 w-4" />
+                                            <EditIcon className="mr-2 h-4 w-4" />
                                             <span>Edit</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Eye className="mr-2 h-4 w-4" />
+                                            <EyeIcon className="mr-2 h-4 w-4" />
                                             <span>View</span>
                                         </>
                                     )}
@@ -330,27 +343,18 @@ export function ServiceTable({ data }: Props) {
             header: () => <TableOfContents />,
             cell: ActionsCell,
         }),
+
         ...columnHeadersArray.map((columnName) => {
             return columnHelper.accessor(
                 (row) => {
                     // transformational
                     const value = row[columnName]
-                    if (columnName === "amount") {
-                        return new Intl.NumberFormat("pt-BR", {
-                            style: "decimal",
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        }).format(+value)
+                    const transformFn =
+                        columnDefs[columnName as keyof typeof columnDefs]
+                            ?.transform
+                    if (transformFn) {
+                        return transformFn(value)
                     }
-
-                    if (columnName === "validatorEmail") {
-                        if (typeof value !== "string") {
-                            return value
-                        }
-
-                        return value?.split("@")[0]
-                    }
-
                     return value
                 },
                 {
@@ -385,25 +389,28 @@ export function ServiceTable({ data }: Props) {
                                     <ArrowDown className="ml-2 h-4 w-4" />
                                 )}
 
-                                {column.getIsSorted() !== "desc" &&
+                                {/* {column.getIsSorted() !== "desc" &&
                                     column.getIsSorted() !== "asc" && (
                                         <ArrowUpDown className="ml-2 h-4 w-4" />
-                                    )}
+                                    )} */}
                             </Button>
                         )
                     },
                     cell: (info) => {
+                        // presentational
+                        const presenterFn =
+                            columnDefs[columnName as keyof typeof columnDefs]
+                                ?.presenter
+
                         return (
                             <Link
                                 href={`/services/form?serviceId=${info.row.original.serviceId}`}
                                 prefetch={false}
                             >
-                                {columnName === "amount" ? (
-                                    <div className="text-right">
-                                        {info.renderValue()}
-                                    </div>
+                                {presenterFn ? (
+                                    presenterFn({ value: info.getValue() })
                                 ) : (
-                                    <div>{info.renderValue()}</div>
+                                    <div>{info.getValue()?.toString()}</div>
                                 )}
                             </Link>
                         )

@@ -1,6 +1,7 @@
 "use client"
 
 import { saveAgreementAction } from "@/actions/saveAgreementAction"
+import { AgreementNav } from "@/components/AgreementNav"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
 import { ComboboxWithLabel } from "@/components/inputs/ComboboxWithLabel"
@@ -17,14 +18,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 
 type Props = {
     agreement?: getAgreementType
-    hasServices?: boolean
     plans: {
         id: string
         description: string
@@ -36,12 +35,7 @@ type Props = {
     }[]
 }
 
-export function AgreementForm({
-    agreement,
-    hasServices,
-    plans,
-    servicesAmount,
-}: Props) {
+export function AgreementForm({ agreement, plans, servicesAmount }: Props) {
     const { toast } = useToast()
 
     const searchParams = useSearchParams()
@@ -142,25 +136,17 @@ export function AgreementForm({
                 <h2 className="text-2xl font-bold">
                     {agreement?.agreementId ? "Edit" : "New"} Agreement Form
                 </h2>
-                {!!saveResult?.data?.agreementId &&
-                    !agreement?.agreementId &&
-                    !hasServices && (
-                        <Link
-                            href={`/services/form?agreementId=${saveResult.data.agreementId}`}
-                        >
-                            <h2>Go to New Service Form</h2>
-                        </Link>
-                    )}
-                {!!agreement?.agreementId && hasServices && (
-                    <Link href={`/services?searchText=${agreement.code}`}>
-                        <h2>Go to Services List</h2>
-                    </Link>
-                )}
-                {!!agreement?.agreementId && !hasServices && (
-                    <Link href={`/agreements?searchText=${agreement.code}`}>
-                        <h2>Go to Agreements List</h2>
-                    </Link>
-                )}
+
+                <AgreementNav
+                    agreementId={
+                        agreement?.agreementId
+                            ? agreement.agreementId
+                            : saveResult?.data?.agreementId
+                              ? saveResult.data.agreementId
+                              : undefined
+                    }
+                    omit="agreement"
+                />
             </div>
 
             <Form {...form}>

@@ -136,6 +136,7 @@ export function SystemsToServiceForm({
                 title="Cost Allocation"
                 service={service}
                 agreement={agreement}
+                omit="allocation"
             />
             {isEditable && (
                 <Form {...form}>

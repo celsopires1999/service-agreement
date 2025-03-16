@@ -172,3 +172,39 @@ export async function getServiceWithRelations(serviceId: string) {
         .innerJoin(plans, eq(plans.planId, agreements.localPlanId))
         .where(eq(services.serviceId, serviceId))
 }
+
+export async function getServicesByAgreementId(agreementId: string) {
+    const results = await db
+        .select({
+            serviceId: services.serviceId,
+            name: services.name,
+            amount: services.amount,
+            currency: services.currency,
+            responsibleEmail: services.responsibleEmail,
+            status: services.status,
+            validatorEmail: services.validatorEmail,
+            agreementId: services.agreementId,
+            agreementCode: agreements.code,
+            agreementName: agreements.name,
+            year: agreements.year,
+            revision: agreements.revision,
+            revisionDate: agreements.revisionDate,
+            isRevised: agreements.isRevised,
+            localPlan: plans.code,
+        })
+        .from(services)
+        .innerJoin(agreements, eq(services.agreementId, agreements.agreementId))
+        .innerJoin(plans, eq(plans.planId, agreements.localPlanId))
+        .where(eq(services.agreementId, agreementId))
+        .orderBy(
+            asc(services.name),
+            desc(agreements.year),
+            desc(agreements.revision),
+        )
+
+    return results
+}
+
+export type getServicesByAgreementIdType = Awaited<
+    ReturnType<typeof getServicesByAgreementId>
+>[number]

@@ -4,6 +4,7 @@ import { saveSystemAction } from "@/actions/saveSystemAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
+import { SystemNav } from "@/components/SystemNav"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
@@ -101,6 +102,7 @@ export function SystemForm({ system }: Props) {
                 <h2 className="text-2xl font-bold">
                     {system?.systemId ? "Edit" : "New"} System Form
                 </h2>
+                <SystemNav systemId={system?.systemId} omit="system" />
             </div>
 
             <Form {...form}>

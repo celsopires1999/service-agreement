@@ -72,6 +72,7 @@ export function UserListForm({ service, agreement, userListItems }: Props) {
                 title="User List"
                 service={service}
                 agreement={agreement}
+                omit="users"
             />
             <div className="flex flex-row gap-1">
                 {!agreement.isRevised && (

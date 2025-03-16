@@ -1,6 +1,7 @@
 "use client"
 
 import { saveServiceAction } from "@/actions/saveServiceAction"
+import { AgreementNav } from "@/components/AgreementNav"
 import { BadgeWithTooltip } from "@/components/BadgeWithTooltip"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
@@ -19,7 +20,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { ServiceStatusSelect } from "./ServiceStatusSelect"
 
@@ -133,16 +133,16 @@ export function ServiceForm({
                         )
                     ) : null}
                 </div>
-                {!!saveResult?.data?.serviceId && !service?.serviceId && (
-                    <Link href={`/services/${saveResult.data.serviceId}`}>
-                        <h2>Go to Cost Allocation</h2>
-                    </Link>
-                )}
-                {!!service?.serviceId && (
-                    <Link href={`/services/${service.serviceId}`}>
-                        <h2>Go to Cost Allocation</h2>
-                    </Link>
-                )}
+
+                <AgreementNav
+                    agreementId={agreement.agreementId}
+                    serviceId={
+                        service?.serviceId
+                            ? service.serviceId
+                            : saveResult?.data?.serviceId
+                    }
+                    omit="service"
+                />
             </div>
 
             <Form {...form}>

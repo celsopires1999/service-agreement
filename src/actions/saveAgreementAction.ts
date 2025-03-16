@@ -3,6 +3,7 @@
 import { and, count, eq, or } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { agreements, services } from "@/db/schema"
 import { actionClient } from "@/lib/safe-action"
@@ -11,7 +12,6 @@ import {
     type insertAgreementSchemaType,
 } from "@/zod-schemas/agreement"
 import { revalidatePath } from "next/cache"
-import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 
 export const saveAgreementAction = actionClient
     .metadata({ actionName: "saveAgreementAction" })
@@ -67,6 +67,7 @@ export const saveAgreementAction = actionClient
                     agreementId: agreements.agreementId,
                     year: agreements.year,
                     code: agreements.code,
+                    isRevised: agreements.isRevised,
                 })
                 .from(agreements)
                 .where(eq(agreements.agreementId, agreement.agreementId))
@@ -74,6 +75,7 @@ export const saveAgreementAction = actionClient
 
             const currentAgreementYear = currentAgreement[0].year
             const currentAgreementCode = currentAgreement[0].code
+            const currentAgreementIsRevised = currentAgreement[0].isRevised
 
             const countYearCode = await db
                 .select({
@@ -97,25 +99,27 @@ export const saveAgreementAction = actionClient
             }
 
             // Agreement can only be set to revised if all services are validated.
-            const resultNotValidated = await db
-                .select({
-                    totalNotValidatedServices: count(),
-                })
-                .from(services)
-                .where(
-                    and(
-                        eq(services.agreementId, agreement.agreementId),
-                        or(
-                            eq(services.status, "created"),
-                            eq(services.status, "assigned"),
+            if (currentAgreementIsRevised !== agreement.isRevised) {
+                const resultNotValidated = await db
+                    .select({
+                        totalNotValidatedServices: count(),
+                    })
+                    .from(services)
+                    .where(
+                        and(
+                            eq(services.agreementId, agreement.agreementId),
+                            or(
+                                eq(services.status, "created"),
+                                eq(services.status, "assigned"),
+                            ),
                         ),
-                    ),
-                )
+                    )
 
-            if (resultNotValidated[0].totalNotValidatedServices > 0) {
-                throw new ValidationError(
-                    `Agreement cannot be set to revised because ${resultNotValidated[0].totalNotValidatedServices} services are not validated`,
-                )
+                if (resultNotValidated[0].totalNotValidatedServices > 0) {
+                    throw new ValidationError(
+                        `Agreement cannot be set to revised because ${resultNotValidated[0].totalNotValidatedServices} services are not validated`,
+                    )
+                }
             }
 
             // updatedAt is set by the database

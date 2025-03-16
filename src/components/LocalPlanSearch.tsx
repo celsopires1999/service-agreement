@@ -46,14 +46,16 @@ export function LocalPlanSearch({
     const [selectedLocalPlan, setSelectedLocalPlan] = useState<DataObj | null>(
         defaultOption,
     )
+    const [open, setOpen] = useState(false)
 
     return (
         <>
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
                         role="combobox"
+                        aria-expanded={open}
                         className={cn(
                             className,
                             "justify-between",
@@ -80,6 +82,7 @@ export function LocalPlanSearch({
                                         key={`${fieldName}_${item.id}`}
                                         onSelect={() => {
                                             setSelectedLocalPlan(item)
+                                            setOpen(false)
                                         }}
                                     >
                                         {item.description}

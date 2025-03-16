@@ -57,3 +57,39 @@ export function toDecimal(value: string) {
         return new Decimal(0)
     }
 }
+
+export function dateFormatter(value: unknown): string {
+    if (typeof value !== "string") return ""
+
+    return value
+        ? new Intl.DateTimeFormat("pt-BR", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+          }).format(
+              new Date(
+                  +value.substring(0, 4),
+                  +value.substring(5, 7) - 1,
+                  +value.substring(8, 10),
+              ),
+          )
+        : ""
+}
+
+export function amountFormatter(value: unknown): string {
+    if (typeof value !== "string" && typeof value !== "number") return ""
+
+    return new Intl.NumberFormat("pt-BR", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(+value)
+}
+
+export function validatorEmailFormatter(value: unknown): string {
+    if (typeof value !== "string") {
+        return ""
+    }
+
+    return value?.split("@")[0]
+}

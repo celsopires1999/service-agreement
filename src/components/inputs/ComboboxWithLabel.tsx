@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { Check, ChevronsUpDown } from "lucide-react"
+import { useState } from "react"
 import { useFormContext } from "react-hook-form"
 import { Button } from "../ui/button"
 
@@ -44,6 +45,7 @@ export function ComboboxWithLabel<Schema>({
     className,
 }: Props<Schema>) {
     const form = useFormContext()
+    const [open, setOpen] = useState(false)
 
     return (
         <FormField
@@ -58,12 +60,13 @@ export function ComboboxWithLabel<Schema>({
                         {fieldTitle}
                     </FormLabel>
 
-                    <Popover>
+                    <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                             <FormControl>
                                 <Button
                                     variant="outline"
                                     role="combobox"
+                                    aria-expanded={open}
                                     className={cn(
                                         className,
                                         "justify-between",
@@ -94,6 +97,7 @@ export function ComboboxWithLabel<Schema>({
                                                         nameInSchema as string,
                                                         item.id,
                                                     )
+                                                    setOpen(false)
                                                 }}
                                             >
                                                 {item.description}

@@ -5,15 +5,15 @@ import { countServicesByAgreementId } from "@/lib/queries/service"
 import { AgreementRevisionForm } from "./AgreementRevisionForm"
 
 export async function generateMetadata({
-    searchParams,
+    params,
 }: {
-    searchParams: Promise<{ [key: string]: string | undefined }>
+    params: Promise<{ agreementId: string }>
 }) {
-    const { agreementId } = await searchParams
+    const { agreementId } = await params
 
     if (!agreementId) {
         return {
-            title: "New Agreement Revision",
+            title: "Agreement is missing for Revision",
         }
     }
 

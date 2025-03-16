@@ -1,19 +1,22 @@
 "use client"
-import { deleteAgreementAction } from "@/actions/deleteAgreementAction"
+
+import { deleteServiceAction } from "@/actions/deleteServiceAction"
 import { AlertConfirmation } from "@/components/AlertConfirmation"
+import { AmountPresenter } from "@/components/AmountPresenter"
 import Deleting from "@/components/Deleting"
 import { IconButtonWithTooltip } from "@/components/IconButtonWithTooltip"
-import { IsRevisedPresenter } from "@/components/IsRevisedPresenter"
 import { Filter } from "@/components/react-table/Filter"
 import { NoFilter } from "@/components/react-table/NoFilter"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
+    DropdownMenuPortal,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Label } from "@/components/ui/label"
@@ -28,8 +31,12 @@ import {
 } from "@/components/ui/table"
 import { toast } from "@/hooks/use-toast"
 import { useTableStateHelper } from "@/hooks/useTableStateHelper"
-import { getAgreementSearchResultsType } from "@/lib/queries/agreement"
-import { dateFormatter } from "@/lib/utils"
+import { getAgreementType } from "@/lib/queries/agreement"
+import {
+    getServicesByAgreementIdType,
+    getServiceSearchResultsType,
+} from "@/lib/queries/service"
+import { amountFormatter, validatorEmailFormatter } from "@/lib/utils"
 import {
     CellContext,
     createColumnHelper,
@@ -44,30 +51,35 @@ import {
 import {
     ArrowDown,
     ArrowUp,
-    ClapperboardIcon,
+    CpuIcon,
     Edit,
+    Eye,
+    FileIcon,
+    HandCoinsIcon,
     MoreHorizontal,
     Plus,
-    TablePropertiesIcon,
+    SheetIcon,
     Trash,
 } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { JSX, useEffect, useState } from "react"
+import { AgreementServiceHeader } from "./AgreementServiceHeader"
 
 type Props = {
-    data: getAgreementSearchResultsType[]
+    data: getServicesByAgreementIdType[]
+    agreement: getAgreementType
 }
 
-export function AgreementTable({ data }: Props) {
+export function AgreementServiceTable({ data, agreement }: Props) {
     const router = useRouter()
 
     const searchParams = useSearchParams()
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
-    const [agreementToDelete, setAgreementToDelete] =
-        useState<getAgreementSearchResultsType | null>(null)
+    const [serviceToDelete, setServiceToDelete] =
+        useState<getServiceSearchResultsType | null>(null)
 
     const [
         filterToggle,
@@ -83,10 +95,8 @@ export function AgreementTable({ data }: Props) {
         handleColumnFilters,
     ] = useTableStateHelper()
 
-    const handleDeleteAgreement = (
-        agreement: getAgreementSearchResultsType,
-    ) => {
-        setAgreementToDelete(agreement)
+    const handleDeleteService = (service: getServiceSearchResultsType) => {
+        setServiceToDelete(service)
         setShowDeleteConfirmation(true)
     }
 
@@ -102,7 +112,7 @@ export function AgreementTable({ data }: Props) {
         executeAsync: executeDelete,
         isPending: isDeleting,
         reset: resetDeleteAction,
-    } = useAction(deleteAgreementAction, {
+    } = useAction(deleteServiceAction, {
         onSuccess({ data }) {
             if (data?.message) {
                 toast({
@@ -121,12 +131,12 @@ export function AgreementTable({ data }: Props) {
         },
     })
 
-    const confirmDeleteAgreement = async () => {
-        if (agreementToDelete) {
+    const confirmDeleteService = async () => {
+        if (serviceToDelete) {
             resetDeleteAction()
             try {
                 await executeDelete({
-                    agreementId: agreementToDelete.agreementId,
+                    serviceId: serviceToDelete.serviceId,
                 })
             } catch (error) {
                 if (error instanceof Error) {
@@ -139,22 +149,19 @@ export function AgreementTable({ data }: Props) {
             }
         }
         setShowDeleteConfirmation(false)
-        setAgreementToDelete(null)
+        setServiceToDelete(null)
     }
 
-    const columnHeadersArray: Array<keyof getAgreementSearchResultsType> = [
-        "code",
+    const columnHeadersArray: Array<keyof getServiceSearchResultsType> = [
         "name",
-        "contactEmail",
-        "localPlan",
-        "year",
-        "revision",
-        "isRevised",
-        "revisionDate",
+        "amount",
+        "currency",
+        "validatorEmail",
+        "status",
     ]
 
     const columnDefs: Partial<{
-        [K in keyof getAgreementSearchResultsType]: {
+        [K in keyof getServiceSearchResultsType]: {
             label: string
             width?: number
             filterable?: boolean
@@ -162,98 +169,146 @@ export function AgreementTable({ data }: Props) {
             presenter?: ({ value }: { value: unknown }) => JSX.Element
         }
     }> = {
-        code: { label: "Code", width: 255, filterable: true },
-        name: { label: "Agreement", width: 500, filterable: true },
-        contactEmail: { label: "Contact Email", width: 1, filterable: true },
-        localPlan: { label: "Local Plan", width: 1, filterable: true },
-        year: { label: "Year", width: 1 },
-        revision: { label: "Revision", width: 1 },
-        isRevised: {
-            label: "Revised",
+        name: { label: "Service", width: 500, filterable: true },
+        amount: {
+            label: "Amount",
             width: 1,
-            presenter: IsRevisedPresenter,
+            transform: amountFormatter,
+            presenter: AmountPresenter,
         },
-        revisionDate: {
-            label: "Revision Date",
+        currency: { label: "Currency", width: 1, filterable: true },
+        validatorEmail: {
+            label: "Validator",
             width: 1,
-            transform: dateFormatter,
+            filterable: true,
+            transform: validatorEmailFormatter,
         },
+        status: { label: "Status", width: 1, filterable: true },
     }
 
-    const columnHelper = createColumnHelper<getAgreementSearchResultsType>()
+    const columnHelper = createColumnHelper<getServiceSearchResultsType>()
 
     const ActionsCell = ({
         row,
-    }: CellContext<getAgreementSearchResultsType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Agreement</DropdownMenuLabel>
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <Edit className="mr-2 h-4 w-4" />
-                                <span>Edit</span>
-                            </Link>
-                        </DropdownMenuItem>
+    }: CellContext<getServiceSearchResultsType, unknown>) => (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open Menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Options</DropdownMenuLabel>
 
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/agreements/${row.original.agreementId}/new-revision`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <ClapperboardIcon className="mr-2 h-4 w-4" />
-                                <span>Revision</span>
-                            </Link>
-                        </DropdownMenuItem>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <FileIcon className="mr-2 h-4 w-4" />
+                        <span>Service</span>
+                    </DropdownMenuSubTrigger>
 
-                        <DropdownMenuItem
-                            onClick={() => handleDeleteAgreement(row.original)}
-                        >
-                            <Trash className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            {!row.original.isRevised && (
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href={`/services/form?agreementId=${row.original.agreementId}`}
+                                        className="flex w-full"
+                                        prefetch={false}
+                                    >
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        <span>Add</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
 
-                    <DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuLabel>Service</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/agreements/${row.original.agreementId}/services`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <TablePropertiesIcon className="mr-2 h-4 w-4" />
-                                <span>List</span>
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/services/form?agreementId=${row.original.agreementId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <Plus className="mr-2 h-4 w-4" />
-                                <span>Add</span>
-                            </Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={`/services/form?serviceId=${row.original.serviceId}`}
+                                    className="flex w-full"
+                                    prefetch={false}
+                                >
+                                    {!row.original.isRevised ? (
+                                        <>
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            <span>Edit</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Eye className="mr-2 h-4 w-4" />
+                                            <span>View</span>
+                                        </>
+                                    )}
+                                </Link>
+                            </DropdownMenuItem>
+
+                            {!row.original.isRevised && (
+                                <DropdownMenuItem
+                                    onClick={() =>
+                                        handleDeleteService(row.original)
+                                    }
+                                >
+                                    <Trash className="mr-2 h-4 w-4" />
+                                    <span>Delete</span>
+                                </DropdownMenuItem>
+                            )}
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <SheetIcon className="mr-2 h-4 w-4" />
+                        <span>User List</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={`/services/${row.original.serviceId}/users`}
+                                    className="flex w-full"
+                                    prefetch={false}
+                                >
+                                    {!row.original.isRevised ? (
+                                        <>
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            <span>Edit</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Eye className="mr-2 h-4 w-4" />
+                                            <span>View</span>
+                                        </>
+                                    )}
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <CpuIcon className="mr-2 h-4 w-4" />
+                        <span>Systems</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={`/services/${row.original.serviceId}`}
+                                    className="flex w-full"
+                                    prefetch={false}
+                                >
+                                    <HandCoinsIcon className="mr-2 h-4 w-4" />
+                                    <span>Allocation</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
 
     ActionsCell.displayName = "ActionsCell"
 
@@ -262,8 +317,8 @@ export function AgreementTable({ data }: Props) {
             id: "actions",
             header: () => (
                 <IconButtonWithTooltip
-                    text="New Agreement"
-                    href="/agreements/form"
+                    text="New Service"
+                    href={`/services/form?agreementId=${agreement.agreementId}`}
                 />
             ),
             cell: ActionsCell,
@@ -315,9 +370,9 @@ export function AgreementTable({ data }: Props) {
                                 )}
 
                                 {/* {column.getIsSorted() !== "desc" &&
-                                    column.getIsSorted() !== "asc" && (
-                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                    )} */}
+                                            column.getIsSorted() !== "asc" && (
+                                                <ArrowUpDown className="ml-2 h-4 w-4" />
+                                            )} */}
                             </Button>
                         )
                     },
@@ -329,7 +384,7 @@ export function AgreementTable({ data }: Props) {
 
                         return (
                             <Link
-                                href={`/agreements/form?agreementId=${info.row.original.agreementId}`}
+                                href={`/services/form?serviceId=${info.row.original.serviceId}`}
                                 prefetch={false}
                             >
                                 {presenterFn ? (
@@ -382,9 +437,11 @@ export function AgreementTable({ data }: Props) {
     }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <div className="mt-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Agreements List</h2>
+        <div className="flex flex-col gap-1 sm:px-8">
+            <AgreementServiceHeader
+                title="Agreement Services"
+                agreement={agreement}
+            >
                 <div className="flex items-center space-x-2">
                     <Switch
                         id="filterToggle"
@@ -395,7 +452,22 @@ export function AgreementTable({ data }: Props) {
                         Filter
                     </Label>
                 </div>
-            </div>
+            </AgreementServiceHeader>
+
+            {data.length === 0 && (
+                <div>
+                    <Button variant="ghost" asChild>
+                        <Link
+                            href={`/services/form?agreementId=${agreement.agreementId}`}
+                            prefetch={false}
+                        >
+                            <Plus className="h-4 w-4" />
+                            <span>Add First Service</span>
+                        </Link>
+                    </Button>
+                </div>
+            )}
+
             <div className="overflow-hidden rounded-lg border border-border">
                 <Table className="border">
                     <TableHeader>
@@ -404,7 +476,7 @@ export function AgreementTable({ data }: Props) {
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
+                                        className={`bg-secondary p-1 ${header.id === "actions" ? "w-12" : ""}`}
                                         style={
                                             header.id !== "actions"
                                                 ? {
@@ -424,7 +496,6 @@ export function AgreementTable({ data }: Props) {
                                                       header.getContext(),
                                                   )}
                                         </div>
-
                                         {filterToggle ? (
                                             header.column.getCanFilter() ? (
                                                 <div className="grid w-max place-content-center">
@@ -451,6 +522,7 @@ export function AgreementTable({ data }: Props) {
                             </TableRow>
                         ))}
                     </TableHeader>
+
                     <TableBody>
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
@@ -531,9 +603,9 @@ export function AgreementTable({ data }: Props) {
             <AlertConfirmation
                 open={showDeleteConfirmation}
                 setOpen={setShowDeleteConfirmation}
-                confirmationAction={confirmDeleteAgreement}
-                title="Are you sure you want to delete this Agreement?"
-                message={`This action cannot be undone. This will permanently delete the agreement ${agreementToDelete?.code} of year ${agreementToDelete?.year} revsion ${agreementToDelete?.revision}.`}
+                confirmationAction={confirmDeleteService}
+                title="Are you sure you want to delete this Service?"
+                message={`This action cannot be undone. This will permanently delete the service ${serviceToDelete?.name}.`}
             />
             {isDeleting && <Deleting />}
         </div>
