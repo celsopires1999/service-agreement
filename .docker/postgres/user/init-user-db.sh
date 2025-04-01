@@ -2,11 +2,15 @@
 set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-    CREATE USER test WITH PASSWORD 'test';
-	CREATE DATABASE test;
-	GRANT ALL PRIVILEGES ON DATABASE test TO test;
+    CREATE USER servagre WITH PASSWORD 'servagre';
+	CREATE DATABASE servagre;
+	GRANT ALL PRIVILEGES ON DATABASE servagre TO servagre;
 EOSQL
 
-# psql -v ON_ERROR_STOP=1 --username "test" --dbname "test" <<-EOSQL
-# 	CREATE SCHEMA estimation;
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "servagre" <<-EOSQL
+	GRANT ALL PRIVILEGES ON SCHEMA public TO servagre;
+EOSQL
+
+# psql -v ON_ERROR_STOP=1 --username "servagre" --dbname "servagre" <<-EOSQL
+# 	CREATE SCHEMA servagre;
 # EOSQL

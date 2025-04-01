@@ -1,34 +1,37 @@
 services:
+    sav:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        volumes:
+            - .:/home/node/app
+        ports:
+            - 3000:3000
+        extra_hosts:
+            - host.docker.internal:host-gateway
 
-  db:
-    image: postgres:latest
-    restart: unless-stopped
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./.docker/postgres/user/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-      POSTGRES_HOSTNAME: localhost
-    ports:
-      - 5432:5432
+    db:
+        image: postgres:latest
+        restart: unless-stopped
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+            - ./.docker/postgres/user/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+            POSTGRES_HOSTNAME: localhost
+        ports:
+            - 5432:5432
 
-    # env_file:
-    # Ensure that the variables in .env match the same variables in devcontainer.json
-    # - .env
-
-    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: always
-    ports:
-      - 9080:80
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@domain.com
-      PGADMIN_DEFAULT_PASSWORD: SuperSecret
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: always
+        ports:
+            - 9080:80
+        environment:
+            PGADMIN_DEFAULT_EMAIL: user@domain.com
+            PGADMIN_DEFAULT_PASSWORD: SuperSecret
 
 volumes:
-  postgres-data:
+    postgres-data:
