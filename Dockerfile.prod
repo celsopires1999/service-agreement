@@ -1,0 +1,41 @@
+# Use a multi-stage build to optimize the final image size
+# Stage 1: Build
+FROM node:23.3.0-slim AS builder
+
+# Set working directory
+WORKDIR /home/node/app
+
+# Copy the application code
+COPY . .
+
+# Remove unnecessary files and directories to reduce image size
+RUN rm -rf node_modules  && rm -rf .next \
+    && rm -rf .devcontainer && rm -rf .docker && rm -rf .swc  && rm -rf .vscode \
+    && rm -rf .env.drizzle && rm -rf .env.local \
+    && rm -rf .git && rm -rf .git .gitignore \
+    && rm -rf docker-compose.prod.yaml && rm -rf docker-compose.yaml && rm -rf Dockerfile.prod  && rm -rf Dockerfile.dev \
+    && rm -rf README.md
+
+# Install dependencies
+RUN npm ci
+
+# Build the application
+RUN npm run build
+
+# Stage 2: Production
+FROM node:23.3.0-slim
+
+# Set working directory
+WORKDIR /home/node/app
+
+# Copy only the built application and necessary files from the builder stage
+COPY --from=builder /home/node/app/.next ./.next
+COPY --from=builder /home/node/app/node_modules ./node_modules
+COPY --from=builder /home/node/app/public ./public
+COPY --from=builder /home/node/app/package.json .
+
+# Expose the application port
+EXPOSE 3000
+
+# Set the command to run the application
+CMD ["npm", "start"]

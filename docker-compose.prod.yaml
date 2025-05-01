@@ -1,0 +1,10 @@
+services:
+    app:
+        image: celsopires/service-agreement:v1.0.1
+        ports:
+            - "3001:3000"
+        environment:
+            NODE_ENV: production
+            DATABASE_URL: postgres://<user>:<password>@<server>:5432/<database>?sslmode=require
+        restart: unless-stopped
+        # command: tail -f /dev/null
