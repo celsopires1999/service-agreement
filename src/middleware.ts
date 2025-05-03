@@ -1,9 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server"
+import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 
 export default auth((req) => {
-    console.log("Middleware auth", req.nextUrl.pathname)
-
     if (!req.auth && req.nextUrl.pathname !== "/login") {
         const newUrl = new URL(
             `/login?callbackUrl=${req.nextUrl.pathname}`,

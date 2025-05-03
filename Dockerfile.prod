@@ -8,13 +8,8 @@ WORKDIR /home/node/app
 # Copy the application code
 COPY . .
 
-# Remove unnecessary files and directories to reduce image size
-RUN rm -rf node_modules  && rm -rf .next \
-    && rm -rf .devcontainer && rm -rf .docker && rm -rf .swc  && rm -rf .vscode \
-    && rm -rf .env.drizzle && rm -rf .env.local \
-    && rm -rf .git && rm -rf .git .gitignore \
-    && rm -rf docker-compose.prod.yaml && rm -rf docker-compose.yaml && rm -rf Dockerfile.prod  && rm -rf Dockerfile.dev \
-    && rm -rf README.md
+# Remove build directories
+RUN rm -rf node_modules  && rm -rf .next 
 
 # Install dependencies
 RUN npm ci
@@ -27,6 +22,8 @@ FROM node:23.3.0-slim
 
 # Set working directory
 WORKDIR /home/node/app
+
+ENV NODE_ENV=production 
 
 # Copy only the built application and necessary files from the builder stage
 COPY --from=builder /home/node/app/.next ./.next

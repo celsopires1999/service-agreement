@@ -1,10 +1,9 @@
 services:
     app:
-        image: celsopires/service-agreement:v1.0.1
+        image: celsopires/service-agreement:v1.0.3
         ports:
-            - "3001:3000"
-        environment:
-            NODE_ENV: production
-            DATABASE_URL: postgres://<user>:<password>@<server>:5432/<database>?sslmode=require
-        restart: unless-stopped
+            - "5000:5000"
+        env_file:
+            - .env          
+        # restart: unless-stopped
         # command: tail -f /dev/null

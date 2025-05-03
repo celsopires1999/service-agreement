@@ -8,6 +8,7 @@ This project is a Next.js application designed for managing service agreements, 
 - **Plan Management**: Add, update, and delete company plans.
 - **System Management**: Manage systems and their associated services.
 - **User List Management**: Handle user lists and their items.
+- **Authentication**: Secure login and logout functionality for users.
 - **Database Migrations**: Manage schema changes using Drizzle ORM.
 
 # Setup
