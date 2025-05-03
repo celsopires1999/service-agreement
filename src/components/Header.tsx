@@ -11,6 +11,7 @@ import Link from "next/link"
 import { NavButton } from "@/components/NavButton"
 import { ModeToggle } from "./ModeToggle"
 import { NavButtonMenu } from "./NavButtonMenu"
+import { SignOut } from "./SignOut"
 
 export function Header() {
     return (
@@ -68,7 +69,7 @@ export function Header() {
                     />
 
                     <ModeToggle />
-
+                    <SignOut />
                     {/* <Button
                         variant="ghost"
                         size="icon"

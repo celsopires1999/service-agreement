@@ -22,6 +22,12 @@ The project is organized as follows:
 
 The project provides the following key functionalities:
 
+### Authentication
+
+- Secure login and logout functionality for users.
+- Session management to ensure secure access to resources.
+- Integration with middleware for route protection and user role validation.
+
 ### Service Agreement Management
 
 - Create, revise, and manage service agreements.
