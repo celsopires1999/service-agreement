@@ -1,9 +1,11 @@
 services:
     app:
-        image: celsopires/service-agreement:v1.0.3
+        image: celsopires/service-agreement:v1.0.4
         ports:
             - "5000:5000"
         env_file:
-            - .env          
+            - .env
+        extra_hosts:
+            - host.docker.internal:host-gateway
         # restart: unless-stopped
         # command: tail -f /dev/null

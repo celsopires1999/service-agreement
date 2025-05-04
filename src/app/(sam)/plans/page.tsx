@@ -5,7 +5,17 @@ export const metadata = {
     title: "Company Plans",
 }
 
-export default async function PlansPage() {
+export default async function PlansPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | undefined }>
+}) {
+    const { plans } = await searchParams
+
+    if (plans) {
+        return <p className="mt-4">Plans filter is not allowed yet.</p>
+    }
+
     try {
         const results = await getPlans()
 

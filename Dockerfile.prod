@@ -1,6 +1,6 @@
 # Use a multi-stage build to optimize the final image size
 # Stage 1: Build
-FROM node:23.3.0-slim AS builder
+FROM node:23.3.0-alpine AS builder
 
 # Set working directory
 WORKDIR /home/node/app
@@ -9,7 +9,7 @@ WORKDIR /home/node/app
 COPY . .
 
 # Remove build directories
-RUN rm -rf node_modules  && rm -rf .next 
+RUN rm -rf node_modules && rm -rf .next 
 
 # Install dependencies
 RUN npm ci
@@ -17,8 +17,14 @@ RUN npm ci
 # Build the application
 RUN npm run build
 
+# Remove node_modules used for building the .next directory
+RUN rm -rf node_modules
+
+# Install production dependencies (node_modules contains production dependencies only)
+RUN npm ci --omit=dev
+
 # Stage 2: Production
-FROM node:23.3.0-slim
+FROM node:23.3.0-alpine
 
 # Set working directory
 WORKDIR /home/node/app
