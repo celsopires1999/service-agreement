@@ -4,6 +4,7 @@ import { SystemsToServiceForm } from "./SystemsToServiceForm"
 import { getSystems } from "@/lib/queries/system"
 import { getServiceSystemsSearchResults } from "@/lib/queries/serviceSystem"
 import { getAgreement } from "@/lib/queries/agreement"
+import { getSession } from "@/lib/auth"
 
 export async function generateMetadata({
     params,
@@ -11,6 +12,7 @@ export async function generateMetadata({
     params: Promise<{ serviceId: string }>
 }) {
     const { serviceId } = await params
+    await getSession(`/services/${serviceId}`)
 
     if (!serviceId) {
         return {

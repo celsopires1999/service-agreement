@@ -1,6 +1,7 @@
 "use server"
 
 import { CreateAgreementRevisionUseCase } from "@/core/agreement/application/use-cases/create-agreement-revision.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     createAgreementRevisionSchema,
@@ -21,6 +22,8 @@ export const createAgreementRevisionAction = actionClient
         }: {
             parsedInput: createAgreementRevisionSchemaType
         }) => {
+            await getSession()
+
             const uc = new CreateAgreementRevisionUseCase()
 
             const result = await uc.execute({

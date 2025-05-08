@@ -1,4 +1,5 @@
 import { BackButton } from "@/components/BackButton"
+import { getSession } from "@/lib/auth"
 import { getAgreement } from "@/lib/queries/agreement"
 import { getService } from "@/lib/queries/service"
 import { ServiceForm } from "./ServiceForm"
@@ -8,7 +9,9 @@ export async function generateMetadata({
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
-    const { agreementId, serviceId } = await searchParams
+    const params = await searchParams
+    const { agreementId, serviceId } = params
+    await getSession("/services/form", params)
 
     if (!agreementId && !serviceId)
         return {

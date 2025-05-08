@@ -2,6 +2,7 @@
 
 import { CreateServiceUseCase } from "@/core/service/application/use-cases/create-service.use-case"
 import { SaveServiceUseCase } from "@/core/service/application/use-cases/save-service.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertServiceSchema,
@@ -24,6 +25,8 @@ export const saveServiceAction = actionClient
         }) => {
             // New Service
             // createdAt and updatedAt are set by the database
+
+            await getSession()
 
             if (service.serviceId === "(New)") {
                 const uc = new CreateServiceUseCase()

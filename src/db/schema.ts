@@ -15,6 +15,7 @@ import {
 
 import { relations } from "drizzle-orm"
 import { ServiceStatus } from "@/core/service/domain/service"
+import { Role } from "@/core/user/domain/user"
 
 export const plans = pgTable(
     "plans",
@@ -166,6 +167,20 @@ export const userListItems = pgTable("user_list_items", {
     corpUserId: varchar("corp_user_id").notNull(),
     area: varchar("area").notNull(),
     costCenter: varchar("cost_center").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+        .notNull()
+        .defaultNow()
+        .$onUpdate(() => new Date()),
+})
+
+export const roleEnum = pgEnum("role", enumToPgEnum(Role))
+
+export const users = pgTable("users", {
+    userId: uuid("user_id").defaultRandom().primaryKey(),
+    email: varchar("email").notNull().unique(),
+    name: varchar("name").notNull(),
+    role: roleEnum("role").notNull().default("viewer"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
         .notNull()

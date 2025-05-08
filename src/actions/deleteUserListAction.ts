@@ -1,6 +1,7 @@
 "use server"
 
 import { DeleteUserListUseCase } from "@/core/users-list/application/use-cases/delete-user-list.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
 // import { revalidatePath } from "next/cache"
@@ -25,6 +26,7 @@ export const deleteUserListAction = actionClient
         }: {
             parsedInput: deleteSystemSchemaType
         }) => {
+            await getSession()
             const uc = new DeleteUserListUseCase()
 
             const result = await uc.execute(params)

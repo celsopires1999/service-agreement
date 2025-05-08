@@ -6,6 +6,7 @@ import { flattenValidationErrors } from "next-safe-action"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { agreements, services } from "@/db/schema"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertAgreementSchema,
@@ -27,6 +28,7 @@ export const saveAgreementAction = actionClient
         }) => {
             // New Agreement
             // createdAt and updatedAt are set by the database
+            await getSession()
 
             if (
                 agreement.agreementId === "" ||

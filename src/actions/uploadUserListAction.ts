@@ -1,6 +1,7 @@
 "use server"
 
 import { SaveUserListUseCase } from "@/core/users-list/application/use-cases/save-user-list.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     userListUploadSchema,
@@ -22,6 +23,7 @@ export const uploadUserListAction = actionClient
         }: {
             parsedInput: userListUploadSchemaType
         }) => {
+            await getSession()
             const uc = new SaveUserListUseCase()
 
             const result = await uc.execute(params)

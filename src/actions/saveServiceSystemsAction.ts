@@ -1,6 +1,7 @@
 "use server"
 
 import { SaveServiceSystemUseCase } from "@/core/service/application/use-cases/save-service-system.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     saveServiceSystemsSchema,
@@ -21,6 +22,7 @@ export const saveServiceSystemsAction = actionClient
         }: {
             parsedInput: saveServiceSystemsSchemaType
         }) => {
+            await getSession()
             const uc = new SaveServiceSystemUseCase()
             await uc.execute(serviceSystem)
 

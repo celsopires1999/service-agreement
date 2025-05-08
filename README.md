@@ -25,7 +25,21 @@ This project is a Next.js application designed for managing service agreements, 
     ```bash
     npm run db:seed
     ```
-4. Start the development server:
+4. Set up PostgreSQL permissions for the `servagre` user. Connect to your PostgreSQL database and run the following commands:
+
+```bash
+DO $$
+BEGIN
+    EXECUTE format('GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO %I', 'servagre');
+    EXECUTE format('GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO %I', 'servagre');
+    EXECUTE format('GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO %I', 'servagre');
+    EXECUTE format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO %I', 'servagre');
+    EXECUTE format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON SEQUENCES TO %I', 'servagre');
+    EXECUTE format('ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON FUNCTIONS TO %I', 'servagre');
+END $$;
+```
+
+5. Start the development server:
     ```bash
     npm run dev
     ```

@@ -1,6 +1,7 @@
 "use server"
 
 import { DeleteServiceUseCase } from "@/core/service/application/use-cases/delete-service.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
@@ -24,6 +25,7 @@ export const deleteServiceAction = actionClient
         }: {
             parsedInput: deleteServiceSchemaType
         }) => {
+            await getSession()
             const uc = new DeleteServiceUseCase()
             const result = await uc.execute({
                 serviceId: params.serviceId,

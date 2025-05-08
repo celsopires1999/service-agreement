@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth"
 import { getAgreementSearchResults } from "@/lib/queries/agreement"
 import { cookies } from "next/headers"
 import { AgreementSearch } from "./AgreementSearch"
@@ -12,7 +13,9 @@ export default async function AgreementsPage({
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
-    const { localPlanId, searchText } = await searchParams
+    const params = await searchParams
+    const { localPlanId, searchText } = params
+    await getSession("/agreements", params)
 
     const cookieStore = await cookies()
     const cookieLocalPlanId = cookieStore.get("localPlanId")?.value

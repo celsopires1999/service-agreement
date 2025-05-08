@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth"
 import { getServiceSearchResults } from "@/lib/queries/service"
 import { cookies } from "next/headers"
 import { ServiceSearch } from "./ServiceSearch"
@@ -12,7 +13,9 @@ export default async function ServicesPage({
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
-    const { localPlanId, searchText } = await searchParams
+    const params = await searchParams
+    const { localPlanId, searchText } = params
+    await getSession("/services", params)
 
     const cookieStore = await cookies()
     const cookieLocalPlanId = cookieStore.get("localPlanId")?.value

@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth"
 import { getServiceWithRelations } from "@/lib/queries/service"
 import { getUserListItemsByServiceId } from "@/lib/queries/userList"
 import { type NextRequest } from "next/server"
@@ -10,6 +11,7 @@ export async function GET(
     const serviceId = (await params).serviceId
 
     try {
+        await getSession()
         const service = await getServiceWithRelations(serviceId)
         if (service.length === 0) {
             return writeExcelFile(

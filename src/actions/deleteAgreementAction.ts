@@ -1,6 +1,7 @@
 "use server"
 
 import { DeleteAgreementUseCase } from "@/core/agreement/application/use-cases/delete-agreement.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
@@ -24,6 +25,8 @@ export const deleteAgreementAction = actionClient
         }: {
             parsedInput: deleteAgreementSchemaType
         }) => {
+            await getSession()
+
             const uc = new DeleteAgreementUseCase()
             const result = await uc.execute({
                 agreementId: params.agreementId,

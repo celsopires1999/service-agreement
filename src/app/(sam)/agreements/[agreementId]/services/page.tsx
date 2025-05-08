@@ -1,4 +1,5 @@
 import { BackButton } from "@/components/BackButton"
+import { getSession } from "@/lib/auth"
 import { getAgreement } from "@/lib/queries/agreement"
 import { getServicesByAgreementId } from "@/lib/queries/service"
 import { AgreementServiceTable } from "./AgreementServiceTable"
@@ -27,6 +28,7 @@ export default async function AgreementServicesPage({
     params: Promise<{ agreementId: string }>
 }) {
     const { agreementId } = await params
+    await getSession(`/agreements/${agreementId}/services`)
 
     try {
         const agreement = await getAgreement(agreementId)

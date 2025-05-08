@@ -2,6 +2,7 @@
 
 import { db } from "@/db"
 import { plans } from "@/db/schema"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
@@ -26,6 +27,7 @@ export const deletePlanAction = actionClient
         }: {
             parsedInput: deletePlanSchemaType
         }) => {
+            await getSession()
             const result = await db
                 .delete(plans)
                 .where(eq(plans.planId, params.planId))

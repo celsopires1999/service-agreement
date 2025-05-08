@@ -5,6 +5,7 @@ import { flattenValidationErrors } from "next-safe-action"
 
 import { db } from "@/db"
 import { systems } from "@/db/schema"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertSystemSchema,
@@ -26,6 +27,7 @@ export const saveSystemAction = actionClient
         }) => {
             // New System
             // createdAt and updatedAt are set by the database
+            await getSession()
 
             if (system.systemId === "" || system.systemId === "(New)") {
                 const result = await db

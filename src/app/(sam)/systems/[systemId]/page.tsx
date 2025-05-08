@@ -7,6 +7,7 @@ import { validate as uuidValidate } from "uuid"
 import { SystemServiceHeader } from "./SystemServiceHeader"
 import { SystemServicesSearch } from "./SystemServicesSearch"
 import { SystemServicesTable } from "./SystemServicesTable"
+import { getSession } from "@/lib/auth"
 
 export async function generateMetadata({
     params,
@@ -14,6 +15,7 @@ export async function generateMetadata({
     params: Promise<{ systemId: string }>
 }) {
     const { systemId } = await params
+    await getSession(`/systems/${systemId}`)
 
     if (!systemId) {
         return {

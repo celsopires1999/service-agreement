@@ -5,6 +5,7 @@ import { flattenValidationErrors } from "next-safe-action"
 
 import { db } from "@/db"
 import { plans } from "@/db/schema"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { insertPlanSchema, type insertPlanSchemaType } from "@/zod-schemas/plan"
 import { revalidatePath } from "next/cache"
@@ -21,6 +22,7 @@ export const savePlanAction = actionClient
         }: {
             parsedInput: insertPlanSchemaType
         }) => {
+            await getSession()
             if (plan.planId === "(New)") {
                 const result = await db
                     .insert(plans)

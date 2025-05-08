@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth"
 import { getSystemSearchResults } from "@/lib/queries/system"
 import { SystemSearch } from "./SystemSearch"
 import { SystemTable } from "./SystemTable"
@@ -11,7 +12,9 @@ export default async function SystemsPage({
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
-    const { searchText } = await searchParams
+    const params = await searchParams
+    const { searchText } = params
+    await getSession("/systems", params)
 
     if (!searchText) {
         return (

@@ -2,6 +2,7 @@
 
 import { db } from "@/db"
 import { systems } from "@/db/schema"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
@@ -26,6 +27,8 @@ export const deleteSystemAction = actionClient
         }: {
             parsedInput: deleteSystemSchemaType
         }) => {
+            await getSession()
+
             const result = await db
                 .delete(systems)
                 .where(eq(systems.systemId, params.systemId))

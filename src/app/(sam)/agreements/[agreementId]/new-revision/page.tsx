@@ -3,6 +3,7 @@ import { getAgreement } from "@/lib/queries/agreement"
 import { getPlans } from "@/lib/queries/plan"
 import { countServicesByAgreementId } from "@/lib/queries/service"
 import { AgreementRevisionForm } from "./AgreementRevisionForm"
+import { getSession } from "@/lib/auth"
 
 export async function generateMetadata({
     params,
@@ -10,6 +11,7 @@ export async function generateMetadata({
     params: Promise<{ agreementId: string }>
 }) {
     const { agreementId } = await params
+    await getSession(`/agreements/${agreementId}/new-revision`)
 
     if (!agreementId) {
         return {

@@ -1,3 +1,4 @@
+import { getSession } from "@/lib/auth"
 import { getPlans } from "@/lib/queries/plan"
 import { PlanForm } from "./PlanForm"
 
@@ -10,7 +11,9 @@ export default async function PlansPage({
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
-    const { plans } = await searchParams
+    const params = await searchParams
+    const { plans } = params
+    await getSession("/plans", params)
 
     if (plans) {
         return <p className="mt-4">Plans filter is not allowed yet.</p>

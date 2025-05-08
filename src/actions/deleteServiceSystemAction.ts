@@ -1,6 +1,7 @@
 "use server"
 
 import { RemoveServiceSystemUseCase } from "@/core/service/application/use-cases/remove-service-system.use-case"
+import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
@@ -26,6 +27,7 @@ export const deleteServiceSystemAction = actionClient
         }: {
             parsedInput: deleteServiceSystemSchemaType
         }) => {
+            await getSession()
             const uc = new RemoveServiceSystemUseCase()
             await uc.execute({
                 serviceId: params.serviceId,
