@@ -52,9 +52,11 @@ export const config: NextAuthConfig = {
             if (!token.sub) return token
             if (token.userid && token.role) return token
 
-            // Read database with e-mail to get the userId and role
             if (!token.email) return token
+
+            // Read database with e-mail to get the userId and role
             const user = await getUserByEmail(token.email)
+
             if (!user) return token
             token.role = user?.role
             token.userid = user?.userId

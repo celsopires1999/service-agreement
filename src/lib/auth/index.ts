@@ -3,6 +3,7 @@ import "server-only"
 import { login } from "@/actions/loginAction"
 import { auth } from "@/auth"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { redirect } from "next/navigation"
 
 export async function getSession(
     pathname?: string,
@@ -31,6 +32,10 @@ export async function getSession(
     const fullPath = queryString ? `${pathname}?${queryString}` : pathname
 
     if (!session) await login(fullPath)
+
+    if (!session?.user?.role) {
+        redirect("/not-authorized")
+    }
 
     return session
 }
