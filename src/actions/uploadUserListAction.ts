@@ -1,5 +1,6 @@
 "use server"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { SaveUserListUseCase } from "@/core/users-list/application/use-cases/save-user-list.use-case"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
@@ -23,7 +24,15 @@ export const uploadUserListAction = actionClient
         }: {
             parsedInput: userListUploadSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (
+                session.user.role !== "admin" &&
+                session.user.role !== "validator"
+            ) {
+                throw new ValidationError("Unauthorized")
+            }
+
             const uc = new SaveUserListUseCase()
 
             const result = await uc.execute(params)

@@ -1,6 +1,7 @@
 "use server"
 
 import { CreateAgreementRevisionUseCase } from "@/core/agreement/application/use-cases/create-agreement-revision.use-case"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -22,7 +23,11 @@ export const createAgreementRevisionAction = actionClient
         }: {
             parsedInput: createAgreementRevisionSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
 
             const uc = new CreateAgreementRevisionUseCase()
 

@@ -2,9 +2,9 @@
 
 import { createAgreementRevisionAction } from "@/actions/createAgreementRevisionAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
+import { FormControlButtons } from "@/components/FormControlButtons"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
-import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
@@ -13,7 +13,6 @@ import {
     createAgreementRevisionSchemaType,
 } from "@/zod-schemas/agreement"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
@@ -133,36 +132,13 @@ export function AgreementRevisionForm({
                             type="date"
                         />
 
-                        <div className="flex max-w-xs gap-2">
-                            <Button
-                                type="submit"
-                                className="w-3/4"
-                                variant="default"
-                                title="Save"
-                                disabled={isSaving}
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <LoaderCircle className="animate-spin" />{" "}
-                                        Saving
-                                    </>
-                                ) : (
-                                    "Save"
-                                )}
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                title="Reset"
-                                onClick={() => {
-                                    form.reset(defaultValues)
-                                    resetSaveAction()
-                                }}
-                            >
-                                Reset
-                            </Button>
-                        </div>
+                        <FormControlButtons
+                            isSaving={isSaving}
+                            onReset={() => {
+                                form.reset(defaultValues)
+                                resetSaveAction()
+                            }}
+                        />
                     </div>
                     <div className="flex w-full max-w-xl flex-col gap-4">
                         <div className="space-y-2">

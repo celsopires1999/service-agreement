@@ -1,6 +1,7 @@
 "use server"
 
 import { DeleteAgreementUseCase } from "@/core/agreement/application/use-cases/delete-agreement.use-case"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
@@ -25,7 +26,11 @@ export const deleteAgreementAction = actionClient
         }: {
             parsedInput: deleteAgreementSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
 
             const uc = new DeleteAgreementUseCase()
             const result = await uc.execute({

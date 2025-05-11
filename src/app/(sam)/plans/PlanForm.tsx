@@ -2,14 +2,13 @@
 
 import { savePlanAction } from "@/actions/savePlanAction"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
-import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 
+import { FormControlButtons } from "@/components/FormControlButtons"
 import { getPlansType } from "@/lib/queries/plan"
 import { insertPlanSchema, insertPlanSchemaType } from "@/zod-schemas/plan"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { PlanTable } from "./PlanTable"
@@ -129,35 +128,13 @@ export function PlanForm({ plans }: Props) {
                                     type="date"
                                 />
 
-                                <div className="mt-4 flex gap-2">
-                                    <Button
-                                        type="submit"
-                                        variant="default"
-                                        title="Save"
-                                        disabled={isSaving}
-                                    >
-                                        {isSaving ? (
-                                            <>
-                                                <LoaderCircle className="animate-spin" />{" "}
-                                                Saving
-                                            </>
-                                        ) : (
-                                            "Save"
-                                        )}
-                                    </Button>
-
-                                    <Button
-                                        type="button"
-                                        variant="destructive"
-                                        title="Reset"
-                                        onClick={() => {
-                                            form.reset(defaultValues)
-                                            resetSaveAction()
-                                        }}
-                                    >
-                                        Reset
-                                    </Button>
-                                </div>
+                                <FormControlButtons
+                                    isSaving={isSaving}
+                                    onReset={() => {
+                                        form.reset(defaultValues)
+                                        resetSaveAction()
+                                    }}
+                                />
                             </div>
                         </form>
                     </Form>

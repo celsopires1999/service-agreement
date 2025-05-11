@@ -1,5 +1,6 @@
 "use server"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { users } from "@/db/schema"
 import { getSession } from "@/lib/auth"
@@ -27,7 +28,11 @@ export const deleteUserAction = actionClient
         }: {
             parsedInput: deleteUserSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
 
             const result = await db
                 .delete(users)

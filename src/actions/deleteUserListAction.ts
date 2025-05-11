@@ -1,5 +1,6 @@
 "use server"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { DeleteUserListUseCase } from "@/core/users-list/application/use-cases/delete-user-list.use-case"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
@@ -26,7 +27,15 @@ export const deleteUserListAction = actionClient
         }: {
             parsedInput: deleteSystemSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (
+                session.user.role !== "admin" &&
+                session.user.role !== "validator"
+            ) {
+                throw new ValidationError("Unauthorized")
+            }
+
             const uc = new DeleteUserListUseCase()
 
             const result = await uc.execute(params)

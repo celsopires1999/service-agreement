@@ -1,5 +1,6 @@
 "use server"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { plans } from "@/db/schema"
 import { getSession } from "@/lib/auth"
@@ -27,7 +28,12 @@ export const deletePlanAction = actionClient
         }: {
             parsedInput: deletePlanSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
+
             const result = await db
                 .delete(plans)
                 .where(eq(plans.planId, params.planId))

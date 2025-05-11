@@ -3,11 +3,11 @@
 import { saveAgreementAction } from "@/actions/saveAgreementAction"
 import { AgreementNav } from "@/components/AgreementNav"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
+import { FormControlButtons } from "@/components/FormControlButtons"
 import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
 import { ComboboxWithLabel } from "@/components/inputs/ComboboxWithLabel"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
-import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
@@ -16,7 +16,6 @@ import {
     type insertAgreementSchemaType,
 } from "@/zod-schemas/agreement"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
@@ -270,37 +269,13 @@ export function AgreementForm({ agreement, plans, servicesAmount }: Props) {
                             nameInSchema="comment"
                             className="h-36 max-w-2xl"
                         />
-
-                        <div className="flex max-w-xs gap-2">
-                            <Button
-                                type="submit"
-                                className="w-3/4"
-                                variant="default"
-                                title="Save"
-                                disabled={isSaving}
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <LoaderCircle className="animate-spin" />{" "}
-                                        Saving
-                                    </>
-                                ) : (
-                                    "Save"
-                                )}
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                title="Reset"
-                                onClick={() => {
-                                    form.reset(defaultValues)
-                                    resetSaveAction()
-                                }}
-                            >
-                                Reset
-                            </Button>
-                        </div>
+                        <FormControlButtons
+                            isSaving={isSaving}
+                            onReset={() => {
+                                form.reset(defaultValues)
+                                resetSaveAction()
+                            }}
+                        />
                     </div>
                 </form>
             </Form>

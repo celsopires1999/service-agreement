@@ -2,6 +2,7 @@
 
 import { CreateServiceUseCase } from "@/core/service/application/use-cases/create-service.use-case"
 import { SaveServiceUseCase } from "@/core/service/application/use-cases/save-service.use-case"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -26,9 +27,15 @@ export const saveServiceAction = actionClient
             // New Service
             // createdAt and updatedAt are set by the database
 
-            await getSession()
+            const session = await getSession()
 
             if (service.serviceId === "(New)") {
+                if (session.user.role !== "admin") {
+                    throw new ValidationError(
+                        "You are not authorized to create a new service",
+                    )
+                }
+
                 const uc = new CreateServiceUseCase()
                 const result = await uc.execute(service)
 
@@ -39,7 +46,19 @@ export const saveServiceAction = actionClient
                     serviceId: result.serviceId,
                 }
             }
+
             // Existing service
+            if (session.user.role !== "admin") {
+                if (session.user.role !== "validator") {
+                    throw new ValidationError("Unauthorized")
+                }
+                if (service.validatorEmail !== session.user.email) {
+                    throw new ValidationError(
+                        "Not authorized because you are not the validator of this service",
+                    )
+                }
+            }
+
             const uc = new SaveServiceUseCase()
             const result = await uc.execute(service)
 

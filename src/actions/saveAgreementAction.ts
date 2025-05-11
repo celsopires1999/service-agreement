@@ -28,7 +28,11 @@ export const saveAgreementAction = actionClient
         }) => {
             // New Agreement
             // createdAt and updatedAt are set by the database
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
 
             if (
                 agreement.agreementId === "" ||

@@ -1,6 +1,7 @@
 "use server"
 
 import { DeleteServiceUseCase } from "@/core/service/application/use-cases/delete-service.use-case"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
@@ -25,7 +26,12 @@ export const deleteServiceAction = actionClient
         }: {
             parsedInput: deleteServiceSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
+
             const uc = new DeleteServiceUseCase()
             const result = await uc.execute({
                 serviceId: params.serviceId,

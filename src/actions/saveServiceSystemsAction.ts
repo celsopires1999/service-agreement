@@ -1,6 +1,7 @@
 "use server"
 
 import { SaveServiceSystemUseCase } from "@/core/service/application/use-cases/save-service-system.use-case"
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -22,7 +23,15 @@ export const saveServiceSystemsAction = actionClient
         }: {
             parsedInput: saveServiceSystemsSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (
+                session.user.role !== "admin" &&
+                session.user.role !== "validator"
+            ) {
+                throw new ValidationError("Unauthorized")
+            }
+
             const uc = new SaveServiceSystemUseCase()
             await uc.execute(serviceSystem)
 

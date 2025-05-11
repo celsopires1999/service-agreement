@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { systems } from "@/db/schema"
 import { getSession } from "@/lib/auth"
@@ -27,7 +28,14 @@ export const saveSystemAction = actionClient
         }) => {
             // New System
             // createdAt and updatedAt are set by the database
-            await getSession()
+            const session = await getSession()
+
+            if (
+                session.user.role !== "admin" &&
+                session.user.role !== "validator"
+            ) {
+                throw new ValidationError("Unauthorized")
+            }
 
             if (system.systemId === "" || system.systemId === "(New)") {
                 const result = await db

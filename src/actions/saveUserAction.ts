@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { users } from "@/db/schema"
 import { getSession } from "@/lib/auth"
@@ -24,7 +25,11 @@ export const saveUserAction = actionClient
         }) => {
             // New User
             // createdAt and updatedAt are set by the database
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
 
             if (user.userId === "" || user.userId === "(New)") {
                 const result = await db

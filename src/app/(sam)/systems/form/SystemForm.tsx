@@ -2,10 +2,10 @@
 
 import { saveSystemAction } from "@/actions/saveSystemAction"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
+import { FormControlButtons } from "@/components/FormControlButtons"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { SystemNav } from "@/components/SystemNav"
-import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 import {
@@ -14,7 +14,6 @@ import {
     type selectSystemSchemaType,
 } from "@/zod-schemas/system"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LoaderCircle } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
@@ -128,36 +127,13 @@ export function SystemForm({ system }: Props) {
                             className="h-60 max-w-2xl"
                         />
 
-                        <div className="flex max-w-xs gap-2">
-                            <Button
-                                type="submit"
-                                className="w-3/4"
-                                variant="default"
-                                title="Save"
-                                disabled={isSaving}
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <LoaderCircle className="animate-spin" />{" "}
-                                        Saving
-                                    </>
-                                ) : (
-                                    "Save"
-                                )}
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                title="Reset"
-                                onClick={() => {
-                                    form.reset(defaultValues)
-                                    resetSaveAction()
-                                }}
-                            >
-                                Reset
-                            </Button>
-                        </div>
+                        <FormControlButtons
+                            isSaving={isSaving}
+                            onReset={() => {
+                                form.reset(defaultValues)
+                                resetSaveAction()
+                            }}
+                        />
                     </div>
                 </form>
             </Form>

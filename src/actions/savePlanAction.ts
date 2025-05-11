@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
 import { plans } from "@/db/schema"
 import { getSession } from "@/lib/auth"
@@ -22,7 +23,12 @@ export const savePlanAction = actionClient
         }: {
             parsedInput: insertPlanSchemaType
         }) => {
-            await getSession()
+            const session = await getSession()
+
+            if (session.user.role !== "admin") {
+                throw new ValidationError("Unauthorized")
+            }
+
             if (plan.planId === "(New)") {
                 const result = await db
                     .insert(plans)
