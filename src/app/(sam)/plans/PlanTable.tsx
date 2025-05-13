@@ -4,14 +4,6 @@ import { AlertConfirmation } from "@/components/AlertConfirmation"
 import Deleting from "@/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
     Table,
     TableBody,
     TableCell,
@@ -22,7 +14,6 @@ import {
 import { toast } from "@/hooks/use-toast"
 import { getPlansType } from "@/lib/queries/plan"
 import {
-    CellContext,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -32,10 +23,11 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { Edit, MoreHorizontal, TableOfContents, Trash } from "lucide-react"
+import { TableOfContents } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
+import { ActionsCell } from "./ActionsCell"
 
 type Props = {
     data: getPlansType[]
@@ -133,52 +125,17 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
 
     const columnHelper = createColumnHelper<getPlansType>()
 
-    const ActionsCell = ({ row }: CellContext<getPlansType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Plan</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-
-                    <DropdownMenuItem
-                        onClick={() =>
-                            handleUpdatePlan(
-                                row.original.planId,
-                                row.original.code,
-                                row.original.description,
-                                row.original.euro,
-                                row.original.planDate,
-                            )
-                        }
-                    >
-                        <Edit className="mr-2 h-4 w-4" />
-                        <span>Edit</span>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                        onClick={() => handleDeletePlan(row.original)}
-                    >
-                        <Trash className="mr-2 h-4 w-4" />
-                        <span>Delete</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
-
-    ActionsCell.displayName = "ActionsCell"
-
     const columns = [
         columnHelper.display({
             id: "actions",
             header: () => <TableOfContents />,
-            cell: ActionsCell,
+            cell: (ctx) => (
+                <ActionsCell
+                    {...ctx}
+                    handleUpdatePlan={handleUpdatePlan}
+                    handleDeletePlan={handleDeletePlan}
+                />
+            ),
         }),
         ...columnHeadersArray.map((columnName) => {
             return columnHelper.accessor(

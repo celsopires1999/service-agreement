@@ -1,14 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
     Table,
     TableBody,
     TableCell,
@@ -20,7 +12,6 @@ import {
 import { getServicesBySystemIdType } from "@/lib/queries/service"
 import { toDecimal } from "@/lib/utils"
 import {
-    CellContext,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -31,18 +22,10 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 import Decimal from "decimal.js"
-import {
-    CircleCheckIcon,
-    CircleXIcon,
-    FileIcon,
-    HandCoinsIcon,
-    HandshakeIcon,
-    MoreHorizontal,
-    TableOfContents,
-} from "lucide-react"
-import Link from "next/link"
+import { CircleCheckIcon, CircleXIcon, TableOfContents } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
+import { ActionsCell } from "./ActionsCell"
 
 type Props = {
     data: getServicesBySystemIdType[]
@@ -136,65 +119,11 @@ export function SystemServicesTable({ data }: Props) {
 
     const columnHelper = createColumnHelper<getServicesBySystemIdType>()
 
-    const ActionsCell = ({
-        row,
-    }: CellContext<getServicesBySystemIdType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Options</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-
-                    <DropdownMenuItem asChild>
-                        <Link
-                            href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                            className="flex w-full"
-                            prefetch={false}
-                        >
-                            <HandshakeIcon className="mr-2 h-4 w-4" />
-                            <span>Agreement</span>
-                        </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                        <Link
-                            href={`/services/form?serviceId=${row.original.serviceId}`}
-                            className="flex w-full"
-                            prefetch={false}
-                        >
-                            <FileIcon className="mr-2 h-4 w-4" />
-                            <span>Service</span>
-                        </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                        <Link
-                            href={`/services/${row.original.serviceId}`}
-                            className="flex w-full"
-                            prefetch={false}
-                        >
-                            <HandCoinsIcon className="mr-2 h-4 w-4" />
-                            Allocation
-                        </Link>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
-
-    ActionsCell.displayName = "ActionsCell"
-
     const columns = [
         columnHelper.display({
             id: "actions",
             header: () => <TableOfContents />,
-            cell: ActionsCell,
+            cell: (ctx) => <ActionsCell {...ctx} />,
         }),
         ...columnHeadersArray.map((columnName) => {
             return columnHelper.accessor(

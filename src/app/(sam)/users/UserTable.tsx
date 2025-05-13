@@ -5,14 +5,6 @@ import Deleting from "@/components/Deleting"
 import { IconButtonWithTooltip } from "@/components/IconButtonWithTooltip"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
     Table,
     TableBody,
     TableCell,
@@ -23,7 +15,6 @@ import {
 import { toast } from "@/hooks/use-toast"
 import type { getUserType } from "@/lib/queries/user"
 import {
-    CellContext,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -33,11 +24,11 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { Edit, MoreHorizontal, Trash } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
+import { ActionsCell } from "./ActionsCell"
 
 type Props = {
     data: getUserType[]
@@ -125,51 +116,15 @@ export function UserTable({ data }: Props) {
 
     const columnHelper = createColumnHelper<getUserType>()
 
-    const ActionsCell = ({ row }: CellContext<getUserType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>User</DropdownMenuLabel>
-
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/users/form?userId=${row.original.userId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <Edit className="mr-2 h-4 w-4" />
-                                <span>Edit</span>
-                            </Link>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                            onClick={() => handleDeleteUser(row.original)}
-                        >
-                            <Trash className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
-
-    ActionsCell.displayName = "ActionsCell"
-
     const columns = [
         columnHelper.display({
             id: "actions",
             header: () => (
                 <IconButtonWithTooltip text="New User" href="/users/form" />
             ),
-            cell: ActionsCell,
+            cell: (ctx) => (
+                <ActionsCell {...ctx} handleDeleteUser={handleDeleteUser} />
+            ),
         }),
 
         ...columnHeadersArray.map((columnName) => {

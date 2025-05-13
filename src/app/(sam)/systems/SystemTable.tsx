@@ -4,14 +4,6 @@ import { AlertConfirmation } from "@/components/AlertConfirmation"
 import Deleting from "@/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
     Table,
     TableBody,
     TableCell,
@@ -22,7 +14,6 @@ import {
 import { toast } from "@/hooks/use-toast"
 import type { getSystemType } from "@/lib/queries/system"
 import {
-    CellContext,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -32,17 +23,12 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import {
-    DollarSignIcon,
-    Edit,
-    MoreHorizontal,
-    TableOfContents,
-    Trash,
-} from "lucide-react"
+import { TableOfContents } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
+import { ActionsCell } from "./ActionsCell"
 
 type Props = {
     data: getSystemType[]
@@ -132,60 +118,13 @@ export function SystemTable({ data }: Props) {
 
     const columnHelper = createColumnHelper<getSystemType>()
 
-    const ActionsCell = ({ row }: CellContext<getSystemType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>System</DropdownMenuLabel>
-
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/systems/form?systemId=${row.original.systemId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <Edit className="mr-2 h-4 w-4" />
-                                <span>Edit</span>
-                            </Link>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/systems/${row.original.systemId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <DollarSignIcon className="mr-2 h-4 w-4" />
-                                <span>Cost</span>
-                            </Link>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                            onClick={() => handleDeleteSystem(row.original)}
-                        >
-                            <Trash className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
-
-    ActionsCell.displayName = "ActionsCell"
-
     const columns = [
         columnHelper.display({
             id: "actions",
             header: () => <TableOfContents />,
-            cell: ActionsCell,
+            cell: (ctx) => (
+                <ActionsCell {...ctx} handleDeleteSystem={handleDeleteSystem} />
+            ),
         }),
         ...columnHeadersArray.map((columnName) => {
             return columnHelper.accessor(

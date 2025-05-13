@@ -7,15 +7,6 @@ import { IsRevisedPresenter } from "@/components/IsRevisedPresenter"
 import { Filter } from "@/components/react-table/Filter"
 import { NoFilter } from "@/components/react-table/NoFilter"
 import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import {
@@ -31,7 +22,6 @@ import { useTableStateHelper } from "@/hooks/useTableStateHelper"
 import { getAgreementSearchResultsType } from "@/lib/queries/agreement"
 import { dateFormatter } from "@/lib/utils"
 import {
-    CellContext,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
@@ -41,20 +31,12 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import {
-    ArrowDown,
-    ArrowUp,
-    ClapperboardIcon,
-    Edit,
-    MoreHorizontal,
-    Plus,
-    TablePropertiesIcon,
-    Trash,
-} from "lucide-react"
+import { ArrowDown, ArrowUp } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { JSX, useEffect, useState } from "react"
+import { ActionsCell } from "./ActionsCell"
 
 type Props = {
     data: getAgreementSearchResultsType[]
@@ -182,81 +164,6 @@ export function AgreementTable({ data }: Props) {
 
     const columnHelper = createColumnHelper<getAgreementSearchResultsType>()
 
-    const ActionsCell = ({
-        row,
-    }: CellContext<getAgreementSearchResultsType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Agreement</DropdownMenuLabel>
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/agreements/form?agreementId=${row.original.agreementId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <Edit className="mr-2 h-4 w-4" />
-                                <span>Edit</span>
-                            </Link>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/agreements/${row.original.agreementId}/new-revision`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <ClapperboardIcon className="mr-2 h-4 w-4" />
-                                <span>Revision</span>
-                            </Link>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                            onClick={() => handleDeleteAgreement(row.original)}
-                        >
-                            <Trash className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-
-                    <DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuLabel>Service</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/agreements/${row.original.agreementId}/services`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <TablePropertiesIcon className="mr-2 h-4 w-4" />
-                                <span>List</span>
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={`/services/form?agreementId=${row.original.agreementId}`}
-                                className="flex w-full"
-                                prefetch={false}
-                            >
-                                <Plus className="mr-2 h-4 w-4" />
-                                <span>Add</span>
-                            </Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
-
-    ActionsCell.displayName = "ActionsCell"
-
     const columns = [
         columnHelper.display({
             id: "actions",
@@ -266,9 +173,13 @@ export function AgreementTable({ data }: Props) {
                     href="/agreements/form"
                 />
             ),
-            cell: ActionsCell,
+            cell: (ctx) => (
+                <ActionsCell
+                    {...ctx}
+                    handleDeleteAgreement={handleDeleteAgreement}
+                />
+            ),
         }),
-
         ...columnHeadersArray.map((columnName) => {
             return columnHelper.accessor(
                 (row) => {
@@ -290,7 +201,8 @@ export function AgreementTable({ data }: Props) {
                     enableColumnFilter:
                         columnDefs[columnName as keyof typeof columnDefs]
                             ?.filterable ?? false,
-                    header: ({ column }) => {
+                    header: (headerCtx) => {
+                        const column = headerCtx.column
                         return (
                             <Button
                                 variant="ghost"
@@ -313,31 +225,32 @@ export function AgreementTable({ data }: Props) {
                                 {column.getIsSorted() === "desc" && (
                                     <ArrowDown className="ml-2 h-4 w-4" />
                                 )}
-
-                                {/* {column.getIsSorted() !== "desc" &&
-                                    column.getIsSorted() !== "asc" && (
-                                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                                    )} */}
                             </Button>
                         )
                     },
                     cell: (info) => {
-                        // presentational
                         const presenterFn =
                             columnDefs[columnName as keyof typeof columnDefs]
                                 ?.presenter
-
-                        return (
-                            <Link
-                                href={`/agreements/form?agreementId=${info.row.original.agreementId}`}
-                                prefetch={false}
-                            >
-                                {presenterFn ? (
-                                    presenterFn({ value: info.getValue() })
-                                ) : (
-                                    <div>{info.getValue()?.toString()}</div>
-                                )}
-                            </Link>
+                        // Para a coluna 'code', o link deve ser para o form, para as demais, manter o valor
+                        if (columnName === "code") {
+                            return (
+                                <Link
+                                    href={`/agreements/form?agreementId=${info.row.original.agreementId}`}
+                                    prefetch={false}
+                                >
+                                    {presenterFn ? (
+                                        presenterFn({ value: info.getValue() })
+                                    ) : (
+                                        <div>{info.getValue()?.toString()}</div>
+                                    )}
+                                </Link>
+                            )
+                        }
+                        return presenterFn ? (
+                            presenterFn({ value: info.getValue() })
+                        ) : (
+                            <div>{info.getValue()?.toString()}</div>
                         )
                     },
                 },

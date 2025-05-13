@@ -2,13 +2,6 @@
 import { Filter } from "@/components/react-table/Filter"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
     Table,
     TableBody,
     TableCell,
@@ -18,7 +11,6 @@ import {
 } from "@/components/ui/table"
 import { getUserListItemsByServiceIdType } from "@/lib/queries/userList"
 import {
-    CellContext,
     ColumnFiltersState,
     createColumnHelper,
     flexRender,
@@ -30,15 +22,10 @@ import {
     SortingState,
     useReactTable,
 } from "@tanstack/react-table"
-import {
-    ArrowDown,
-    ArrowUp,
-    ArrowUpDown,
-    MoreHorizontal,
-    TableOfContents,
-} from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown, TableOfContents } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
+import { ActionsCell } from "./ActionsCell"
 
 type Props = {
     data: getUserListItemsByServiceIdType[]
@@ -93,34 +80,11 @@ export function UserListTable({ data }: Props) {
 
     const columnHelper = createColumnHelper<getUserListItemsByServiceIdType>()
 
-    const ActionsCell = ({
-        row,
-    }: CellContext<getUserListItemsByServiceIdType, unknown>) => {
-        return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>
-                        {row.original.corpUserId}
-                    </DropdownMenuLabel>
-                    <DropdownMenuGroup></DropdownMenuGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        )
-    }
-
-    ActionsCell.displayName = "ActionsCell"
-
     const columns = [
         columnHelper.display({
             id: "actions",
             header: () => <TableOfContents />,
-            cell: ActionsCell,
+            cell: (ctx) => <ActionsCell {...ctx} />,
         }),
         ...columnHeadersArray.map((columnName) => {
             return columnHelper.accessor(
