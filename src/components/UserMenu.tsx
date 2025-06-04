@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth"
+import { auth } from "@/auth"
 import { CircleUserIcon } from "lucide-react"
 import { SignOut } from "./SignOut"
 import { Button } from "./ui/button"
@@ -12,7 +12,7 @@ import {
 } from "./ui/dropdown-menu"
 
 export async function UserMenu() {
-    const session = await getSession()
+    const session = await auth()
 
     return (
         <DropdownMenu>
@@ -32,9 +32,9 @@ export async function UserMenu() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex flex-col items-start">
-                    <span className="font-medium">{session.user.name}</span>
+                    <span className="font-medium">{session?.user.name}</span>
                     <span className="text-xs text-muted-foreground">
-                        {session.user.role}
+                        {session?.user.role}
                     </span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
