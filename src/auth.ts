@@ -1,5 +1,10 @@
-import NextAuth, { type DefaultSession, NextAuthConfig } from "next-auth"
+import NextAuth, {
+    CredentialsSignin,
+    type DefaultSession,
+    NextAuthConfig,
+} from "next-auth"
 import "next-auth/jwt"
+import Credentials from "next-auth/providers/credentials"
 import GitHub from "next-auth/providers/github"
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id"
 import { getUserByEmail } from "./lib/queries/user"
@@ -23,6 +28,10 @@ declare module "next-auth/jwt" {
         userid?: string
         role?: string
     }
+}
+
+class InvalidLoginError extends CredentialsSignin {
+    code = "Invalid identifier or password"
 }
 
 export const config: NextAuthConfig = {
@@ -65,6 +74,48 @@ export const config: NextAuthConfig = {
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
+}
+
+const testUsers = [
+    {
+        email: "admin@admin.com",
+        name: "Admin User",
+    },
+    {
+        email: "validator@validator.com",
+        name: "Validator User",
+    },
+    {
+        email: "viewer@viewer.com",
+        name: "Viewer User",
+    },
+]
+
+if (process.env.NODE_ENV === "development") {
+    config.providers.push(
+        Credentials({
+            id: "password",
+            name: "Password",
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" },
+            },
+            authorize: async (credentials) => {
+                const user = testUsers.find(
+                    (u) => u.email === credentials.email,
+                )
+                if (!user) throw new InvalidLoginError()
+
+                if (credentials.password === "password") {
+                    return {
+                        email: user.email,
+                        name: user.name,
+                    }
+                }
+                throw new InvalidLoginError()
+            },
+        }),
+    )
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth(config)
