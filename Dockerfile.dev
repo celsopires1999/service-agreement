@@ -6,6 +6,8 @@ RUN apt update && \
 COPY .docker/start.sh /
 RUN chmod +x start.sh
 
+RUN npx playwright install-deps chromium
+
 USER node
 
 WORKDIR /home/node/app

@@ -14,6 +14,12 @@
     "db:seed": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/seed.ts",
     "test": "jest",
     "test:watch": "jest --watch",
+    "dev:test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) next dev",
+    "test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --reporter null",
+    "test:e2e:headed": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --headed --reporter null",
+    "test:e2e:debug": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --debug --reporter null",
+    "test:e2e:ui": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --ui-host=0.0.0.0 --reporter null",
+    "test:e2e:report": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright show-report",
     "deploy": "git pull && npm ci && next build && pm2 restart service-agreement"
   },
   "dependencies": {
@@ -54,6 +60,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.52.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
