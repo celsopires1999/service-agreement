@@ -1,10 +1,22 @@
-import { test, expect } from "@playwright/test"
+import { db } from "@/db"
+import { users } from "@/db/schema"
+import { expect, test } from "@playwright/test"
 import path from "path"
+import { usersData } from "./fixtures/usersData"
 
 const roles = ["admin", "viewer", "validator"] as const
 type Role = (typeof roles)[number]
 
 const runHomePageTests = (role: Role) => {
+    test.beforeAll(async () => {
+        try {
+            db.delete(users)
+            db.insert(users).values(usersData)
+        } catch (error) {
+            console.error("Error during test setup:", error)
+            throw new Error("Test setup failed", { cause: error })
+        }
+    })
     test.describe(`Agreements List Page as ${role}`, () => {
         test.use({
             storageState: path.join(
