@@ -1,0 +1,37 @@
+- heading "New Agreement Form" [level=2]
+- text: Year
+- spinbutton "Year": /\d+/
+- text: Code
+- textbox "Code"
+- paragraph: Code is required
+- text: Name
+- textbox "Name"
+- paragraph: Name is required
+- text: Provider Plan
+- combobox:
+  - text: Select
+  - img
+- paragraph: invalid UUID
+- text: Local Plan
+- combobox:
+  - text: Select
+  - img
+- paragraph: invalid UUID
+- text: Contact Email
+- textbox "Contact Email"
+- paragraph: Invalid email address
+- heading "Services Info" [level=3]
+- separator
+- paragraph: There are no services yet
+- text: Revision
+- spinbutton "Revision" [disabled]
+- text: Revision Date
+- textbox "Revision Date"
+- text: Description
+- textbox "Description"
+- paragraph: Description is required
+- text: Comment
+- textbox "Comment"
+- button "Save"
+- button "Back"
+- button "Reset"

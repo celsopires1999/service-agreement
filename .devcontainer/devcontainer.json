@@ -21,7 +21,8 @@
 				"cweijan.vscode-postgresql-client2",
 				"esbenp.prettier-vscode",
 				"YoavBls.pretty-ts-errors",
-				"bradlc.vscode-tailwindcss"
+				"bradlc.vscode-tailwindcss",
+				"ms-playwright.playwright"
 			]
 		}
 	},

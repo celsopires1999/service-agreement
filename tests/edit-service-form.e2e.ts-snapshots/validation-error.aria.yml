@@ -1,0 +1,38 @@
+- heading "New Service Form" [level=2]
+- button "Agreement Agreement":
+  - img
+- text: Name
+- textbox "Name"
+- paragraph: Name is required
+- text: Run Amount
+- textbox
+- paragraph: Invalid run amount
+- text: Change Amount
+- textbox
+- paragraph: Invalid change amount
+- text: Currency
+- combobox "Currency"
+- text: Responsible Email
+- textbox "Responsible Email"
+- paragraph: Invalid responsible email address
+- heading "Agreement Info" [level=3]
+- separator
+- paragraph: TIC00001
+- paragraph: SA Ines Kittel
+- paragraph: /Valid for \d+ with Local Plan FC0325/
+- paragraph: Revision in Progress
+- text: Description
+- textbox "Description"
+- paragraph: Description is required
+- text: Provider Allocation
+- textbox "Provider Allocation"
+- paragraph: Provider Allocation is required
+- text: Local Allocation
+- textbox "Local Allocation"
+- paragraph: Local Allocation is required
+- text: Validator Email
+- textbox "Validator Email"
+- paragraph: Invalid validator email address
+- button "Save"
+- button "Back"
+- button "Reset"
