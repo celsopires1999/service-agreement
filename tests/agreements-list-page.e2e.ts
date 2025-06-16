@@ -1,8 +1,11 @@
 import { db } from "@/db"
-import { users } from "@/db/schema"
+import { agreements, plans, users } from "@/db/schema"
 import { expect, test } from "@playwright/test"
 import path from "path"
+import { agreementsData } from "./fixtures/agreementsData"
+import { plansData } from "./fixtures/plansData"
 import { usersData } from "./fixtures/usersData"
+import { cleanTables } from "./utils/clean-tables"
 
 const roles = ["admin", "viewer", "validator"] as const
 type Role = (typeof roles)[number]
@@ -10,8 +13,10 @@ type Role = (typeof roles)[number]
 const runHomePageTests = (role: Role) => {
     test.beforeAll(async () => {
         try {
-            db.delete(users)
-            db.insert(users).values(usersData)
+            await cleanTables()
+            await db.insert(users).values(usersData)
+            await db.insert(plans).values(plansData)
+            await db.insert(agreements).values(agreementsData)
         } catch (error) {
             console.error("Error during test setup:", error)
             throw new Error("Test setup failed", { cause: error })
@@ -57,6 +62,22 @@ const runHomePageTests = (role: Role) => {
                 name: "Service Agreement Validation",
             })
             await expect(heading).toBeVisible()
+        })
+
+        test("should display the agreements list", async ({ page }) => {
+            await page.goto("/agreements")
+            const search = page.getByRole("textbox", {
+                name: "Search Agreements",
+            })
+            search.fill("@")
+            const button = page.getByRole("button", { name: "Search" })
+            await button.click()
+
+            await expect(
+                page.getByText(
+                    "Agreements ListFilterCodeAgreementContact EmailLocal",
+                ),
+            ).toMatchAriaSnapshot({ name: "main.aria.yml" })
         })
     })
 }

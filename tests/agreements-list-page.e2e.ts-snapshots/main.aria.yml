@@ -1,0 +1,182 @@
+- heading "Agreements List" [level=2]
+- switch "Filter"
+- text: Filter
+- table:
+  - rowgroup:
+    - row "Code Agreement Contact Email Local Plan Year Revision Revised Revision Date":
+      - cell:
+        - link:
+          - /url: /agreements/form
+          - img
+      - cell "Code":
+        - button "Code"
+      - cell "Agreement":
+        - button "Agreement"
+      - cell "Contact Email":
+        - button "Contact Email"
+      - cell "Local Plan":
+        - button "Local Plan"
+      - cell "Year":
+        - button "Year"
+      - cell "Revision":
+        - button "Revision"
+      - cell "Revised":
+        - button "Revised"
+      - cell "Revision Date":
+        - button "Revision Date"
+  - rowgroup:
+    - row /Open Menu TIC00001 SA Ines Kittel 8o6tD@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00001":
+        - link "TIC00001":
+          - /url: /agreements/form?agreementId=84c93124-e3f9-48f9-92d5-fcdb4bbbe2ef
+      - cell "SA Ines Kittel"
+      - cell "8o6tD@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00002 SA RD Team 8o6tD@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00002":
+        - link "TIC00002":
+          - /url: /agreements/form?agreementId=d00ca900-84dc-45d6-97df-42783e657945
+      - cell "SA RD Team"
+      - cell "8o6tD@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00003 SA John Doe john\.doe@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00003":
+        - link "TIC00003":
+          - /url: /agreements/form?agreementId=66411eeb-7812-41b7-b628-e48df6209cd1
+      - cell "SA John Doe"
+      - cell "john.doe@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00004 SA Jane Smith jane\.smith@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00004":
+        - link "TIC00004":
+          - /url: /agreements/form?agreementId=61ad98a0-327f-4f38-a9af-e4fa8e7697a2
+      - cell "SA Jane Smith"
+      - cell "jane.smith@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00005 SA Alice Johnson alice\.johnson@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00005":
+        - link "TIC00005":
+          - /url: /agreements/form?agreementId=53476c80-9cd5-48c5-8fed-55532569a78d
+      - cell "SA Alice Johnson"
+      - cell "alice.johnson@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00006 SA Bob Brown bob\.brown@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00006":
+        - link "TIC00006":
+          - /url: /agreements/form?agreementId=d5b419c5-a06a-4461-89ba-95d62d614803
+      - cell "SA Bob Brown"
+      - cell "bob.brown@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00007 SA Charlie Davis charlie\.davis@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00007":
+        - link "TIC00007":
+          - /url: /agreements/form?agreementId=ea217658-f2ac-4837-9776-339fc04a10f7
+      - cell "SA Charlie Davis"
+      - cell "charlie.davis@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00008 SA Emily Clark emily\.clark@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00008":
+        - link "TIC00008":
+          - /url: /agreements/form?agreementId=25b5843d-d99b-4460-bc34-67e354c2a7e4
+      - cell "SA Emily Clark"
+      - cell "emily.clark@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00009 SA Frank Edwards frank\.edwards@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00009":
+        - link "TIC00009":
+          - /url: /agreements/form?agreementId=88d8bd30-8626-4351-9386-fca35c1a6c46
+      - cell "SA Frank Edwards"
+      - cell "frank.edwards@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu TIC00010 SA Grace Wilson grace\.wilson@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "TIC00010":
+        - link "TIC00010":
+          - /url: /agreements/form?agreementId=bad0629a-2f74-449a-a9c5-d4276de55f54
+      - cell "SA Grace Wilson"
+      - cell "grace.wilson@example.com"
+      - cell "FC0325"
+      - cell /\d+/
+      - cell "1"
+      - cell:
+        - img
+      - cell /\d+\/\d+\/\d+/
+- paragraph: /Page 1 of 2 \[\d+ total results\]/
+- button "Refresh Data"
+- button "Reset Sorting"
+- button "Previous" [disabled]
+- button "Next"

@@ -1,0 +1,35 @@
+- heading "Edit Agreement Form" [level=2]
+- button "Agreement Agreement":
+  - img
+- text: Year
+- spinbutton "Year" [disabled]: /\d+/
+- text: Code
+- textbox "Code": TIC00001
+- text: Name
+- textbox "Name": SA Ines Kittel
+- text: Provider Plan
+- combobox:
+  - text: BP25
+  - img
+- text: Local Plan
+- combobox:
+  - text: FC0325
+  - img
+- text: Contact Email
+- textbox "Contact Email": 8o6tD@example.com
+- heading "Services Info" [level=3]
+- separator
+- paragraph: There are no services yet
+- text: Revision
+- spinbutton "Revision" [disabled]
+- text: Revision Date
+- textbox "Revision Date"
+- text: Revised?
+- checkbox "Revised?"
+- text: Yes Description
+- textbox "Description": Service Agreement for Ines Kittel
+- text: Comment
+- textbox "Comment": Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.
+- button "Save"
+- button "Back"
+- button "Reset"
