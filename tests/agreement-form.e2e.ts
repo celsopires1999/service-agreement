@@ -23,7 +23,7 @@ test.beforeEach(async () => {
     }
 })
 
-test.describe(`Edit Agreement Form`, () => {
+test.describe(`Agreement Form`, () => {
     test.use({
         storageState: path.join(__dirname, `../playwright/.auth/admin.json`),
     })

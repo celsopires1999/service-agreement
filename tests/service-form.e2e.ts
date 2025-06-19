@@ -24,7 +24,7 @@ test.beforeEach(async () => {
     }
 })
 
-test.describe(`Edit Service Form`, () => {
+test.describe("Service Form", () => {
     test.use({
         storageState: path.join(__dirname, `../playwright/.auth/admin.json`),
     })

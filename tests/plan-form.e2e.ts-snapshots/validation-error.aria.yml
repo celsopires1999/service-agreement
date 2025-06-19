@@ -1,0 +1,47 @@
+- heading "Company Plans" [level=2]
+- heading "Form" [level=2]
+- text: Code
+- textbox "Code"
+- paragraph: Code is required
+- text: Description
+- textbox "Description"
+- paragraph: Description is required
+- text: EUR / USD
+- spinbutton "EUR / USD"
+- paragraph: Invalid value
+- text: Plan Date
+- textbox "Plan Date"
+- paragraph: Invalid plan date
+- button "Save"
+- button "Back"
+- button "Reset"
+- heading "List" [level=2]
+- table:
+  - rowgroup:
+    - row "Code Description EUR / USD Plan Date":
+      - cell:
+        - img
+      - cell "Code"
+      - cell "Description"
+      - cell "EUR / USD"
+      - cell "Plan Date"
+  - rowgroup:
+    - row /Open Menu PLAN002 Existing Plan 2 \d+,\d+ \d+-\d+-\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "PLAN002"
+      - cell "Existing Plan 2"
+      - cell /\d+,\d+/
+      - cell /\d+-\d+-\d+/
+    - row /Open Menu PLAN001 Existing Plan 1 \d+,\d+ \d+-\d+-\d+/:
+      - cell "Open Menu":
+        - button "Open Menu":
+          - img
+      - cell "PLAN001"
+      - cell "Existing Plan 1"
+      - cell /\d+,\d+/
+      - cell /\d+-\d+-\d+/
+- paragraph: Page 1 of 1 [2 total results]
+- button "Previous" [disabled]
+- button "Next" [disabled]

@@ -22,7 +22,7 @@ const runHomePageTests = (role: Role) => {
             throw new Error("Test setup failed", { cause: error })
         }
     })
-    test.describe(`Agreements List Page as ${role}`, () => {
+    test.describe(`Agreements List as ${role}`, () => {
         test.use({
             storageState: path.join(
                 __dirname,

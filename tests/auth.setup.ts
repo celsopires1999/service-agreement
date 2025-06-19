@@ -1,7 +1,21 @@
 import { test as setup, expect } from "@playwright/test"
 import path from "path"
+import { cleanTables } from "./utils/clean-tables"
+import { db } from "@/db"
+import { users } from "@/db/schema"
+import { usersData } from "./fixtures"
 
 const adminFile = path.join(__dirname, "../playwright/.auth/admin.json")
+
+setup.beforeEach(async () => {
+    try {
+        await cleanTables()
+        await db.insert(users).values(usersData)
+    } catch (error) {
+        console.error("Error during test setup:", error)
+        throw new Error("Test setup failed", { cause: error })
+    }
+})
 
 setup("authenticate as admin", async ({ page }) => {
     // Perform authentication steps. Replace these actions with your own.
