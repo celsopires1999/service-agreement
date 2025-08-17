@@ -6,6 +6,7 @@ import { DisplayServerActionResponse } from "@/components/DisplayServerActionRes
 import { FormControlButtons } from "@/components/FormControlButtons"
 import { CheckboxWithLabel } from "@/components/inputs/CheckboxWithLabel"
 import { ComboboxWithLabel } from "@/components/inputs/ComboboxWithLabel"
+import { InputURL } from "@/components/inputs/InputURL"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
 import { Form } from "@/components/ui/form"
@@ -53,6 +54,7 @@ export function AgreementForm({ agreement, plans, servicesAmount }: Props) {
         description: "",
         contactEmail: "",
         comment: "",
+        documentUrl: "",
     }
 
     const defaultValues: insertAgreementSchemaType = hasAgreementId
@@ -75,6 +77,7 @@ export function AgreementForm({ agreement, plans, servicesAmount }: Props) {
               description: agreement?.description ?? "",
               contactEmail: agreement?.contactEmail ?? "",
               comment: agreement?.comment ?? "",
+              documentUrl: agreement?.documentUrl ?? "",
           }
         : emptyValues
 
@@ -189,6 +192,11 @@ export function AgreementForm({ agreement, plans, servicesAmount }: Props) {
                         <InputWithLabel<insertAgreementSchemaType>
                             fieldTitle="Contact Email"
                             nameInSchema="contactEmail"
+                        />
+
+                        <InputURL<insertAgreementSchemaType>
+                            fieldTitle="Document URL"
+                            nameInSchema="documentUrl"
                         />
 
                         <div className="mt-4 space-y-2">

@@ -20,6 +20,8 @@
 - text: Contact Email
 - textbox "Contact Email"
 - paragraph: Invalid email address
+- text: Document URL
+- textbox "Document URL"
 - heading "Services Info" [level=3]
 - separator
 - paragraph: There are no services yet

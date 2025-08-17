@@ -54,6 +54,7 @@ export class CreateAgreementRevisionUseCase {
                     description: newAgreement.description,
                     contactEmail: newAgreement.contactEmail,
                     comment: newAgreement.comment,
+                    documentUrl: newAgreement.documentUrl,
                 })
                 .returning({ insertedId: agreements.agreementId })
 
@@ -81,6 +82,7 @@ export class CreateAgreementRevisionUseCase {
                     providerAllocation: service.providerAllocation,
                     localAllocation: service.localAllocation,
                     validatorEmail: service.validatorEmail,
+                    documentUrl: service.documentUrl,
                 })
 
                 newService.validate()
@@ -132,6 +134,7 @@ export class CreateAgreementRevisionUseCase {
                         localAllocation: newService.localAllocation,
                         status: newService.status,
                         validatorEmail: newService.validatorEmail,
+                        documentUrl: newService.documentUrl,
                     })
                     .returning()
 

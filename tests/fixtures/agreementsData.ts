@@ -14,6 +14,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "8o6tD@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: "https://www.example.com",
     },
     {
         agreementId: "d00ca900-84dc-45d6-97df-42783e657945",
@@ -28,6 +29,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "8o6tD@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "66411eeb-7812-41b7-b628-e48df6209cd1",
@@ -42,6 +44,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "john.doe@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "61ad98a0-327f-4f38-a9af-e4fa8e7697a2",
@@ -56,6 +59,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "jane.smith@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "53476c80-9cd5-48c5-8fed-55532569a78d",
@@ -70,6 +74,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "alice.johnson@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "d5b419c5-a06a-4461-89ba-95d62d614803",
@@ -84,6 +89,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "bob.brown@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "ea217658-f2ac-4837-9776-339fc04a10f7",
@@ -98,6 +104,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "charlie.davis@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "25b5843d-d99b-4460-bc34-67e354c2a7e4",
@@ -112,6 +119,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "emily.clark@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "88d8bd30-8626-4351-9386-fca35c1a6c46",
@@ -126,6 +134,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "frank.edwards@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "bad0629a-2f74-449a-a9c5-d4276de55f54",
@@ -140,6 +149,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "grace.wilson@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "cd0dcd26-6e75-4aba-8124-0a91b26aade1",
@@ -154,6 +164,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "henry.martinez@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "c215ada7-8761-4c45-b5e7-852d304566c7",
@@ -168,6 +179,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "isabella.lopez@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "9b93c6a3-90d6-4801-86b8-f41eea56f061",
@@ -182,6 +194,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "jack.taylor@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "0f8be300-a7e0-4ca0-aebb-bf8f642ba479",
@@ -196,6 +209,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "karen.lee@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "ba5b3205-649b-43ef-b22c-9ff37e40427d",
@@ -210,6 +224,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "leo.gonzalez@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "5e45ea12-eb75-4799-a406-07baa5e365d0",
@@ -224,6 +239,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "mia.wright@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "22b35fe0-cbe9-4428-a29a-be7abeb17b51",
@@ -238,6 +254,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "nathan.scott@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "bb47d3e5-3aa4-436d-878e-703c1fa72c02",
@@ -252,6 +269,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "olivia.king@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "5e97bba4-d7de-46b5-b7c9-3a1a653c57c9",
@@ -266,6 +284,7 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "peter.harris@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
     {
         agreementId: "b2ded3ea-ffa5-496d-91a6-db127668949c",
@@ -280,5 +299,6 @@ export const agreementsData: insertAgreementSchemaType[] = [
         contactEmail: "quinn.adams@example.com",
         comment:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, tempora.",
+        documentUrl: null,
     },
 ]

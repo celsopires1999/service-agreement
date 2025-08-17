@@ -18,6 +18,10 @@
   - img
 - text: Contact Email
 - textbox "Contact Email": 8o6tD@example.com
+- text: Document URL
+- textbox "Document URL": https://www.example.com
+- button "Open URL":
+  - img
 - heading "Services Info" [level=3]
 - separator
 - paragraph: /\d+\.\d+\.\d+,\d+ EUR \(\d+ services\)/

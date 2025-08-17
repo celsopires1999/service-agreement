@@ -16,6 +16,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "dedec5ab-a66d-400e-b21a-8a987dffa4a7",
@@ -32,6 +33,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "b5d81465-13d5-4fe6-8e97-5f18ebc6f9ed",
@@ -49,6 +51,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "1d323e0d-1ed8-4183-9fde-d46db6da09b7",
@@ -66,6 +69,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "09e5901a-5b14-4e1f-af13-7b0e9d66b3bd",
@@ -82,6 +86,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "418db53f-be0b-4b68-a59f-aaee11bfd980",
@@ -98,6 +103,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "a31316e6-454f-4def-8cd7-4d401e7b8d39",
@@ -114,6 +120,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "81ee4b3d-d88c-48db-9c46-82fc1eb8bd8b",
@@ -130,6 +137,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "21af436f-ee7b-4112-827b-cfa485ce56b0",
@@ -146,6 +154,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "d12af29c-2fd9-42d9-b864-a593587792b9",
@@ -162,6 +171,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "d89f9138-3b70-463f-a525-6f7d50a83682",
@@ -178,6 +188,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "4726533b-2f72-4fed-9329-865b5bf48375",
@@ -194,6 +205,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "a589c58e-92c4-41a4-948a-1e4fc5fb7d95",
@@ -210,6 +222,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "b73b441a-fe6a-4423-8254-d96a160dcef8",
@@ -226,6 +239,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "639d9f50-3823-47be-b56e-9f4b087741c7",
@@ -242,6 +256,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "0e34e39c-f1d3-4b81-bee7-147e98ad6caa",
@@ -258,6 +273,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "88bf2993-d0f4-4892-9afe-8fb0f5c95dc8",
@@ -274,6 +290,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "7b3b327e-e76c-4323-9637-07e06af430b2",
@@ -290,6 +307,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "f101e787-fddc-498c-b567-2d9e3b59d1be",
@@ -306,6 +324,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "9b7b71e9-ff07-46d0-af39-32564b8ec277",
@@ -322,6 +341,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "0312082f-1df8-4be2-966f-fadcc25444fc",
@@ -338,6 +358,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "c1abf4ff-7a09-46cb-8ab0-cbc3d070d318",
@@ -354,6 +375,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "e95f997b-5ca2-40a4-8c69-71cfdbd30491",
@@ -370,6 +392,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "e2589279-0533-4d45-9620-a1dcb4e6bce5",
@@ -386,6 +409,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "b699d835-0489-4482-87b8-00f2893c8da5",
@@ -402,6 +426,7 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
     {
         serviceId: "4e168386-6098-4519-aad2-6333f2d17ef6",
@@ -418,5 +443,6 @@ export const servicesData: insertServiceSchemaType[] = [
         localAllocation: "Number of users",
         status: "created",
         validatorEmail: "tbd@tbd.com",
+        documentUrl: null,
     },
 ]

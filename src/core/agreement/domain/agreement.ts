@@ -13,6 +13,7 @@ export type AgreementConstructorProps = {
     description: string
     contactEmail: string
     comment: string | null
+    documentUrl: string | null
 }
 
 export type AgreementCreateCommand = Omit<
@@ -33,6 +34,7 @@ export class Agreement {
     description: string
     contactEmail: string
     comment: string | null
+    documentUrl: string | null
 
     constructor(props: AgreementConstructorProps) {
         this.agreementId = props.agreementId
@@ -47,6 +49,7 @@ export class Agreement {
         this.description = props.description
         this.contactEmail = props.contactEmail
         this.comment = props.comment
+        this.documentUrl = props.documentUrl
     }
 
     static create(props: AgreementCreateCommand) {
@@ -74,6 +77,7 @@ export class Agreement {
             description: this.description,
             contactEmail: this.contactEmail,
             comment: this.comment,
+            documentUrl: this.documentUrl,
         })
     }
 }

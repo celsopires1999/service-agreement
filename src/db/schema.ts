@@ -53,6 +53,7 @@ export const agreements = pgTable(
         description: text("description").notNull(),
         contactEmail: varchar("contact_email").notNull(),
         comment: text("comment"),
+        documentUrl: text("document_url"),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at")
             .notNull()
@@ -96,6 +97,7 @@ export const services = pgTable(
         isActive: boolean("is_active").notNull().default(false),
         validatorEmail: varchar("validator_email").notNull(),
         status: serviceStatusEnum("status").notNull().default("created"),
+        documentUrl: text("document_url"),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at")
             .notNull()
