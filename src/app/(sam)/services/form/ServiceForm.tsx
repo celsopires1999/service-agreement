@@ -6,6 +6,7 @@ import { BadgeWithTooltip } from "@/components/BadgeWithTooltip"
 import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
 import { FormControlButtons } from "@/components/FormControlButtons"
 import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
+import { InputURL } from "@/components/inputs/InputURL"
 import { InputWithLabel } from "@/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
 import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
@@ -53,6 +54,7 @@ export function ServiceForm({
         localAllocation: service?.localAllocation ?? "",
         status: service?.status ?? "created",
         validatorEmail: service?.validatorEmail ?? "",
+        documentUrl: service?.documentUrl ?? "",
     }
 
     const form = useForm<insertServiceSchemaType>({
@@ -190,6 +192,11 @@ export function ServiceForm({
                             fieldTitle="Responsible Email"
                             nameInSchema="responsibleEmail"
                             disabled={!isEditable}
+                        />
+
+                        <InputURL<insertServiceSchemaType>
+                            fieldTitle="Document URL"
+                            nameInSchema="documentUrl"
                         />
 
                         <div className="mt-4 space-y-2">

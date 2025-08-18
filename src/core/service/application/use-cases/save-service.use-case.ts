@@ -32,6 +32,7 @@ export class SaveServiceUseCase {
         entity.changeLocalAllocation(input.localAllocation)
         entity.changeStatus(input.status)
         entity.changeValidatorEmail(input.validatorEmail)
+        entity.changeDocumentUrl(input.documentUrl)
         entity.changeActivationStatusBasedOnAllocation()
 
         entity.validate()

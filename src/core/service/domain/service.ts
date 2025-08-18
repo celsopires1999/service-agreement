@@ -31,6 +31,7 @@ export type ServiceConstructorProps = {
     localAllocation: string
     status: ServiceStatusType
     validatorEmail: string
+    documentUrl: string | null
     serviceSystems?: ServiceSystem[]
 }
 
@@ -54,6 +55,7 @@ export class Service {
     localAllocation: string
     status: ServiceStatusType
     validatorEmail: string
+    documentUrl: string | null
     serviceSystems: ServiceSystem[]
     private prevStatus: ServiceStatusType
     private isChanged = false
@@ -73,6 +75,7 @@ export class Service {
         this.localAllocation = props.localAllocation.trim()
         this.status = props.status
         this.validatorEmail = props.validatorEmail.trim().toLowerCase()
+        this.documentUrl = props.documentUrl ?? null
         this.serviceSystems = props.serviceSystems ?? []
         this.prevStatus = props.status
     }
@@ -164,6 +167,14 @@ export class Service {
         }
         this.isChanged = true
         this.validatorEmail = validatorEmail.trim().toLowerCase()
+    }
+
+    changeDocumentUrl(documentUrl: string | null) {
+        if (this.documentUrl === documentUrl) {
+            return
+        }
+        this.isChanged = true
+        this.documentUrl = documentUrl ? documentUrl.trim() : null
     }
 
     hasSystem(systemId: string) {

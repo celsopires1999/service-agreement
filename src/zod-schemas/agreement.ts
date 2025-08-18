@@ -87,6 +87,16 @@ export const insertAgreementSchema = createInsertSchema(agreements, {
     contactEmail: (schema) => schema.email("Invalid email address"),
     comment: (schema) =>
         schema.max(500, "Comment must be 500 characters or less"),
+    documentUrl: (schema) =>
+        schema
+            .transform((value) => (value === "" ? null : value))
+            .pipe(
+                z
+                    .string()
+                    .url("Invalid URL")
+                    .max(300, "Document URL must be 300 characters or less")
+                    .nullable(),
+            ),
 })
 
 export const selectAgreementSchema = createSelectSchema(agreements)

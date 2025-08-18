@@ -15,6 +15,8 @@
 - text: Responsible Email
 - textbox "Responsible Email"
 - paragraph: Invalid responsible email address
+- text: Document URL
+- textbox "Document URL"
 - heading "Agreement Info" [level=3]
 - separator
 - paragraph: TIC00001

@@ -80,6 +80,7 @@ test.describe("Service Form", () => {
         await expect(getResponsibleEmail(page)).toHaveValue(
             "responsible@test.com",
         )
+        await expect(getDocumentUrl(page)).toHaveValue("https://example.com")
         await expect(getProviderAllocation(page)).toHaveValue(
             "Provider allocation details",
         )
@@ -100,6 +101,7 @@ test.describe("Service Form", () => {
             amount: "1500.00",
             currency: "USD" as const,
             responsibleEmail: "initial@test.com",
+            documentUrl: "https://example.com",
             isActive: true,
             providerAllocation: "Initial provider allocation",
             localAllocation: "Initial local allocation",
@@ -122,6 +124,7 @@ test.describe("Service Form", () => {
             chgAmount: "1000.00",
             currency: "EUR",
             responsibleEmail: "updated@test.com",
+            documentUrl: "https://updated.example.com",
             providerAllocation: "Updated provider allocation",
             localAllocation: "Updated local allocation",
             validatorEmail: "updated.validator@test.com",
@@ -143,6 +146,9 @@ test.describe("Service Form", () => {
         await expect(getChgAmountFormatted(page)).toHaveValue("1.000,00")
         await expect(getCurrency(page)).toContainText("EUR")
         await expect(getResponsibleEmail(page)).toHaveValue("updated@test.com")
+        await expect(getDocumentUrl(page)).toHaveValue(
+            "https://updated.example.com",
+        )
         await expect(getProviderAllocation(page)).toHaveValue(
             "Updated provider allocation",
         )
@@ -432,6 +438,7 @@ async function fillServiceForm(
         chgAmount?: string
         currency?: "USD" | "EUR"
         responsibleEmail?: string
+        documentUrl?: string
         providerAllocation?: string
         localAllocation?: string
         validatorEmail?: string
@@ -462,6 +469,9 @@ async function fillServiceForm(
 
     await getResponsibleEmail(page).fill(
         params?.responsibleEmail || "responsible@test.com",
+    )
+    await getDocumentUrl(page).fill(
+        params?.documentUrl || "https://example.com",
     )
     await getProviderAllocation(page).fill(
         params?.providerAllocation || "Provider allocation details",
@@ -512,6 +522,8 @@ const getCurrencyOptionUSD = (p: Page) => p.getByRole("option", { name: "USD" })
 const getCurrencyOptionEUR = (p: Page) => p.getByRole("option", { name: "EUR" })
 const getResponsibleEmail = (p: Page) =>
     p.getByRole("textbox", { name: "Responsible Email" })
+const getDocumentUrl = (p: Page) =>
+    p.getByRole("textbox", { name: "Document URL" })
 const getProviderAllocation = (p: Page) =>
     p.getByRole("textbox", { name: "Provider Allocation" })
 const getLocalAllocation = (p: Page) =>

@@ -56,6 +56,9 @@ export const saveAgreementAction = actionClient
                         ...(agreement.comment
                             ? { comment: agreement.comment.trim() }
                             : {}),
+                        ...(agreement.documentUrl
+                            ? { documentUrl: agreement.documentUrl.trim() }
+                            : {}),
                     })
                     .returning({ insertedId: agreements.agreementId })
 
@@ -145,6 +148,7 @@ export const saveAgreementAction = actionClient
                         .trim()
                         .toLocaleLowerCase(),
                     comment: agreement.comment?.trim() ?? null,
+                    documentUrl: agreement.documentUrl?.trim() ?? null,
                 })
                 .where(eq(agreements.agreementId, agreement.agreementId!))
                 .returning({ updatedId: agreements.agreementId })

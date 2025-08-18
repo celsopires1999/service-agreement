@@ -83,10 +83,18 @@ The following commands are available for managing the database:
 
 ### Testing
 
-Run tests using Jest:
+Run tests using the following commands.
+
+Start the development server with:
 
 ```bash
-npm test
+npm run dev:test:e2e
+```
+
+Run e2e tests with:
+
+```bash
+npm run test:e2e -- --repeat-each 2
 ```
 
 ## Additional Resources

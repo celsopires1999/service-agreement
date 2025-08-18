@@ -69,6 +69,16 @@ export const insertServiceSchema = createInsertSchema(services, {
             message: "Invalid status",
         }),
     validatorEmail: (schema) => schema.email("Invalid validator email address"),
+    documentUrl: (schema) =>
+        schema
+            .transform((value) => (value === "" ? null : value))
+            .pipe(
+                z
+                    .string()
+                    .url("Invalid URL")
+                    .max(300, "Document URL must be 300 characters or less")
+                    .nullable(),
+            ),
 })
 
 export const selectServiceSchema = createSelectSchema(services)

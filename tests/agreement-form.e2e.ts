@@ -106,6 +106,7 @@ test.describe(`Agreement Form`, () => {
         await expect(getComment(page)).toHaveValue(
             "This is a comment for the agreement.",
         )
+        await expect(getDocumentUrl(page)).toHaveValue("https://example.com")
     })
 
     test("should edit an existing agreement", async ({ page }) => {
@@ -132,6 +133,7 @@ test.describe(`Agreement Form`, () => {
         await getRevised(page).check()
         await getDescription(page).fill("This is an updated description.")
         await getComment(page).fill("This is an updated comment.")
+        await getDocumentUrl(page).fill("https://updated.example.com")
 
         const saveButton = getSaveButton(page)
         await saveButton.click()
@@ -157,6 +159,9 @@ test.describe(`Agreement Form`, () => {
         )
         await expect(getComment(page)).toHaveValue(
             "This is an updated comment.",
+        )
+        await expect(getDocumentUrl(page)).toHaveValue(
+            "https://updated.example.com",
         )
     })
 
@@ -308,6 +313,7 @@ async function fillAgreementForm(
         revisionDate?: string
         description?: string
         comment?: string
+        documentUrl?: string
     },
 ) {
     await getYear(page).fill(params?.year || "2025")
@@ -339,6 +345,9 @@ async function fillAgreementForm(
     await getComment(page).fill(
         params?.comment || "This is a comment for the agreement.",
     )
+    await getDocumentUrl(page).fill(
+        params?.documentUrl || "https://example.com",
+    )
 }
 
 const getYear = (p: Page) => p.getByRole("spinbutton", { name: "Year" })
@@ -368,6 +377,8 @@ const getRevised = (p: Page) => p.getByRole("checkbox", { name: "Revised?" })
 const getDescription = (p: Page) =>
     p.getByRole("textbox", { name: "Description" })
 const getComment = (p: Page) => p.getByRole("textbox", { name: "Comment" })
+const getDocumentUrl = (p: Page) =>
+    p.getByRole("textbox", { name: "Document URL" })
 const getSaveButton = (p: Page) => p.getByRole("button", { name: "Save" })
 const getSuccessMessage = (p: Page) => p.getByText("🎉 Success: Agreement ID #")
 const getErrorMessage = (p: Page) => p.getByText("🚨")

@@ -20,6 +20,7 @@ export async function getAgreement(agreementId: string) {
             contactEmail: agreements.contactEmail,
             comment: agreements.comment,
             localPlan: plans.code,
+            documentUrl: agreements.documentUrl,
         })
         .from(agreements)
         .innerJoin(plans, eq(plans.planId, agreements.localPlanId))
