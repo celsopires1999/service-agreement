@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid"
+import { AgreementValidator } from "./agreement.validator"
 
 export type AgreementConstructorProps = {
     agreementId: string
@@ -57,6 +58,11 @@ export class Agreement {
             agreementId: uuidv4(),
             ...props,
         })
+    }
+
+    validate() {
+        const validator = new AgreementValidator()
+        validator.validate(this)
     }
 
     newRevision(

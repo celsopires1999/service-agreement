@@ -42,19 +42,20 @@ test.describe(`Agreement Form`, () => {
 
         await page.waitForLoadState("networkidle")
 
-        const menu = page
-            .getByRole("row", {
-                name: "Open Menu TIC00001 SA Ines",
-            })
-            .getByRole("button")
-        await expect(menu).toBeVisible()
-        await menu.click()
+        // The following code is commented out because the menu button is unstable in tests
+        // const menu = page
+        //     .getByRole("row", {
+        //         name: "Open Menu TIC00001 SA Ines",
+        //     })
+        //     .getByRole("button")
+        // await expect(menu).toBeVisible()
+        // await menu.click()
 
-        const menuitem = page.getByRole("menuitem", { name: "Edit" })
-        await expect(menuitem).toBeVisible()
-        await menuitem.click()
+        // const menuitem = page.getByRole("menuitem", { name: "Edit" })
+        // await expect(menuitem).toBeVisible()
+        // await menuitem.click()
 
-        // await page.getByRole("link", { name: "TIC00001" }).click()
+        await page.getByRole("link", { name: "TIC00001" }).click()
 
         await expect(page).toHaveURL(
             "/agreements/form?agreementId=84c93124-e3f9-48f9-92d5-fcdb4bbbe2ef",

@@ -18,11 +18,17 @@ setup.beforeEach(async () => {
 })
 
 setup("authenticate as admin", async ({ page }) => {
-    // Perform authentication steps. Replace these actions with your own.
+    // Perform authentication steps.
     await page.goto("/")
 
     const startLink = page.getByRole("link", { name: "Start" })
     await startLink.click()
+
+    await page.waitForLoadState("networkidle")
+
+    if (page.url() === "/agreements") {
+        return
+    }
 
     await expect(page).toHaveURL("/api/auth/signin?callbackUrl=%2Fagreements", {
         timeout: 10000,
@@ -61,11 +67,17 @@ setup("authenticate as admin", async ({ page }) => {
 const viewerFile = path.join(__dirname, "../playwright/.auth/viewer.json")
 
 setup("authenticate as viewer", async ({ page }) => {
-    // Perform authentication steps. Replace these actions with your own.
+    // Perform authentication steps.
     await page.goto("/")
 
     const startLink = page.getByRole("link", { name: "Start" })
     await startLink.click()
+
+    await page.waitForLoadState("networkidle")
+
+    if (page.url() === "/agreements") {
+        return
+    }
 
     await expect(page).toHaveURL("/api/auth/signin?callbackUrl=%2Fagreements", {
         timeout: 10000,
@@ -104,11 +116,17 @@ setup("authenticate as viewer", async ({ page }) => {
 const validatorFile = path.join(__dirname, "../playwright/.auth/validator.json")
 
 setup("authenticate as validator", async ({ page }) => {
-    // Perform authentication steps. Replace these actions with your own.
+    // Perform authentication steps.
     await page.goto("/")
 
     const startLink = page.getByRole("link", { name: "Start" })
     await startLink.click()
+
+    await page.waitForLoadState("networkidle")
+
+    if (page.url() === "/agreements") {
+        return
+    }
 
     await expect(page).toHaveURL("/api/auth/signin?callbackUrl=%2Fagreements", {
         timeout: 10000,

@@ -18,14 +18,19 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 const config: Config = {
     // coverageProvider: "v8",
-    testEnvironment: "jsdom",
-    // testEnvironment: "node",
-    testRegex: ["(/__tests__/.*|(\\.|/)(test|spec|int-spec))\\.[jt]sx?$"],
+    testEnvironment: "node",
+    testRegex: ["(/__tests__/.*|(\.|/)(test|spec|int-spec))\\.[jt]sx?$"],
+    testPathIgnorePatterns: ["/node_modules/", "\\.helper\\.ts$"],
     // Add more setup options before each test is run
     // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+    globalSetup:
+        "<rootDir>/src/core/shared/infra/db/drizzle/jest.global-setup.ts",
     moduleNameMapper: {
         "^@/src/(.*)$": "<rootDir>/src/$1",
     },
+    transformIgnorePatterns: [
+        "/node_modules/(?!(@testcontainers|testcontainers|drizzle-orm|pg|uuid)/)",
+    ],
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

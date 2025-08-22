@@ -5,6 +5,7 @@ services:
             dockerfile: Dockerfile.dev
         volumes:
             - .:/home/node/app
+            - /var/run/docker.sock:/var/run/docker.sock
         ports:
             - 3000:3000
         extra_hosts:

@@ -23,7 +23,9 @@
 				"YoavBls.pretty-ts-errors",
 				"bradlc.vscode-tailwindcss",
 				"ms-playwright.playwright",
-				"Codeium.codeium"
+				"Codeium.codeium",
+				"Orta.vscode-jest",
+				"Google.geminicodeassist"
 			]
 		}
 	},
