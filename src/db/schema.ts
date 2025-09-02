@@ -14,7 +14,7 @@ import {
 } from "drizzle-orm/pg-core"
 
 import { relations } from "drizzle-orm"
-import { ServiceStatus } from "@/core/service/domain/service"
+import { ServiceStatus } from "@/core/service/domain/service.types"
 import { Role } from "@/core/user/domain/user"
 
 export const plans = pgTable(

@@ -119,8 +119,9 @@ export class AgreementValidator {
 
         if (!parsed.success) {
             const fieldErrorsString =
-                Object.values(parsed.error.flatten().fieldErrors).join(". ") +
-                "."
+                Object.values(parsed.error.flatten().fieldErrors)
+                    .flat()
+                    .join(". ") + "."
             throw new ValidationError(fieldErrorsString)
         }
     }

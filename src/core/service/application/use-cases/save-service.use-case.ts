@@ -1,15 +1,16 @@
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { db } from "@/db"
 import { insertServiceSchemaType } from "@/zod-schemas/service"
 
 export class SaveServiceUseCase {
     async execute(input: SaveServiceInput): Promise<SaveServiceOutput> {
-        const serviceRepo = new ServiceDrizzleRepository()
-        const agreementRepo = new AgreementDrizzleRepository()
-        const entity = await serviceRepo.findById(input.serviceId)
+        const serviceRepo = new ServiceDrizzleRepository(db)
+        const agreementRepo = new AgreementDrizzleRepository(db)
+        const entity = await serviceRepo.find(input.serviceId)
 
-        const agreement = await agreementRepo.findById(input.agreementId)
+        const agreement = await agreementRepo.find(input.agreementId)
 
         if (!!agreement && agreement.isRevised) {
             throw new ValidationError(
@@ -40,7 +41,7 @@ export class SaveServiceUseCase {
         const serviceId = await serviceRepo.update(entity)
 
         return {
-            serviceId,
+            serviceId: entity.serviceId,
         }
     }
 }

@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid"
+import { Uuid } from "@/core/shared/domain/value-objects/uuid"
 import { AgreementValidator } from "./agreement.validator"
 
 export type AgreementConstructorProps = {
@@ -55,7 +55,7 @@ export class Agreement {
 
     static create(props: AgreementCreateCommand) {
         return new Agreement({
-            agreementId: uuidv4(),
+            agreementId: new Uuid().toString(),
             ...props,
         })
     }
@@ -71,7 +71,7 @@ export class Agreement {
         localPlanId: string,
     ) {
         return new Agreement({
-            agreementId: uuidv4(),
+            agreementId: new Uuid().toString(),
             year: this.year,
             code: this.code,
             revision: this.revision + 1,

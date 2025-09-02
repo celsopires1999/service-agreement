@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid"
+import { Uuid } from "@/core/shared/domain/value-objects/uuid"
 import { UserListItem, UserListItemCreateCommand } from "./user-list-item"
 
 export type UserListContructorProps = {
@@ -29,7 +29,7 @@ export class UserList {
     static create(props: UserListCreateCommand) {
         return new UserList({
             ...props,
-            userListId: uuidv4(),
+            userListId: new Uuid().toString(),
             usersNumber: 0,
             items: [],
         })

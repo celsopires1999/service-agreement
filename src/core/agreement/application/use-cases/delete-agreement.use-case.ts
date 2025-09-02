@@ -14,11 +14,11 @@ import { eq } from "drizzle-orm"
 
 export class DeleteAgreementUseCase {
     async execute(input: DeleteAgreementInput): Promise<DeleteAgreementOutput> {
-        const agreementRepo = new AgreementDrizzleRepository()
+        const agreementRepo = new AgreementDrizzleRepository(db)
         const serviceRepo = new ServiceDrizzleRepository()
         const userListRepo = new UserListDrizzleRepository()
 
-        const foundAgreement = await agreementRepo.findById(input.agreementId)
+        const foundAgreement = await agreementRepo.find(input.agreementId)
 
         if (!foundAgreement) {
             throw new ValidationError(

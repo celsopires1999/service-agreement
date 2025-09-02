@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from "uuid"
-import { PlanValidator } from "./plan.validator"
+import { Uuid } from "@/core/shared/domain/value-objects/uuid"
 import Decimal from "decimal.js"
+import { PlanValidator } from "./plan.validator"
 
 export type PlanConstructorProps = {
     planId: string
@@ -29,7 +29,7 @@ export class Plan {
 
     static create(props: PlanCreateCommand) {
         return new Plan({
-            planId: uuidv4(),
+            planId: new Uuid().toString(),
             ...props,
         })
     }

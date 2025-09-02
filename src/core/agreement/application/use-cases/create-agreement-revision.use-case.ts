@@ -21,7 +21,7 @@ export class CreateAgreementRevisionUseCase {
         const serviceRepo = new ServiceDrizzleRepository()
         const userListRepo = new UserListDrizzleRepository()
 
-        const sourceAgreement = await agreementRepo.findById(input.agreementId)
+        const sourceAgreement = await agreementRepo.find(input.agreementId)
 
         if (!sourceAgreement) {
             throw new ValidationError(

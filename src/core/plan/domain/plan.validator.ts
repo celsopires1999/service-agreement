@@ -28,16 +28,15 @@ export const planSchema = z.object({
     planDate: z.string().date("Plan date is invalid"),
 })
 
-// export type insertPlanSchemaType = z.infer<typeof insertPlanSchema>
-
 export class PlanValidator {
     validate(plan: Plan) {
         const parsed = planSchema.safeParse(plan)
 
         if (!parsed.success) {
             const fieldErrorsString =
-                Object.values(parsed.error.flatten().fieldErrors).join(". ") +
-                "."
+                Object.values(parsed.error.flatten().fieldErrors)
+                    .flat()
+                    .join(". ") + "."
             throw new ValidationError(fieldErrorsString)
         }
     }

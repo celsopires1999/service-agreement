@@ -106,7 +106,7 @@ describe("Plan Unit Tests", () => {
             },
         ]
 
-        test.each(arrange)(
+                test.each(arrange)(
             "should throw validation error for $label",
             ({ builder, expected }) => {
                 expect(() => builder().build()).toThrow(
