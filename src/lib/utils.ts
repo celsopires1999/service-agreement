@@ -58,6 +58,12 @@ export function toDecimal(value: string) {
     }
 }
 
+export function compareDecimal(left: string, right: string): number {
+    const leftDecimal = toDecimal(left)
+    const rightDecimal = toDecimal(right)
+    return leftDecimal.comparedTo(rightDecimal)
+}
+
 export function dateFormatter(value: unknown): string {
     if (typeof value !== "string") return ""
 

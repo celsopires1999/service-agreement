@@ -1,44 +1,24 @@
-import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
-import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
-import { db } from "@/db"
-import { services, serviceSystems, userListItems, userLists } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { ServiceRepository } from "@/core/service/domain/service.repository"
+import { UnitOfWork } from "@/core/shared/domain/repositories/unit-of-work"
+import { UserListRepository } from "@/core/users-list/domain/user-list.respository"
 
 export class DeleteServiceUseCase {
+    constructor(private readonly uow: UnitOfWork) {}
+
     async execute(input: DeleteServiceInput): Promise<DeleteServiceOutput> {
-        const serviceRepo = new ServiceDrizzleRepository()
-        const userListRepo = new UserListDrizzleRepository()
+        await this.uow.execute(async (uow) => {
+            const serviceRepo =
+                uow.getRepository<ServiceRepository>("ServiceRepository")
+            const userListRepo =
+                this.uow.getRepository<UserListRepository>("UserListRepository")
 
-        const foundService = await serviceRepo.findById(input.serviceId)
+            const foundUserList = await userListRepo.findById(input.serviceId)
 
-        if (!foundService) {
-            throw new ValidationError(
-                `Service ID #${input.serviceId} not found`,
-            )
-        }
-
-        const foundUserList = await userListRepo.findById(input.serviceId)
-
-        await db.transaction(async (tx) => {
             if (foundUserList) {
-                await tx
-                    .delete(userListItems)
-                    .where(
-                        eq(userListItems.userListId, foundUserList.userListId),
-                    )
-                await tx
-                    .delete(userLists)
-                    .where(eq(userLists.userListId, foundUserList.userListId))
+                await userListRepo.delete(input.serviceId)
             }
 
-            await tx
-                .delete(serviceSystems)
-                .where(eq(serviceSystems.serviceId, foundService.serviceId))
-
-            await tx
-                .delete(services)
-                .where(eq(services.serviceId, input.serviceId))
+            await serviceRepo.delete(input.serviceId)
         })
 
         return {

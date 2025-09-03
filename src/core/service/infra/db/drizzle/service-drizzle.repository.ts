@@ -10,10 +10,43 @@ export class ServiceDrizzleRepository implements ServiceRepository {
     constructor(private readonly db: DB) {}
 
     async insert(service: Service) {
-        return await this.db.transaction(async (tx) => {
-            await tx.insert(services).values({
-                serviceId: service.serviceId,
-                agreementId: service.agreementId,
+        await this.db.insert(services).values({
+            serviceId: service.serviceId,
+            agreementId: service.agreementId,
+            name: service.name,
+            description: service.description,
+            runAmount: service.runAmount,
+            chgAmount: service.chgAmount,
+            amount: service.amount,
+            currency: service.currency,
+            responsibleEmail: service.responsibleEmail,
+            isActive: service.isActive,
+            providerAllocation: service.providerAllocation,
+            localAllocation: service.localAllocation,
+            status: service.status,
+            validatorEmail: service.validatorEmail,
+            documentUrl: service.documentUrl,
+        })
+
+        const serviceId = service.serviceId
+
+        for (const serviceSystem of service.serviceSystems) {
+            await this.db.insert(serviceSystems).values({
+                serviceId,
+                systemId: serviceSystem.systemId,
+                allocation: serviceSystem.allocation,
+                runAmount: serviceSystem.runAmount,
+                chgAmount: serviceSystem.chgAmount,
+                amount: serviceSystem.amount,
+                currency: serviceSystem.currency,
+            })
+        }
+    }
+
+    async update(service: Service) {
+        const result = await this.db
+            .update(services)
+            .set({
                 name: service.name,
                 description: service.description,
                 runAmount: service.runAmount,
@@ -28,73 +61,44 @@ export class ServiceDrizzleRepository implements ServiceRepository {
                 validatorEmail: service.validatorEmail,
                 documentUrl: service.documentUrl,
             })
+            .where(eq(services.serviceId, service.serviceId))
+            .returning({ updatedId: services.serviceId })
 
-            const serviceId = service.serviceId
+        if (result[0].updatedId !== service.serviceId) {
+            throw new ValidationError(
+                `Service ID #${service.serviceId} not found`,
+            )
+        }
 
-            for (const serviceSystem of service.serviceSystems) {
-                await tx.insert(serviceSystems).values({
-                    serviceId,
-                    systemId: serviceSystem.systemId,
-                    allocation: serviceSystem.allocation,
-                    runAmount: serviceSystem.runAmount,
-                    chgAmount: serviceSystem.chgAmount,
-                    amount: serviceSystem.amount,
-                    currency: serviceSystem.currency,
-                })
-            }
-        })
-    }
+        await this.db
+            .delete(serviceSystems)
+            .where(eq(serviceSystems.serviceId, service.serviceId))
 
-    async update(service: Service) {
-        await this.db.transaction(async (tx) => {
-            const result = await tx
-                .update(services)
-                .set({
-                    name: service.name,
-                    description: service.description,
-                    runAmount: service.runAmount,
-                    chgAmount: service.chgAmount,
-                    amount: service.amount,
-                    currency: service.currency,
-                    responsibleEmail: service.responsibleEmail,
-                    isActive: service.isActive,
-                    providerAllocation: service.providerAllocation,
-                    localAllocation: service.localAllocation,
-                    status: service.status,
-                    validatorEmail: service.validatorEmail,
-                    documentUrl: service.documentUrl,
-                })
-                .where(eq(services.serviceId, service.serviceId))
-                .returning({ updatedId: services.serviceId })
-
-            if (result[0].updatedId !== service.serviceId) {
-                throw new ValidationError(
-                    `Service ID #${service.serviceId} not found`,
-                )
-            }
-
-            await tx
-                .delete(serviceSystems)
-                .where(eq(serviceSystems.serviceId, service.serviceId))
-
-            for (const serviceSystem of service.serviceSystems) {
-                await tx.insert(serviceSystems).values({
-                    serviceId: serviceSystem.serviceId,
-                    systemId: serviceSystem.systemId,
-                    allocation: serviceSystem.allocation,
-                    runAmount: serviceSystem.runAmount,
-                    chgAmount: serviceSystem.chgAmount,
-                    amount: serviceSystem.amount,
-                    currency: serviceSystem.currency,
-                })
-            }
-
-            return service.serviceId
-        })
+        for (const serviceSystem of service.serviceSystems) {
+            await this.db.insert(serviceSystems).values({
+                serviceId: serviceSystem.serviceId,
+                systemId: serviceSystem.systemId,
+                allocation: serviceSystem.allocation,
+                runAmount: serviceSystem.runAmount,
+                chgAmount: serviceSystem.chgAmount,
+                amount: serviceSystem.amount,
+                currency: serviceSystem.currency,
+            })
+        }
     }
 
     async delete(serviceId: string): Promise<void> {
-        throw new Error("Method not implemented.")
+        const foundService = await this.find(serviceId)
+
+        if (!foundService) {
+            throw new ValidationError(`Service ID #${serviceId} not found`)
+        }
+
+        await this.db
+            .delete(serviceSystems)
+            .where(eq(serviceSystems.serviceId, foundService.serviceId))
+
+        await this.db.delete(services).where(eq(services.serviceId, serviceId))
     }
 
     async find(serviceId: string): Promise<Service | null> {
