@@ -6,11 +6,10 @@ export class DeleteServiceUseCase {
     constructor(private readonly uow: UnitOfWork) {}
 
     async execute(input: DeleteServiceInput): Promise<DeleteServiceOutput> {
-        await this.uow.execute(async (uow) => {
-            const serviceRepo =
-                uow.getRepository<ServiceRepository>("ServiceRepository")
+        return await this.uow.execute(async (uow) => {
+            const serviceRepo = uow.getRepository<ServiceRepository>("service")
             const userListRepo =
-                this.uow.getRepository<UserListRepository>("UserListRepository")
+                this.uow.getRepository<UserListRepository>("userList")
 
             const foundUserList = await userListRepo.findById(input.serviceId)
 
@@ -19,11 +18,11 @@ export class DeleteServiceUseCase {
             }
 
             await serviceRepo.delete(input.serviceId)
-        })
 
-        return {
-            serviceId: input.serviceId,
-        }
+            return {
+                serviceId: input.serviceId,
+            }
+        })
     }
 }
 

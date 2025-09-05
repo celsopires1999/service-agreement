@@ -17,9 +17,9 @@ export class CreateAgreementRevisionUseCase {
     async execute(
         input: CreateAgreementRevisionInput,
     ): Promise<CreateAgreementRevisionOutput> {
-        const agreementRepo = new AgreementDrizzleRepository()
-        const serviceRepo = new ServiceDrizzleRepository()
-        const userListRepo = new UserListDrizzleRepository()
+        const agreementRepo = new AgreementDrizzleRepository(db)
+        const serviceRepo = new ServiceDrizzleRepository(db)
+        const userListRepo = new UserListDrizzleRepository(db)
 
         const sourceAgreement = await agreementRepo.find(input.agreementId)
 

@@ -1,8 +1,12 @@
 "use server"
 
+import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { CreateServiceUseCase } from "@/core/service/application/use-cases/create-service.use-case"
 import { SaveServiceUseCase } from "@/core/service/application/use-cases/save-service.use-case"
+import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
+import { db } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -36,7 +40,11 @@ export const saveServiceAction = actionClient
                     )
                 }
 
-                const uc = new CreateServiceUseCase()
+                const uow = new UnitOfWorkDrizzle(db, {
+                    service: (db) => new ServiceDrizzleRepository(db),
+                })
+
+                const uc = new CreateServiceUseCase(uow)
                 const result = await uc.execute(service)
 
                 revalidatePath("/services")
@@ -59,7 +67,12 @@ export const saveServiceAction = actionClient
                 }
             }
 
-            const uc = new SaveServiceUseCase()
+            const uow = new UnitOfWorkDrizzle(db, {
+                agreement: (db) => new AgreementDrizzleRepository(db),
+                service: (db) => new ServiceDrizzleRepository(db),
+            })
+
+            const uc = new SaveServiceUseCase(uow)
             const result = await uc.execute(service)
 
             revalidatePath("/services")

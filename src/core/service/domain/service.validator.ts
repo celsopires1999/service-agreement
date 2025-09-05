@@ -111,7 +111,7 @@ export const serviceSchema = z.object({
     }),
     validatorEmail: z.string().email("Invalid validator email address"),
     documentUrl: z
-        .string()
+        .unknown()
         .transform((value) => (value === "" ? null : value))
         .pipe(
             z

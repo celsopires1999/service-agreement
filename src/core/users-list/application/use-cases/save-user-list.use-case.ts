@@ -1,5 +1,6 @@
 import { UserList } from "@/core/users-list/domain/user-list"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
+import { db } from "@/db"
 import { userListUploadSchemaType } from "@/zod-schemas/user-list"
 
 export class SaveUserListUseCase {
@@ -13,7 +14,7 @@ export class SaveUserListUseCase {
             userList.addItem(item)
         }
 
-        const userListRepo = new UserListDrizzleRepository()
+        const userListRepo = new UserListDrizzleRepository(db)
         const userListId = await userListRepo.save(userList)
 
         return {

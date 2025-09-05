@@ -132,6 +132,14 @@ describe("Service Unit Tests", () => {
             expect(service.documentUrl).toBe(newUrl)
         })
 
+        it("should change documentUrl to null", () => {
+            const service = builder.build()
+            const newUrl = null
+            service.changeDocumentUrl(newUrl)
+            service.validate()
+            expect(service.documentUrl).toBe(newUrl)
+        })
+
         it("should change status", () => {
             const service = builder
                 .withServiceSystems([{ allocation: "100" }])
@@ -180,7 +188,7 @@ describe("Service Unit Tests", () => {
 
         it("should validate status is valid", () => {
             const service = builder.build()
-            const invalidStatus = "invalid" as any
+            const invalidStatus = "invalid" as unknown as typeof service.status
             service.changeStatus(invalidStatus)
 
             expect(() => {

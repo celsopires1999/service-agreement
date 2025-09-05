@@ -50,8 +50,8 @@ export class ServiceDataBuilder<TBuild = unknown> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private _documentUrl: PropOrFactory<string | null> = (_index) =>
         this.chance.url()
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private _serviceSystems: PropOrFactory<ServiceSystemProps[]> = (
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _index,
     ) => []
 

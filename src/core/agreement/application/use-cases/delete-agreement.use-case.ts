@@ -15,8 +15,8 @@ import { eq } from "drizzle-orm"
 export class DeleteAgreementUseCase {
     async execute(input: DeleteAgreementInput): Promise<DeleteAgreementOutput> {
         const agreementRepo = new AgreementDrizzleRepository(db)
-        const serviceRepo = new ServiceDrizzleRepository()
-        const userListRepo = new UserListDrizzleRepository()
+        const serviceRepo = new ServiceDrizzleRepository(db)
+        const userListRepo = new UserListDrizzleRepository(db)
 
         const foundAgreement = await agreementRepo.find(input.agreementId)
 

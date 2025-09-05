@@ -1,5 +1,6 @@
 import { Uuid } from "@/core/shared/domain/value-objects/uuid"
 import { UserListItem, UserListItemCreateCommand } from "./user-list-item"
+import { UserListValidator } from "./user-list.validator"
 
 export type UserListContructorProps = {
     userListId: string
@@ -35,10 +36,6 @@ export class UserList {
         })
     }
 
-    changeUsersNumber(newUsersNumber: number) {
-        this.usersNumber = newUsersNumber
-    }
-
     addItem(item: UserListItemCreateCommand) {
         this.items.push(UserListItem.create(item))
         this.usersNumber = this.items.length
@@ -49,5 +46,19 @@ export class UserList {
             (i) => i.userListItemId !== userListItemId,
         )
         this.usersNumber = this.items.length
+    }
+
+    validate() {
+        const validator = new UserListValidator()
+        validator.validate(this)
+    }
+
+    toJSON() {
+        return {
+            userListId: this.userListId,
+            serviceId: this.serviceId,
+            usersNumber: this.usersNumber,
+            items: this.items,
+        }
     }
 }

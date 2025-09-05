@@ -1,8 +1,8 @@
 import { UnitOfWork } from "@/core/shared/domain/repositories/unit-of-work"
 import { DB } from "@/db"
 
-type RepositoryFactory<T> = (db: any) => T
-type Repositories = Record<string, any>
+type RepositoryFactory<T> = (db: DB) => T
+type Repositories = Record<string, object>
 
 export class UnitOfWorkDrizzle implements UnitOfWork {
     private repositories: Repositories = {}
@@ -11,7 +11,7 @@ export class UnitOfWorkDrizzle implements UnitOfWork {
         private readonly db: DB,
         private readonly repositoryFactories: Record<
             string,
-            RepositoryFactory<any>
+            RepositoryFactory<object>
         >,
     ) {}
 

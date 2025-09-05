@@ -25,11 +25,7 @@ export type ServiceConstructorProps = {
     serviceSystems?: ServiceSystem[]
 }
 
-export type {
-    currecyType,
-    ServiceStatus,
-    ServiceStatusType,
-} from "./service.types"
+export type { currecyType, ServiceStatusType } from "./service.types"
 
 export type ServiceCreateCommand = Omit<
     ServiceConstructorProps,

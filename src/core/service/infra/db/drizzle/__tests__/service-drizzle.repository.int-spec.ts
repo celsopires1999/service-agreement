@@ -88,10 +88,12 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         expect(fetchedService?.name).toBe(service.name)
         expect(fetchedService?.description).toBe(service.description)
         expect(
-            compareDecimal(fetchedService?.runAmount!, service.runAmount),
+            fetchedService &&
+                compareDecimal(fetchedService.runAmount, service.runAmount),
         ).toBe(0)
         expect(
-            compareDecimal(fetchedService?.chgAmount!, service.chgAmount),
+            fetchedService &&
+                compareDecimal(fetchedService.chgAmount, service.chgAmount),
         ).toBe(0)
         expect(fetchedService?.amount).toBe(service.amount)
         expect(fetchedService?.currency).toBe(service.currency)
@@ -161,10 +163,12 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         expect(fetchedService?.name).toBe(service.name)
         expect(fetchedService?.description).toBe(service.description)
         expect(
-            compareDecimal(fetchedService?.runAmount!, service.runAmount),
+            fetchedService &&
+                compareDecimal(fetchedService.runAmount, service.runAmount),
         ).toBe(0)
         expect(
-            compareDecimal(fetchedService?.chgAmount!, service.chgAmount),
+            fetchedService &&
+                compareDecimal(fetchedService.chgAmount, service.chgAmount),
         ).toBe(0)
         expect(fetchedService?.amount).toBe(service.amount)
         expect(fetchedService?.currency).toBe(service.currency)
@@ -241,10 +245,12 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         expect(fetchedService?.name).toBe(service.name)
         expect(fetchedService?.description).toBe(service.description)
         expect(
-            compareDecimal(fetchedService?.runAmount!, service.runAmount),
+            fetchedService &&
+                compareDecimal(fetchedService.runAmount, service.runAmount),
         ).toBe(0)
         expect(
-            compareDecimal(fetchedService?.chgAmount!, service.chgAmount),
+            fetchedService &&
+                compareDecimal(fetchedService.chgAmount, service.chgAmount),
         ).toBe(0)
         expect(fetchedService?.amount).toBe(service.amount)
         expect(fetchedService?.currency).toBe(service.currency)
@@ -263,10 +269,11 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
             )
             expect(serviceSystem).toBeDefined()
             expect(
-                compareDecimal(
-                    serviceSystem!.allocation,
-                    new Decimal("100").div(new Decimal(4)).toFixed(6),
-                ),
+                serviceSystem &&
+                    compareDecimal(
+                        serviceSystem.allocation,
+                        new Decimal("100").div(new Decimal(4)).toFixed(6),
+                    ),
             ).toBe(0)
         })
     })
@@ -306,10 +313,12 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
             expect(fetchedService?.name).toBe(service.name)
             expect(fetchedService?.description).toBe(service.description)
             expect(
-                compareDecimal(fetchedService?.runAmount!, service.runAmount),
+                fetchedService &&
+                    compareDecimal(fetchedService.runAmount, service.runAmount),
             ).toBe(0)
             expect(
-                compareDecimal(fetchedService?.chgAmount!, service.chgAmount),
+                fetchedService &&
+                    compareDecimal(fetchedService.chgAmount, service.chgAmount),
             ).toBe(0)
             expect(fetchedService?.amount).toBe(service.amount)
             expect(fetchedService?.currency).toBe(service.currency)
@@ -332,10 +341,11 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
                 )
                 expect(serviceSystem).toBeDefined()
                 expect(
-                    compareDecimal(
-                        serviceSystem!.allocation,
-                        new Decimal("100").div(new Decimal(4)).toFixed(6),
-                    ),
+                    serviceSystem &&
+                        compareDecimal(
+                            serviceSystem.allocation,
+                            new Decimal("100").div(new Decimal(4)).toFixed(6),
+                        ),
                 ).toBe(0)
             })
         }

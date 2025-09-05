@@ -1,4 +1,4 @@
-import { ServiceStatus } from "@/core/service/domain/service"
+import { ServiceStatus } from "@/core/service/domain/service.types"
 import { services } from "@/db/schema"
 import {
     isGreaterThanOrEqualToZero,

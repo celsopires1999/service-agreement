@@ -101,7 +101,7 @@ export const agreementSchema = z.object({
         .max(500, "Comment must be 500 characters or less")
         .nullable(),
     documentUrl: z
-        .string()
+        .unknown()
         .transform((value) => (value === "" ? null : value))
         .pipe(
             z
@@ -109,8 +109,7 @@ export const agreementSchema = z.object({
                 .url("Invalid URL")
                 .max(300, "Document URL must be 300 characters or less")
                 .nullable(),
-        )
-        .nullable(),
+        ),
 })
 
 export class AgreementValidator {
