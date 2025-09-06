@@ -1,5 +1,5 @@
-import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 
 export class GetSystemUseCase {
     constructor(private readonly systemRepo: SystemDrizzleRepository) {}

@@ -1,8 +1,8 @@
 import { System } from "@/core/system/domain/system"
-import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
+import { SystemRepository } from "../../domain/system.repository"
 
 export class CreateSystemUseCase {
-    constructor(private readonly systemRepo: SystemDrizzleRepository) {}
+    constructor(private readonly systemRepo: SystemRepository) {}
 
     async execute(input: CreateSystemInput): Promise<CreateSystemOutput> {
         const system = System.create(input)

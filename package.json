@@ -15,7 +15,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "dev:test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) next dev --turbopack",
-    "test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --reporter null",
+    "test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test",
     "test:e2e:update": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --update-snapshots --reporter null",
     "test:e2e:headed": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --headed --reporter null",
     "test:e2e:debug": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test --debug --reporter null",
