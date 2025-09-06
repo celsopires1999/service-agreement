@@ -1,18 +1,14 @@
-import { AgreementDataBuilder } from "@/core/agreement/domain/agreement-data-builder"
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
-import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
-import { ServiceDataBuilder } from "@/core/service/domain/service-data-builder"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
-import { SystemDataBuilder } from "@/core/system/domain/system-data-builder"
 import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
-import { UserListDataBuilder } from "@/core/users-list/domain/users-list-data-builder"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
 import { DB } from "@/db"
 import { agreements, plans, services, systems, userLists } from "@/db/schema"
 import { count } from "drizzle-orm"
+import { createAgreementRelations } from "../__tests__helpers/agreement-test-helpers"
 import { DeleteAgreementUseCase } from "../delete-agreement.use-case"
 
 describe("DeleteAgreementUseCase Integration Tests", () => {
@@ -45,59 +41,13 @@ describe("DeleteAgreementUseCase Integration Tests", () => {
     })
 
     it("should delete an agreement", async () => {
-        // Create Plans
-        const providerPlan = PlanDataBuilder.aPlan().build()
-        await planRepository.insert(providerPlan)
-
-        const localPlan = PlanDataBuilder.aPlan().build()
-        await planRepository.insert(localPlan)
-
-        // Create Systems
-        const theSystems = SystemDataBuilder.theSystems(4).build()
-
-        for (const system of theSystems) {
-            await systemRepository.insert(system)
-        }
-
-        // Create Agreement
-        const anAgreement = AgreementDataBuilder.anAgreement()
-            .withProviderPlanId(providerPlan.planId)
-            .withLocalPlanId(localPlan.planId)
-            .build()
-        await agreementRepository.insert(anAgreement)
-
-        // Create Services
-        const theServices = ServiceDataBuilder.theServices(3)
-            .withAgreementId(anAgreement.agreementId)
-            .withServiceSystems([
-                {
-                    systemId: theSystems[0].systemId,
-                    allocation: "40",
-                },
-                {
-                    systemId: theSystems[1].systemId,
-                    allocation: "10",
-                },
-                {
-                    systemId: theSystems[2].systemId,
-                    allocation: "35",
-                },
-                {
-                    systemId: theSystems[3].systemId,
-                    allocation: "15",
-                },
-            ])
-            .build()
-
-        for (const service of theServices) {
-            await serviceRepository.insert(service)
-
-            // Create User List for each Service
-            const userList = UserListDataBuilder.aUserList()
-                .withServiceId(service.serviceId)
-                .build()
-            await userListRepository.save(userList)
-        }
+        const anAgreement = await createAgreementRelations({
+            planRepository,
+            systemRepository,
+            agreementRepository,
+            serviceRepository,
+            userListRepository,
+        })
 
         // Delete Agreement
         const { agreementId: deletedAgreementId } = await useCase.execute({
