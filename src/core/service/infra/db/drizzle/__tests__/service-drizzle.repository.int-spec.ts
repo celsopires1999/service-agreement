@@ -350,4 +350,32 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
             })
         }
     })
+
+    it("should find services by agreement id", async () => {
+        const services = ServiceDataBuilder.theServices(4)
+            .withAgreementId(agreement.agreementId)
+            .build()
+        forEach(services, (service) => {
+            forEach(systems, (system) => {
+                service.addServiceSystem(
+                    system.systemId,
+                    new Decimal("100").div(new Decimal(4)).toFixed(6),
+                )
+            })
+            service.changeActivationStatusBasedOnAllocation()
+            service.validate()
+        })
+
+        for (const service of services) {
+            await serviceRepo.insert(service)
+        }
+
+        const fetchedServices = await uow.execute(async (uow) => {
+            const serviceRepo =
+                uow.getRepository<ServiceDrizzleRepository>("service")
+            return serviceRepo.findManyByAgreementId(agreement.agreementId)
+        })
+
+        expect(fetchedServices?.length).toBe(4)
+    })
 })
