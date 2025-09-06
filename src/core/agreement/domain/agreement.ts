@@ -55,14 +55,62 @@ export class Agreement {
 
     static create(props: AgreementCreateCommand) {
         return new Agreement({
-            agreementId: new Uuid().toString(),
             ...props,
+            agreementId: new Uuid().toString(),
         })
     }
 
     validate() {
         const validator = new AgreementValidator()
         validator.validate(this)
+    }
+
+    changeYear(year: number) {
+        this.year = year
+    }
+
+    changeCode(code: string) {
+        this.code = code
+    }
+
+    changeRevision(revision: number) {
+        this.revision = revision
+    }
+
+    changeIsRevised(isRevised: boolean) {
+        this.isRevised = isRevised
+    }
+
+    changeRevisionDate(revisionDate: string) {
+        this.revisionDate = revisionDate
+    }
+
+    changeProviderPlanId(providerPlanId: string) {
+        this.providerPlanId = providerPlanId
+    }
+
+    changeLocalPlanId(localPlanId: string) {
+        this.localPlanId = localPlanId
+    }
+
+    changeName(name: string) {
+        this.name = name
+    }
+
+    changeDescription(description: string) {
+        this.description = description
+    }
+
+    changeContactEmail(contactEmail: string) {
+        this.contactEmail = contactEmail
+    }
+
+    changeComment(comment: string | null) {
+        this.comment = comment
+    }
+
+    changeDocumentUrl(documentUrl: string | null) {
+        this.documentUrl = documentUrl
     }
 
     newRevision(

@@ -17,8 +17,12 @@ describe("CreatePlanUseCase Integration Tests", () => {
 
     it("should create a plan", async () => {
         const aPlan = PlanDataBuilder.aPlan().build()
-        await useCase.execute(aPlan)
-        const createdPlan = await planRepository.find(aPlan.planId)
-        expect(createdPlan?.toJSON()).toEqual(aPlan.toJSON())
+        const { planId } = await useCase.execute(aPlan)
+        const createdPlan = await planRepository.find(planId)
+        expect(createdPlan).toBeDefined()
+        expect(createdPlan?.code).toBe(aPlan.code)
+        expect(createdPlan?.description).toBe(aPlan.description)
+        expect(createdPlan?.euro).toBe(aPlan.euro)
+        expect(createdPlan?.planDate).toBe(aPlan.planDate)
     })
 })

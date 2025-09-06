@@ -29,8 +29,8 @@ export class Plan {
 
     static create(props: PlanCreateCommand) {
         return new Plan({
-            planId: new Uuid().toString(),
             ...props,
+            planId: new Uuid().toString(),
         })
     }
 

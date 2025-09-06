@@ -25,8 +25,8 @@ export class System {
 
     static create(props: SystemCreateCommand) {
         return new System({
-            systemId: new Uuid().toString(),
             ...props,
+            systemId: new Uuid().toString(),
         })
     }
 

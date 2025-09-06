@@ -17,8 +17,12 @@ describe("CreateSystemUseCase Integration Tests", () => {
 
     it("should create a system", async () => {
         const aSystem = SystemDataBuilder.aSystem().build()
-        await useCase.execute(aSystem)
-        const createdSystem = await systemRepository.find(aSystem.systemId)
-        expect(createdSystem?.toJSON()).toEqual(aSystem.toJSON())
+        const result = await useCase.execute(aSystem)
+        const createdSystem = await systemRepository.find(result.systemId)
+        expect(createdSystem).toBeDefined()
+        expect(createdSystem?.systemId).toBe(result.systemId)
+        expect(createdSystem?.name).toBe(aSystem.name)
+        expect(createdSystem?.description).toBe(aSystem.description)
+        expect(createdSystem?.applicationId).toBe(aSystem.applicationId)
     })
 })

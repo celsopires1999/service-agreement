@@ -4,7 +4,7 @@ import { ServiceSystem } from "@/core/service/domain/serviceSystems"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { DB } from "@/db"
 import { services, serviceSystems } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { and, count, eq, or } from "drizzle-orm"
 
 export class ServiceDrizzleRepository implements ServiceRepository {
     constructor(private readonly db: DB) {}
@@ -179,5 +179,26 @@ export class ServiceDrizzleRepository implements ServiceRepository {
         )
 
         return serviceEntities
+    }
+
+    async countNotValidatedServicesByAgreementId(
+        agreementId: string,
+    ): Promise<number> {
+        const resultNotValidated = await this.db
+            .select({
+                totalNotValidatedServices: count(),
+            })
+            .from(services)
+            .where(
+                and(
+                    eq(services.agreementId, agreementId),
+                    or(
+                        eq(services.status, "created"),
+                        eq(services.status, "assigned"),
+                    ),
+                ),
+            )
+
+        return resultNotValidated[0].totalNotValidatedServices
     }
 }

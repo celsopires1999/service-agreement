@@ -166,4 +166,102 @@ describe("Agreement Unit Tests", () => {
             expect(newRevision.documentUrl).toBe(agreement.documentUrl)
         })
     })
+
+    describe("change attributes methods", () => {
+        it("should change the year of an agreement", () => {
+            const agreement = builder.build()
+            const newYear = 2025
+            agreement.changeYear(newYear)
+            agreement.validate()
+            expect(agreement.year).toBe(newYear)
+        })
+
+        it("should change the code of an agreement", () => {
+            const agreement = builder.build()
+            const newCode = "new code"
+            agreement.changeCode(newCode)
+            agreement.validate()
+            expect(agreement.code).toBe(newCode)
+        })
+
+        it("should change the revision of an agreement", () => {
+            const agreement = builder.build()
+            const newRevision = 2
+            agreement.changeRevision(newRevision)
+            agreement.validate()
+            expect(agreement.revision).toBe(newRevision)
+        })
+
+        it("should change the isRevised of an agreement", () => {
+            const agreement = builder.withIsRevised(false).build()
+            const newIsRevised = true
+            agreement.changeIsRevised(newIsRevised)
+            agreement.validate()
+            expect(agreement.isRevised).toBe(newIsRevised)
+        })
+
+        it("should change the revisionDate of an agreement", () => {
+            const agreement = builder.withRevisionDate("2025-01-01").build()
+            const newRevisionDate = "2025-01-02"
+            agreement.changeRevisionDate(newRevisionDate)
+            agreement.validate()
+            expect(agreement.revisionDate).toBe(newRevisionDate)
+        })
+
+        it("should change the providerPlanId of an agreement", () => {
+            const agreement = builder.build()
+            const newProviderPlanId = "c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a14"
+            agreement.changeProviderPlanId(newProviderPlanId)
+            agreement.validate()
+            expect(agreement.providerPlanId).toBe(newProviderPlanId)
+        })
+
+        it("should change the localPlanId of an agreement", () => {
+            const agreement = builder.build()
+            const newLocalPlanId = "c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a14"
+            agreement.changeLocalPlanId(newLocalPlanId)
+            agreement.validate()
+            expect(agreement.localPlanId).toBe(newLocalPlanId)
+        })
+
+        it("should change the name of an agreement", () => {
+            const agreement = builder.build()
+            const newName = "new name"
+            agreement.changeName(newName)
+            agreement.validate()
+            expect(agreement.name).toBe(newName)
+        })
+
+        it("should change the description of an agreement", () => {
+            const agreement = builder.build()
+            const newDescription = "new description"
+            agreement.changeDescription(newDescription)
+            agreement.validate()
+            expect(agreement.description).toBe(newDescription)
+        })
+
+        it("should change the contactEmail of an agreement", () => {
+            const agreement = builder.build()
+            const newContactEmail = "updated@example.com"
+            agreement.changeContactEmail(newContactEmail)
+            agreement.validate()
+            expect(agreement.contactEmail).toBe(newContactEmail)
+        })
+
+        it("should change the documentUrl of an agreement", () => {
+            const agreement = builder.build()
+            const newDocumentUrl = "http://example.com/new-document.pdf"
+            agreement.changeDocumentUrl(newDocumentUrl)
+            agreement.validate()
+            expect(agreement.documentUrl).toBe(newDocumentUrl)
+        })
+
+        it("should change the comment of an agreement", () => {
+            const agreement = builder.build()
+            const newComment = "new comment"
+            agreement.changeComment(newComment)
+            agreement.validate()
+            expect(agreement.comment).toBe(newComment)
+        })
+    })
 })

@@ -6,4 +6,5 @@ export interface ServiceRepository {
     delete(serviceId: string): Promise<void>
     find(serviceId: string): Promise<Service | null>
     findManyByAgreementId(agreementId: string): Promise<Service[] | null>
+    countNotValidatedServicesByAgreementId(agreementId: string): Promise<number>
 }

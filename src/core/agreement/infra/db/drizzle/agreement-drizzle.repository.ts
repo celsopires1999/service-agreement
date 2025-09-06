@@ -2,7 +2,7 @@ import { Agreement } from "@/core/agreement/domain/agreement"
 import { AgreementRepository } from "@/core/agreement/domain/agreement.repository"
 import { DB } from "@/db"
 import { agreements } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { and, count, eq } from "drizzle-orm"
 
 export class AgreementDrizzleRepository implements AgreementRepository {
     constructor(private readonly db: DB) {}
@@ -65,5 +65,16 @@ export class AgreementDrizzleRepository implements AgreementRepository {
         return new Agreement({
             ...agreementModel,
         })
+    }
+
+    async countRevisions(year: number, code: string): Promise<number> {
+        const revisions = await this.db
+            .select({
+                count: count(),
+            })
+            .from(agreements)
+            .where(and(eq(agreements.year, year), eq(agreements.code, code)))
+
+        return revisions[0].count
     }
 }
