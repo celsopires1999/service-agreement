@@ -1,44 +1,66 @@
-# Use a multi-stage build to optimize the final image size
-# Stage 1: Build
-FROM node:23.3.0-alpine AS builder
+# syntax=docker.io/docker/dockerfile:1
 
-# Set working directory
-WORKDIR /home/node/app
+FROM node:23.3.0-alpine AS base
 
-# Copy the application code
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY vendor ./vendor 
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Remove build directories
-RUN rm -rf node_modules && rm -rf .next 
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Install dependencies
-RUN npm ci
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-# Build the application
-RUN npm run build
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
 
-# Remove node_modules used for building the .next directory
-RUN rm -rf node_modules
+ENV NODE_ENV=production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Install production dependencies (node_modules contains production dependencies only)
-RUN npm ci --omit=dev
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Stage 2: Production
-FROM node:23.3.0-alpine
+COPY --from=builder /app/public ./public
 
-# Set working directory
-WORKDIR /home/node/app
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-ENV NODE_ENV=production 
+USER nextjs
 
-# Copy only the built application and necessary files from the builder stage
-COPY --from=builder /home/node/app/.next ./.next
-COPY --from=builder /home/node/app/node_modules ./node_modules
-COPY --from=builder /home/node/app/public ./public
-COPY --from=builder /home/node/app/package.json .
-
-# Expose the application port
 EXPOSE 3000
 
-# Set the command to run the application
-CMD ["npm", "start"]
+ENV PORT=3000
+
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
+ENV HOSTNAME="0.0.0.0"
+CMD ["node", "server.js"]
