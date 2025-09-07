@@ -15,7 +15,8 @@ import {
 
 import { relations } from "drizzle-orm"
 import { ServiceStatus } from "@/core/service/domain/service.types"
-import { Role } from "@/core/user/domain/user"
+import { Role } from "@/core/user/domain/role"
+// import { Role } from "@/core/user/domain/user"
 
 export const plans = pgTable(
     "plans",

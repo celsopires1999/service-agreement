@@ -2,13 +2,13 @@
 
 import { flattenValidationErrors } from "next-safe-action"
 
+import { CreateAgreementUseCase } from "@/core/agreement/application/use-cases/create-agreement.use-case"
 import { UpdateAgreementUseCase } from "@/core/agreement/application/use-cases/update-agreement.use-case"
 import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
 import { db } from "@/db"
-import { agreements } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -16,7 +16,6 @@ import {
     type insertAgreementSchemaType,
 } from "@/zod-schemas/agreement"
 import { revalidatePath } from "next/cache"
-import { CreateAgreementUseCase } from "@/core/agreement/application/use-cases/create-agreement.use-case"
 
 export const saveAgreementAction = actionClient
     .metadata({ actionName: "saveAgreementAction" })

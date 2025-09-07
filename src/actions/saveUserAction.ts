@@ -1,11 +1,11 @@
 "use server"
 
-import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
-
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { CreateUserUseCase } from "@/core/user/application/use-cases/create-user.use-case"
+import { UpdateUserUseCase } from "@/core/user/application/use-cases/update-user.use-case"
+import { UserDrizzleRepository } from "@/core/user/infra/db/drizzle/user-drizzle.repository"
 import { db } from "@/db"
-import { users } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { insertUserSchema, type insertUserSchemaType } from "@/zod-schemas/user"
@@ -23,52 +23,47 @@ export const saveUserAction = actionClient
         }: {
             parsedInput: insertUserSchemaType
         }) => {
-            // New User
-            // createdAt and updatedAt are set by the database
             const session = await getSession()
 
             if (session.user.role !== "admin") {
                 throw new ValidationError("Unauthorized")
             }
 
+            const userRepo = new UserDrizzleRepository(db)
+
             if (user.userId === "" || user.userId === "(New)") {
-                const result = await db
-                    .insert(users)
-                    .values({
-                        name: user.name.trim(),
-                        email: user.email.trim().toLowerCase(),
-                        role: user.role,
-                    })
-                    .returning({ insertedId: users.userId })
+                // New User
+                const createUser = new CreateUserUseCase(userRepo)
+                const result = await createUser.execute({
+                    name: user.name.trim(),
+                    email: user.email.trim().toLowerCase(),
+                    role: user.role,
+                })
 
                 // revalidatePath("/users")
                 const c = await cookies()
                 c.set("force-refresh", JSON.stringify(Math.random()))
 
                 return {
-                    message: `User ID #${result[0].insertedId} created successfully`,
-                    userId: result[0].insertedId,
+                    message: `User ID #${result.userId} created successfully`,
+                    userId: result.userId,
                 }
             }
             // Existing user
-            // updatedAt is set by the database
-            const result = await db
-                .update(users)
-                .set({
-                    name: user.name.trim(),
-                    email: user.email.trim().toLowerCase(),
-                    role: user.role,
-                })
-                .where(eq(users.userId, user.userId!))
-                .returning({ updatedId: users.userId })
-
+            const updateUser = new UpdateUserUseCase(userRepo)
+            await updateUser.execute({
+                userId: user.userId,
+                name: user.name.trim(),
+                email: user.email.trim().toLowerCase(),
+                role: user.role,
+            })
             // revalidatePath("/users")
             const c = await cookies()
             c.set("force-refresh", JSON.stringify(Math.random()))
 
             return {
-                message: `User ID #${result[0].updatedId} updated successfully`,
-                userId: result[0].updatedId,
+                message: `User ID #${user.userId} updated successfully`,
+                userId: user.userId,
             }
         },
     )

@@ -1,8 +1,8 @@
 import { Plan } from "@/core/plan/domain/plan"
-import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
+import { PlanRepository } from "../../domain/plan.repository"
 
 export class CreatePlanUseCase {
-    constructor(private readonly planRepo: PlanDrizzleRepository) {}
+    constructor(private readonly planRepo: PlanRepository) {}
 
     async execute(input: CreatePlanInput): Promise<CreatePlanOutput> {
         const plan = Plan.create(input)

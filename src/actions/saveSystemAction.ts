@@ -1,21 +1,18 @@
 "use server"
 
-import { eq } from "drizzle-orm"
-import { flattenValidationErrors } from "next-safe-action"
-
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { CreateSystemUseCase } from "@/core/system/application/use-cases/create-system.use-case"
+import { UpdateSystemUseCase } from "@/core/system/application/use-cases/update-system.use-case"
+import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 import { db } from "@/db"
-import { systems } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertSystemSchema,
     type insertSystemSchemaType,
 } from "@/zod-schemas/system"
+import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
-import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
-import { CreateSystemUseCase } from "@/core/system/application/use-cases/create-system.use-case"
-import { UpdateSystemUseCase } from "@/core/system/application/use-cases/update-system.use-case"
 
 export const saveSystemAction = actionClient
     .metadata({ actionName: "saveSystemAction" })

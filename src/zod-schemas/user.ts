@@ -1,4 +1,4 @@
-import { Role } from "@/core/user/domain/user"
+import { Role } from "@/core/user/domain/role"
 import { users } from "@/db/schema"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"

@@ -3,7 +3,6 @@ import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/servic
 import { UnitOfWork } from "@/core/shared/domain/repositories/unit-of-work"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { insertAgreementSchemaType } from "@/zod-schemas/agreement"
-import { Agreement } from "../../domain/agreement"
 
 export class UpdateAgreementUseCase {
     constructor(private readonly uow: UnitOfWork) {}
