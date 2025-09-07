@@ -6,7 +6,7 @@ import { z } from "zod"
 export const insertUserSchema = createInsertSchema(users, {
     userId: z.union([z.string().uuid("invalid UUID"), z.literal("(New)")]),
     email: (schema) =>
-        schema.email("Invalid email").min(1, "Email is required"),
+        schema.min(1, "Email is required").email("Invalid email"),
     name: (schema) =>
         schema
             .min(1, "Name is required")

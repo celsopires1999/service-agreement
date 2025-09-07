@@ -5,7 +5,7 @@ import { Role } from "./role"
 
 export const userSchema = z.object({
     userId: z.string().uuid("Invalid UUID for userId"),
-    email: z.string().email("Invalid email").min(1, "Email is required"),
+    email: z.string().min(1, "Email is required").email("Invalid email"),
     name: z
         .string()
         .min(1, "Name is required")
