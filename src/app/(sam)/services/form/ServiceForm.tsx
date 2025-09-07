@@ -197,6 +197,7 @@ export function ServiceForm({
                         <InputURL<insertServiceSchemaType>
                             fieldTitle="Document URL"
                             nameInSchema="documentUrl"
+                            disabled={!isEditable}
                         />
 
                         <div className="mt-4 space-y-2">

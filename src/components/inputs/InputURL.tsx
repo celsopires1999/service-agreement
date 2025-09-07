@@ -69,9 +69,10 @@ export function InputURL<Schema>({
                                         aria-label="Open URL"
                                         title="Open URL"
                                         className="absolute right-1 h-5 w-5 rounded-full"
-                                        onClick={() =>
+                                        onClick={(e) => {
+                                            e.preventDefault()
                                             window.open(urlValue, "_blank")
-                                        }
+                                        }}
                                     >
                                         <ExternalLink />
                                     </Button>
