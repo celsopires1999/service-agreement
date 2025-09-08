@@ -1,1 +1,0 @@
-ALTER TABLE "service_systems" ALTER COLUMN "allocation" SET DATA TYPE numeric(9, 6);
