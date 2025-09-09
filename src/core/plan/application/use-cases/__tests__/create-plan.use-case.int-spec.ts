@@ -1,6 +1,7 @@
 import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { compareDecimal } from "@/lib/utils"
 import { CreatePlanUseCase } from "../create-plan.use-case"
 
 describe("CreatePlanUseCase Integration Tests", () => {
@@ -22,7 +23,9 @@ describe("CreatePlanUseCase Integration Tests", () => {
         expect(createdPlan).toBeDefined()
         expect(createdPlan?.code).toBe(aPlan.code)
         expect(createdPlan?.description).toBe(aPlan.description)
-        expect(createdPlan?.euro).toBe(aPlan.euro)
+        expect(
+            createdPlan && compareDecimal(createdPlan.euro, aPlan.euro),
+        ).toBe(0)
         expect(createdPlan?.planDate).toBe(aPlan.planDate)
     })
 })

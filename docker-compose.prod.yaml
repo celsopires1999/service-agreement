@@ -1,6 +1,6 @@
 services:
     app:
-        image: celsopires/service-agreement:v1.0.5
+        image: celsopires/service-agreement:prod
         ports:
             - "5000:5000"
         env_file:
