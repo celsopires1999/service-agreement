@@ -1,11 +1,23 @@
-import { test as setup, expect } from "@playwright/test"
-import path from "path"
-import { cleanTables } from "./utils/clean-tables"
 import { db } from "@/db"
 import { users } from "@/db/schema"
+import { expect, test as setup } from "@playwright/test"
+import { migrate } from "drizzle-orm/node-postgres/migrator"
+import path from "path"
 import { usersData } from "./fixtures"
+import { cleanTables } from "./utils/clean-tables"
 
 const adminFile = path.join(__dirname, "../playwright/.auth/admin.json")
+
+setup.beforeAll(async () => {
+    try {
+        await migrate(db, {
+            migrationsFolder: "src/db/migrations",
+        })
+    } catch (error) {
+        console.error("Error during migration: ", error)
+        throw new Error("Test setup failed", { cause: error })
+    }
+})
 
 setup.beforeEach(async () => {
     try {
