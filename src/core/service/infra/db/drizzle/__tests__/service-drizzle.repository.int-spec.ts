@@ -18,7 +18,6 @@ import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-d
 import { DB } from "@/db"
 import { compareDecimal } from "@/lib/utils"
 import Decimal from "decimal.js"
-import { forEach } from "lodash"
 import { ServiceDrizzleRepository } from "../service-drizzle.repository"
 
 describe("ServiceDrizzleRepository Integration Tests", () => {
@@ -53,9 +52,9 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         await planRepo.insert(plan)
 
         systems = SystemDataBuilder.theSystems(4).build()
-        forEach(systems, async (system) => {
+        for (const system of systems) {
             await systemRepo.insert(system)
-        })
+        }
 
         agreement = AgreementDataBuilder.anAgreement()
             .withProviderPlanId(plan.planId)
@@ -68,12 +67,12 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         const service = ServiceDataBuilder.aService()
             .withAgreementId(agreement.agreementId)
             .build()
-        forEach(systems, async (system) => {
+        for (const system of systems) {
             service.addServiceSystem(
                 system.systemId,
                 new Decimal("100").div(new Decimal(4)).toFixed(6),
             )
-        })
+        }
         await uow.execute(async (uow) => {
             const serviceRepo =
                 uow.getRepository<ServiceDrizzleRepository>("service")
@@ -106,7 +105,7 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         expect(fetchedService?.validatorEmail).toBe(service.validatorEmail)
         expect(fetchedService?.documentUrl).toBe(service.documentUrl)
         expect(fetchedService?.serviceSystems.length).toBe(4)
-        forEach(systems, (system) => {
+        for (const system of systems) {
             const serviceSystem = fetchedService?.serviceSystems.find(
                 (ss) => ss.systemId === system.systemId,
             )
@@ -117,19 +116,21 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
                     new Decimal("100").div(new Decimal(4)).toFixed(6),
                 ),
             ).toBe(0)
-        })
+        }
     })
 
     it("should update a service", async () => {
         const service = ServiceDataBuilder.aService()
             .withAgreementId(agreement.agreementId)
             .build()
-        forEach(systems, async (system) => {
+
+        for (const system of systems) {
             service.addServiceSystem(
                 system.systemId,
                 new Decimal("100").div(new Decimal(4)).toFixed(6),
             )
-        })
+        }
+
         service.changeActivationStatusBasedOnAllocation()
         service.validate()
         await serviceRepo.insert(service)
@@ -185,7 +186,7 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         )
         expect(fetchedService?.documentUrl).toBe(service.documentUrl)
         expect(fetchedService?.serviceSystems.length).toBe(4)
-        forEach(systems, (system) => {
+        for (const system of systems) {
             const serviceSystem = fetchedService?.serviceSystems.find(
                 (ss) => ss.systemId === system.systemId,
             )
@@ -196,19 +197,19 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
                     new Decimal("100").div(new Decimal(4)).toFixed(6),
                 ),
             ).toBe(0)
-        })
+        }
     })
 
     it("should delete a service", async () => {
         const service = ServiceDataBuilder.aService()
             .withAgreementId(agreement.agreementId)
             .build()
-        forEach(systems, async (system) => {
+        for (const system of systems) {
             service.addServiceSystem(
                 system.systemId,
                 new Decimal("100").div(new Decimal(4)).toFixed(6),
             )
-        })
+        }
         service.changeActivationStatusBasedOnAllocation()
         service.validate()
         await serviceRepo.insert(service)
@@ -227,12 +228,12 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         const service = ServiceDataBuilder.aService()
             .withAgreementId(agreement.agreementId)
             .build()
-        forEach(systems, async (system) => {
+        for (const system of systems) {
             service.addServiceSystem(
                 system.systemId,
                 new Decimal("100").div(new Decimal(4)).toFixed(6),
             )
-        })
+        }
         service.changeActivationStatusBasedOnAllocation()
         service.validate()
         await serviceRepo.insert(service)
@@ -263,7 +264,7 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         expect(fetchedService?.validatorEmail).toBe(service.validatorEmail)
         expect(fetchedService?.documentUrl).toBe(service.documentUrl)
         expect(fetchedService?.serviceSystems.length).toBe(4)
-        forEach(systems, (system) => {
+        for (const system of systems) {
             const serviceSystem = fetchedService?.serviceSystems.find(
                 (ss) => ss.systemId === system.systemId,
             )
@@ -275,7 +276,7 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
                         new Decimal("100").div(new Decimal(4)).toFixed(6),
                     ),
             ).toBe(0)
-        })
+        }
     })
 
     it("should return null if service not found", async () => {
@@ -289,16 +290,17 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         const services = ServiceDataBuilder.theServices(4)
             .withAgreementId(agreement.agreementId)
             .build()
-        forEach(services, (service) => {
-            forEach(systems, (system) => {
+
+        for (const service of services) {
+            for (const system of systems) {
                 service.addServiceSystem(
                     system.systemId,
                     new Decimal("100").div(new Decimal(4)).toFixed(6),
                 )
-            })
+            }
             service.changeActivationStatusBasedOnAllocation()
             service.validate()
-        })
+        }
 
         for (const service of services) {
             await serviceRepo.insert(service)
@@ -335,7 +337,7 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
             expect(fetchedService?.validatorEmail).toBe(service.validatorEmail)
             expect(fetchedService?.documentUrl).toBe(service.documentUrl)
             expect(fetchedService?.serviceSystems.length).toBe(4)
-            forEach(systems, (system) => {
+            for (const system of systems) {
                 const serviceSystem = fetchedService?.serviceSystems.find(
                     (ss) => ss.systemId === system.systemId,
                 )
@@ -347,7 +349,7 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
                             new Decimal("100").div(new Decimal(4)).toFixed(6),
                         ),
                 ).toBe(0)
-            })
+            }
         }
     })
 
@@ -355,16 +357,16 @@ describe("ServiceDrizzleRepository Integration Tests", () => {
         const services = ServiceDataBuilder.theServices(4)
             .withAgreementId(agreement.agreementId)
             .build()
-        forEach(services, (service) => {
-            forEach(systems, (system) => {
+        for (const service of services) {
+            for (const system of systems) {
                 service.addServiceSystem(
                     system.systemId,
                     new Decimal("100").div(new Decimal(4)).toFixed(6),
                 )
-            })
+            }
             service.changeActivationStatusBasedOnAllocation()
             service.validate()
-        })
+        }
 
         for (const service of services) {
             await serviceRepo.insert(service)
