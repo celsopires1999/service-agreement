@@ -11,19 +11,19 @@ import {
 } from "./fixtures"
 import { cleanTables } from "./utils/clean-tables"
 
-test.beforeEach(async () => {
-    try {
-        await cleanTables()
-        await db.insert(users).values(usersData)
-        await db.insert(plans).values(plansData)
-        await db.insert(agreements).values(agreementsData)
-    } catch (error) {
-        console.error("Error during test setup:", error)
-        throw new Error("Test setup failed", { cause: error })
-    }
-})
-
 test.describe(`Agreement Form`, () => {
+    test.beforeEach(async () => {
+        try {
+            await cleanTables()
+            await db.insert(users).values(usersData)
+            await db.insert(plans).values(plansData)
+            await db.insert(agreements).values(agreementsData)
+        } catch (error) {
+            console.error("Error during test setup:", error)
+            throw new Error("Test setup failed", { cause: error })
+        }
+    })
+
     test.use({
         storageState: path.join(__dirname, `../playwright/.auth/admin.json`),
     })

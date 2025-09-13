@@ -11,18 +11,18 @@ const roles = ["admin", "viewer", "validator"] as const
 type Role = (typeof roles)[number]
 
 const runHomePageTests = (role: Role) => {
-    test.beforeAll(async () => {
-        try {
-            await cleanTables()
-            await db.insert(users).values(usersData)
-            await db.insert(plans).values(plansData)
-            await db.insert(agreements).values(agreementsData)
-        } catch (error) {
-            console.error("Error during test setup:", error)
-            throw new Error("Test setup failed", { cause: error })
-        }
-    })
     test.describe(`Agreements List as ${role}`, () => {
+        test.beforeAll(async () => {
+            try {
+                await cleanTables()
+                await db.insert(users).values(usersData)
+                await db.insert(plans).values(plansData)
+                await db.insert(agreements).values(agreementsData)
+            } catch (error) {
+                console.error("Error during test setup:", error)
+                throw new Error("Test setup failed", { cause: error })
+            }
+        })
         test.use({
             storageState: path.join(
                 __dirname,

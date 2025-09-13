@@ -1,0 +1,40 @@
+services:
+    sav:
+        build:
+            context: .
+            dockerfile: Dockerfile.ci
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - 3000:3000
+        depends_on:
+            db:
+                condition: service_healthy
+
+    db:
+        image: postgres:latest
+        restart: unless-stopped
+        volumes:
+            - ./.docker/postgres/user/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+            POSTGRES_HOSTNAME: localhost
+        ports:
+            - 5432:5432
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "pg_isready",
+                    "-h",
+                    "localhost",
+                    "-p",
+                    "5432",
+                    "-U",
+                    "postgres",
+                ]
+            interval: 10s
+            timeout: 30s
+            retries: 5

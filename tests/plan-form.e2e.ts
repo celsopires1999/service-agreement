@@ -22,18 +22,18 @@ const plansData = [
     },
 ]
 
-test.beforeEach(async () => {
-    try {
-        await cleanTables()
-        await db.insert(users).values(usersData)
-        await db.insert(plans).values(plansData)
-    } catch (error) {
-        console.error("Error during test setup:", error)
-        throw new Error("Test setup failed", { cause: error })
-    }
-})
-
 test.describe("Plan Form", () => {
+    test.beforeEach(async () => {
+        try {
+            await cleanTables()
+            await db.insert(users).values(usersData)
+            await db.insert(plans).values(plansData)
+        } catch (error) {
+            console.error("Error during test setup:", error)
+            throw new Error("Test setup failed", { cause: error })
+        }
+    })
+
     test.use({
         storageState: path.join(__dirname, "../playwright/.auth/admin.json"),
     })

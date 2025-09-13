@@ -5,17 +5,17 @@ import path from "path"
 import { usersData } from "./fixtures"
 import { cleanTables } from "./utils/clean-tables"
 
-test.beforeEach(async () => {
-    try {
-        await cleanTables()
-        await db.insert(users).values(usersData)
-    } catch (error) {
-        console.error("Error during test setup:", error)
-        throw new Error("Test setup failed", { cause: error })
-    }
-})
-
 test.describe("User Form", () => {
+    test.beforeEach(async () => {
+        try {
+            await cleanTables()
+            await db.insert(users).values(usersData)
+        } catch (error) {
+            console.error("Error during test setup:", error)
+            throw new Error("Test setup failed", { cause: error })
+        }
+    })
+
     test.use({
         storageState: path.join(__dirname, "../playwright/.auth/admin.json"),
     })
