@@ -1,9 +1,10 @@
 FROM node:23.3.0-slim
 
 RUN apt update && \
-    apt install -y curl gpg gnupg gpg-agent socat docker.io 
-    
-RUN groupadd -g 989 dockerhost || true && usermod -aG 989 node
+apt install -y curl gpg gnupg gpg-agent socat docker.io 
+
+ARG DOCKER_GID=989
+RUN groupadd -g ${DOCKER_GID} dockerhost || true && usermod -aG ${DOCKER_GID} node
 
 COPY .docker/start.sh /
 RUN chmod +x start.sh

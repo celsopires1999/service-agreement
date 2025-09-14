@@ -1,11 +1,11 @@
-FROM node:23.3.0-slim
+FROM node:23.3.0-slim AS development
 
 RUN apt update && \
     apt install -y docker.io     
 
-# RUN groupadd -g 989 dockerhost || true && usermod -aG 989 node
-RUN groupadd -g 118 dockerhost || true && usermod -aG 118 node
-    
+ARG DOCKER_GID
+RUN groupadd -g ${DOCKER_GID} dockerhost || true && usermod -aG ${DOCKER_GID} node
+
 RUN npx playwright install-deps chromium
 
 USER node
@@ -16,7 +16,6 @@ WORKDIR /home/node/app
 
 COPY --chown=node:node . .
 RUN npm ci
-# RUN npx playwright install chromium
 
 EXPOSE 3000 
 

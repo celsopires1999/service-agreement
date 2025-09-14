@@ -18,7 +18,7 @@ env:
     REGISTRY: ghcr.io
     # github.repository as <account>/<repo>
     IMAGE_NAME: ${{ github.repository }}
-    FOLDER_NAME: ${{ github.event.repository.name }}-app
+    FOLDER_NAME: ${{ github.event.repository.name }}-sav
 
 jobs:
     build:
@@ -68,6 +68,10 @@ jobs:
 
             # Build and push Docker image with Buildx (don't push on PR)
             # https://github.com/docker/build-push-action
+            - name: Get Docker GID
+              id: docker-gid
+              run: echo "DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)" >> $GITHUB_ENV
+
             - name: Build development
               id: build-and-push
               uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
@@ -79,12 +83,12 @@ jobs:
                   cache-to: type=gha,mode=max
                   load: true
                   file: Dockerfile.ci
+                  target: development
+                  build-args: |
+                      DOCKER_GID=${{ env.DOCKER_GID }}
 
             - name: up containers
-              run: docker compose -f docker-compose.ci.yaml up -d
-
-            # - name: wait for mysql
-            #   run: docker compose -f docker-compose.ci.yaml exec -T db mysqladmin ping --silent --wait=30 -uroot -proot
+              run: DOCKER_GID=${{ env.DOCKER_GID }} docker compose -f docker-compose.ci.yaml up -d
 
             - name: generate envs
               run: |

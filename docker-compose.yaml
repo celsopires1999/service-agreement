@@ -3,6 +3,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile.dev
+            args:
+                DOCKER_GID: 989
         volumes:
             - .:/home/node/app
             - /var/run/docker.sock:/var/run/docker.sock
