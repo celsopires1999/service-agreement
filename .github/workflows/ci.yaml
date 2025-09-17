@@ -105,3 +105,11 @@ jobs:
 
             - name: run e2e tests
               run: docker compose -f docker-compose.ci.yaml exec -T sav npm run test:e2e
+
+            - name: SonarCloud Scan
+              uses: SonarSource/sonarcloud-github-action@v2
+              with:
+                  projectKey: celsopires1999_service-agreement
+                  organization: celsopires
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

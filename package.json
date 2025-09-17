@@ -12,7 +12,7 @@
     "db:push": "env $(cat .env.drizzle | grep -v '^#' | xargs) drizzle-kit push",
     "db:migrate": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/migrate.ts",
     "db:seed": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/seed.ts",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "dev:test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) next dev --turbopack",
     "test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test",
