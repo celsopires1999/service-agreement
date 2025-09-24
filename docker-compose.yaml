@@ -5,6 +5,7 @@ services:
             dockerfile: Dockerfile.dev
             args:
                 DOCKER_GID: 989
+        command: .docker/start.sh
         volumes:
             - .:/home/node/app
             - /var/run/docker.sock:/var/run/docker.sock

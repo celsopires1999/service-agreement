@@ -1,7 +1,10 @@
 #!/bin/bash
 
-npx playwright install 
-
+echo "Installing dependencies..."
 npm install
 
+echo "Installing Playwright..."
+npx playwright install chromium
+
+echo "App is ready."
 tail -f /dev/null

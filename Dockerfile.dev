@@ -6,9 +6,6 @@ apt install -y curl gpg gnupg gpg-agent socat docker.io
 ARG DOCKER_GID=989
 RUN groupadd -g ${DOCKER_GID} dockerhost || true && usermod -aG ${DOCKER_GID} node
 
-COPY .docker/start.sh /
-RUN chmod +x start.sh
-
 RUN npx playwright install-deps chromium
 
 USER node
@@ -16,5 +13,3 @@ USER node
 WORKDIR /home/node/app
 
 EXPOSE 3000 
-
-CMD ["/start.sh"]
