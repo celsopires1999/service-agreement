@@ -1,8 +1,8 @@
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
+import { SystemRepository } from "../../domain/system.repository"
 
 export class GetSystemUseCase {
-    constructor(private readonly systemRepo: SystemDrizzleRepository) {}
+    constructor(private readonly systemRepo: SystemRepository) {}
 
     async execute(input: GetSystemInput): Promise<GetSystemOutput> {
         const system = await this.systemRepo.find(input.systemId)

@@ -1,10 +1,10 @@
-import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
 import { Service } from "@/core/service/domain/service"
-import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ServiceRepository } from "@/core/service/domain/service.repository"
 import { UnitOfWork } from "@/core/shared/domain/repositories/unit-of-work"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UserList } from "@/core/users-list/domain/user-list"
-import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
+import { UserListRepository } from "@/core/users-list/domain/user-list.respository"
+import { AgreementRepository } from "../../domain/agreement.repository"
 
 export class CreateAgreementRevisionUseCase {
     constructor(private readonly uow: UnitOfWork) {}
@@ -14,11 +14,10 @@ export class CreateAgreementRevisionUseCase {
     ): Promise<CreateAgreementRevisionOutput> {
         return await this.uow.execute(async (uow) => {
             const agreementRepo =
-                uow.getRepository<AgreementDrizzleRepository>("agreement")
-            const serviceRepo =
-                uow.getRepository<ServiceDrizzleRepository>("service")
+                uow.getRepository<AgreementRepository>("agreement")
+            const serviceRepo = uow.getRepository<ServiceRepository>("service")
             const userListRepo =
-                uow.getRepository<UserListDrizzleRepository>("userList")
+                uow.getRepository<UserListRepository>("userList")
 
             const sourceAgreement = await agreementRepo.find(input.agreementId)
 

@@ -1,8 +1,8 @@
-import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
-import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
+import { ServiceRepository } from "@/core/service/domain/service.repository"
 import { UnitOfWork } from "@/core/shared/domain/repositories/unit-of-work"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { insertAgreementSchemaType } from "@/zod-schemas/agreement"
+import { AgreementRepository } from "../../domain/agreement.repository"
 
 export class UpdateAgreementUseCase {
     constructor(private readonly uow: UnitOfWork) {}
@@ -10,9 +10,8 @@ export class UpdateAgreementUseCase {
     async execute(input: UpdateAgreementInput): Promise<UpdateAgreementOutput> {
         return await this.uow.execute(async (uow) => {
             const agreementRepo =
-                uow.getRepository<AgreementDrizzleRepository>("agreement")
-            const serviceRepo =
-                uow.getRepository<ServiceDrizzleRepository>("service")
+                uow.getRepository<AgreementRepository>("agreement")
+            const serviceRepo = uow.getRepository<ServiceRepository>("service")
 
             const agreement = await agreementRepo.find(
                 input.agreement.agreementId,

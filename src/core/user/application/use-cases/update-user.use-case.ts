@@ -1,9 +1,9 @@
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { UserDrizzleRepository } from "@/core/user/infra/db/drizzle/user-drizzle.repository"
+import { UserRepository } from "@/core/user/domain/user.repository"
 import { RoleType } from "../../domain/role"
 
 export class UpdateUserUseCase {
-    constructor(private readonly userRepo: UserDrizzleRepository) {}
+    constructor(private readonly userRepo: UserRepository) {}
 
     async execute(input: UpdateUserInput): Promise<void> {
         const user = await this.userRepo.find(input.userId)
