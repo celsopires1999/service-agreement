@@ -105,6 +105,7 @@ export function LocalPlanSearch({
             <input
                 type="hidden"
                 name={fieldName}
+                data-testid={`hidden-${fieldName}-input`}
                 value={selectedLocalPlan?.id ?? ""}
             />
         </>

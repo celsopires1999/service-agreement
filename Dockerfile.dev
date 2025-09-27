@@ -1,4 +1,4 @@
-FROM node:23.3.0-slim
+FROM node:24.9.0-slim
 
 RUN apt update && \
 apt install -y curl gpg gnupg gpg-agent socat docker.io 

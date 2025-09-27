@@ -17,6 +17,7 @@ const MessageBox = ({
     content: React.ReactNode
 }) => (
     <div
+        role="alert"
         className={`my-2 rounded-lg bg-accent px-4 py-2 ${type === "error" ? "text-red-500" : ""}`}
     >
         {type === "success" ? "🎉" : "🚨"} {content}
@@ -31,12 +32,15 @@ export function DisplayServerActionResponse({
 
     return (
         <div>
-            {!showErrorOnly && data?.message && (
-                <MessageBox
-                    type="success"
-                    content={`Success: ${data.message}`}
-                />
-            )}
+            {!showErrorOnly &&
+                data?.message &&
+                !serverError &&
+                !validationErrors && (
+                    <MessageBox
+                        type="success"
+                        content={`Success: ${data.message}`}
+                    />
+                )}
 
             {serverError && <MessageBox type="error" content={serverError} />}
 

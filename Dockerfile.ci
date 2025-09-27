@@ -1,4 +1,4 @@
-FROM node:23.3.0-slim AS development
+FROM node:24.9.0-slim AS development
 
 RUN apt update && \
     apt install -y docker.io     

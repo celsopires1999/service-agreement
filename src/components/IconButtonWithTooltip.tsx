@@ -1,11 +1,6 @@
 import Link from "next/link"
 import { Button } from "./ui/button"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "./ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import { ListPlus } from "lucide-react"
 
 export function IconButtonWithTooltip({
@@ -17,20 +12,18 @@ export function IconButtonWithTooltip({
 }) {
     return (
         <div>
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size={"icon"} asChild>
-                            <Link href={href} prefetch={false}>
-                                <ListPlus />
-                            </Link>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>{text}</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button variant="ghost" size={"icon"} asChild>
+                        <Link href={href} prefetch={false}>
+                            <ListPlus />
+                        </Link>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{text}</p>
+                </TooltipContent>
+            </Tooltip>
         </div>
     )
 }

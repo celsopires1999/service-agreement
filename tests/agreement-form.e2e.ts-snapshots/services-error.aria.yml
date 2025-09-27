@@ -1,4 +1,4 @@
-- text: /🚨 Agreement cannot be set to revised because \d+ services are not validated/
+- alert: /🚨 Agreement cannot be set to revised because \d+ services are not validated/
 - heading "Edit Agreement Form" [level=2]
 - button "Agreement Agreement":
   - img
