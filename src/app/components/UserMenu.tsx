@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { CircleUserIcon } from "lucide-react"
 import { SignOut } from "./SignOut"
-import { Button } from "./ui/button"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu"
 
 export async function UserMenu() {
     const session = await auth()

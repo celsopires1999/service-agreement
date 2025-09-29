@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
 import { useFormContext } from "react-hook-form"
-import { Button } from "../ui/button"
+import { Button } from "../../../components/ui/button"
 
 type DataObj = {
     id: string
@@ -60,7 +60,15 @@ export function ComboboxWithLabel<Schema>({
                         {fieldTitle}
                     </FormLabel>
 
-                    <Popover open={open} onOpenChange={setOpen}>
+                    <Popover
+                        open={open}
+                        onOpenChange={(isOpen) => {
+                            setOpen(isOpen)
+                            if (!isOpen) {
+                                field.onBlur()
+                            }
+                        }}
+                    >
                         <PopoverTrigger asChild>
                             <FormControl>
                                 <Button
@@ -96,6 +104,10 @@ export function ComboboxWithLabel<Schema>({
                                                     form.setValue(
                                                         nameInSchema as string,
                                                         item.id,
+                                                        {
+                                                            shouldValidate:
+                                                                true,
+                                                        },
                                                     )
                                                     setOpen(false)
                                                 }}

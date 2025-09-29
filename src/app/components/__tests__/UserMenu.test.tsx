@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event"
 
 // Mock the auth function to control the session state in tests.
 const mockAuth = jest.fn()
-jest.mock("../../auth", () => ({
+jest.mock("../../../auth", () => ({
     auth: () => mockAuth(),
 }))
 

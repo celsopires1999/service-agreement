@@ -1,6 +1,5 @@
-import { IconButtonWithTooltip } from "@/components/IconButtonWithTooltip"
-import { TooltipProvider } from "@/components/ui/tooltip"
 import { render, screen } from "@testing-library/react"
+import { IconButtonWithTooltip } from "../IconButtonWithTooltip"
 
 // Mock for ResizeObserver. Components from libraries like Shadcn/ui often use
 // ResizeObserver, which is not available in Jest's JSDOM environment.
@@ -40,11 +39,7 @@ describe("IconButtonWithTooltip", () => {
     }
 
     it("should render the icon button as a link with the correct href", () => {
-        render(
-            <TooltipProvider>
-                <IconButtonWithTooltip {...mockProps} />
-            </TooltipProvider>,
-        )
+        render(<IconButtonWithTooltip {...mockProps} />)
 
         // Check if the icon is rendered
         expect(screen.getByTestId("list-plus-icon")).toBeInTheDocument()

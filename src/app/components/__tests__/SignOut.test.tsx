@@ -5,7 +5,7 @@ import { SignOut } from "../SignOut"
 
 // Mock the server action. We need to mock the module and then provide a mock implementation for the action.
 const mockLogout = jest.fn()
-jest.mock("../../actions/logoutAction", () => ({
+jest.mock("../../../actions/logoutAction", () => ({
     // The key here must match the exported function name from the action file.
     logout: () => mockLogout(),
 }))

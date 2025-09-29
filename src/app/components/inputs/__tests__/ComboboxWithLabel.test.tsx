@@ -39,6 +39,7 @@ let form: UseFormReturn<TestFormValues>
 const TestComponent = () => {
     form = useForm<TestFormValues>({
         resolver: zodResolver(TestSchema),
+        mode: "onBlur",
         defaultValues: {
             testField: "",
         },
@@ -109,5 +110,41 @@ describe("ComboboxWithLabel", () => {
 
         expect(form.getValues("testField")).toBe("2")
         expect(screen.getByText("Selected Value: 2")).toBeInTheDocument()
+    })
+
+    it("should display a validation error message on blur if no value is selected", async () => {
+        const user = userEvent.setup()
+        render(<TestComponent />)
+
+        // Initially, no error message should be visible.
+        expect(screen.queryByText("Field is required")).not.toBeInTheDocument()
+
+        const combobox = screen.getByRole("combobox")
+        await user.click(combobox) // Open the popover
+        await user.keyboard("{Escape}") // Close the popover to trigger blur
+
+        // After blur, the validation message should appear.
+        const errorMessage = await screen.findByText("Field is required")
+        expect(errorMessage).toBeInTheDocument()
+    })
+
+    it("should hide the validation error message after a valid option is selected", async () => {
+        const user = userEvent.setup()
+        render(<TestComponent />)
+
+        // First, trigger the validation error by blurring the input.
+        const combobox = screen.getByRole("combobox")
+        await user.click(combobox)
+        await user.keyboard("{Escape}")
+
+        // Assert that the error message is visible.
+        expect(await screen.findByText("Field is required")).toBeInTheDocument()
+
+        // Now, select a valid option.
+        await user.click(combobox)
+        await user.click(await screen.findByText("First Item"))
+
+        // The error message should disappear.
+        expect(screen.queryByText("Field is required")).not.toBeInTheDocument()
     })
 })

@@ -12,7 +12,7 @@ import { useFormContext } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { ExternalLink } from "lucide-react"
 import { InputHTMLAttributes } from "react"
-import { Button } from "../ui/button"
+import { Button } from "../../../components/ui/button"
 
 type Props<Schema> = {
     fieldTitle: string

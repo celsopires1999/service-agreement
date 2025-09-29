@@ -7,7 +7,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "../ui/form"
+} from "../../../components/ui/form"
 
 type Props<Schema> = {
     fieldTitle: string

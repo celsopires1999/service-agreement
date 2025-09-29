@@ -1,7 +1,7 @@
 "use client"
 
 import { uploadUserListAction } from "@/actions/uploadUserListAction"
-import { InputWithIcon } from "@/components/inputs/InputWithIcon"
+import { InputWithIcon } from "@/app/components/inputs/InputWithIcon"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {

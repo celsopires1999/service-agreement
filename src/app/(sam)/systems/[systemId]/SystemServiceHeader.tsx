@@ -1,4 +1,4 @@
-import { SystemNav } from "@/components/SystemNav"
+import { SystemNav } from "@/app/components/SystemNav"
 
 type Props = {
     systemId: string

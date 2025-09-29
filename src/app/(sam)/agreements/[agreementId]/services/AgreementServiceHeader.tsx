@@ -1,5 +1,5 @@
-import { AgreementNav } from "@/components/AgreementNav"
-import { BadgeWithTooltip } from "@/components/BadgeWithTooltip"
+import { AgreementNav } from "@/app/components/AgreementNav"
+import { BadgeWithTooltip } from "@/app/components/BadgeWithTooltip"
 import { getAgreementType } from "@/lib/queries/agreement"
 
 type Props = {

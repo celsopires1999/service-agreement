@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/BackButton"
+import { BackButton } from "@/app/components/BackButton"
 import { getUser } from "@/lib/queries/user"
 import { UserForm } from "./UserForm"
 

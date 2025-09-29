@@ -6,7 +6,6 @@ const config: Config = {
     collectCoverageFrom: [
         "<rootDir>/src/core/**/*.{ts,tsx}",
         "<rootDir>/src/app/**/*.{ts,tsx}",
-        "<rootDir>/src/components/**/*.{ts,tsx}",
         "!<rootDir>/src/**/*.{test,spec,int-spec}.{ts,tsx}",
         "!<rootDir>/src/**/__tests__/**/*.{ts,tsx}",
     ],

@@ -9,7 +9,7 @@ import {
 import Link from "next/link"
 // import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"
 // import { Button } from "@/components/ui/button"
-import { NavButton } from "@/components/NavButton"
+import { NavButton } from "./NavButton"
 import { ModeToggle } from "./ModeToggle"
 import { NavButtonMenu } from "./NavButtonMenu"
 import { UserMenu } from "./UserMenu"

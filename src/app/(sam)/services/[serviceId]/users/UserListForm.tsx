@@ -1,8 +1,8 @@
 "use client"
 
 import { deleteUserListAction } from "@/actions/deleteUserListAction"
-import { AlertConfirmation } from "@/components/AlertConfirmation"
-import Deleting from "@/components/Deleting"
+import { AlertConfirmation } from "@/app/components/AlertConfirmation"
+import Deleting from "@/app/components/Deleting"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"

@@ -4,7 +4,7 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "./ui/tooltip"
+} from "@/components/ui/tooltip"
 
 type Props = {
     variant: "default" | "destructive" | "outline" | "secondary" | undefined

@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/BackButton"
+import { BackButton } from "@/app/components/BackButton"
 import { getServicesBySystemId } from "@/lib/queries/service"
 import { getSystem } from "@/lib/queries/system"
 import Decimal from "decimal.js"

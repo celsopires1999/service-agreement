@@ -10,7 +10,7 @@ const MockIcon = (() => (
 )) as unknown as LucideIcon
 
 // Mock the Tooltip components to simplify testing
-jest.mock("../ui/tooltip", () => ({
+jest.mock("../../../components/ui/tooltip", () => ({
     Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     TooltipContent: ({ children }: { children: React.ReactNode }) => (
         <div>{children}</div>

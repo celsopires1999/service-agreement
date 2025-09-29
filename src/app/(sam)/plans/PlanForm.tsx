@@ -1,11 +1,11 @@
 "use client"
 
 import { savePlanAction } from "@/actions/savePlanAction"
-import { InputWithLabel } from "@/components/inputs/InputWithLabel"
+import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 
-import { FormControlButtons } from "@/components/FormControlButtons"
+import { FormControlButtons } from "@/app/components/FormControlButtons"
 import { getPlansType } from "@/lib/queries/plan"
 import { insertPlanSchema, insertPlanSchemaType } from "@/zod-schemas/plan"
 import { zodResolver } from "@hookform/resolvers/zod"

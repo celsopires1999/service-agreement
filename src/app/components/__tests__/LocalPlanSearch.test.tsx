@@ -1,4 +1,4 @@
-import { LocalPlanSearch } from "@/components/LocalPlanSearch"
+import { LocalPlanSearch } from "../LocalPlanSearch"
 import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 

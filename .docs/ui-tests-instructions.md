@@ -12,9 +12,10 @@ You are a Senior Software Engineer. Your task is to write a comprehensive unit t
 1.  **Framework:** Next.js 15 (App Router).
 2.  **UI/Design System:** Shadcn/ui components.
 3.  **Testing:** Jest, @testing-library/react.
-4.  **Additional Libraries:** next-auth (v5), next-safe-action (v7), zod.
-5.  **Test Style:** Code must be concise. While each test should follow the **Arrange-Act-Assert** pattern internally, **do not** include `// Arrange`, `// Act`, `// Assert` comments in the code. These comments make the tests look academic and should be omitted.
-6.  **Icon Mocking:** Icons from **`lucide-react`** must be mocked within the test file to simplify the rendered DOM output.
+4.  **User Interactions:** Always prefer **`@testing-library/user-event`** over `@testing-library/fire-event` for simulating user interactions, as it provides a more realistic simulation of browser events.
+5.  **Additional Libraries:** next-auth (v5), next-safe-action (v7), zod.
+6.  **Test Style:** Code must be concise. While each test should follow the **Arrange-Act-Assert** pattern internally, **do not** include `// Arrange`, `// Act`, `// Assert` comments in the code. These comments make the tests look academic and should be omitted.
+7.  **Icon Mocking:** Icons from **`lucide-react`** must be mocked within the test file to simplify the rendered DOM output.
 
     - Example of a mock for a specific icon:
 
@@ -28,11 +29,14 @@ You are a Senior Software Engineer. Your task is to write a comprehensive unit t
 
     - **Important:** Do not use `...jest.requireActual("lucide-react")` in the mock, as it can cause syntax errors with ES Modules. Mock only the icons that are explicitly imported by the component under test.
 
-**TEST SPECIFICATIONS:**
+    - **Note:** Be aware that many `shadcn/ui` components (e.g., `Select`, `Checkbox`) use `lucide-react` icons internally. These icons must also be identified and mocked in your test file.
 
-1.  **Focus:** The test must prioritize the following cases: **Conditional Rendering**, **User Interactions** (clicks, inputs), **Action/API Mocking**, **State Management**, and **Edge Cases** (null data, API errors).
-2.  **`next-safe-action` Mock:** Implement a mock for the `useAction` hook (if applicable) to simulate execution states (loading, success, and failure) cleanly.
-3.  **Environment:** The test must include **manual mocks** (`jest.mock(...)`) for Next.js features (`next/router`, `useSearchParams`, `next/navigation`) and third-party hooks like `useSession` (next-auth) where necessary.
+8.  **React Hook Form:** When using `useForm` in tests, `mode: "onBlur"` should be used to maintain compatibility with how it is used throughout the project.
+    **TEST SPECIFICATIONS:**
+
+9.  **Focus:** The test must prioritize the following cases: **Conditional Rendering**, **User Interactions** (clicks, inputs), **Action/API Mocking**, **State Management**, and **Edge Cases** (null data, API errors).
+10. **`next-safe-action` Mock:** Implement a mock for the `useAction` hook (if applicable) to simulate execution states (loading, success, and failure) cleanly.
+11. **Environment:** The test must include **manual mocks** (`jest.mock(...)`) for Next.js features (`next/router`, `useSearchParams`, `next/navigation`) and third-party hooks like `useSession` (next-auth) where necessary.
 
 **REQUEST:**
 

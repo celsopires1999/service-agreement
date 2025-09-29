@@ -44,7 +44,10 @@ export function SelectWithLabel<Schema>({
             name={nameInSchema}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel className="text-base font-semibold" htmlFor={nameInSchema}>
+                    <FormLabel
+                        className="text-base font-semibold"
+                        htmlFor={nameInSchema}
+                    >
                         {fieldTitle}
                     </FormLabel>
 
@@ -53,6 +56,7 @@ export function SelectWithLabel<Schema>({
                             <SelectTrigger
                                 id={nameInSchema}
                                 className={`w-full max-w-xs ${className}`}
+                                onBlur={field.onBlur}
                             >
                                 <SelectValue placeholder="Select" />
                             </SelectTrigger>

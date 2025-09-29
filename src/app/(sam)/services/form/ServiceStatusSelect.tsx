@@ -1,5 +1,5 @@
-import { InputWithLabel } from "@/components/inputs/InputWithLabel"
-import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
+import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
+import { SelectWithLabel } from "@/app/components/inputs/SelectWithLabel"
 
 type Props<Schema> = {
     fieldTitle: string
