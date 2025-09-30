@@ -9,13 +9,6 @@ import { SelectWithLabel } from "../SelectWithLabel"
 window.HTMLElement.prototype.hasPointerCapture = jest.fn()
 window.HTMLElement.prototype.scrollIntoView = jest.fn()
 
-// Mock for lucide-react icons used in the component
-jest.mock("lucide-react", () => ({
-    ChevronUp: () => <svg data-testid="chevron-down-up" />,
-    ChevronDown: () => <svg data-testid="chevron-down-icon" />,
-    Check: () => <svg data-testid="check-icon" />,
-}))
-// Check, ChevronDown, ChevronUp
 const testSchema = z.object({
     testField: z.string().min(1, "Selection is required"),
 })

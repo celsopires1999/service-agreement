@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ModeToggle } from "../ModeToggle"
@@ -9,12 +8,6 @@ jest.mock("next-themes", () => ({
     useTheme: () => ({
         setTheme: mockSetTheme,
     }),
-}))
-
-// Mock the lucide-react icons
-jest.mock("lucide-react", () => ({
-    Sun: () => <div data-testid="sun-icon" />,
-    Moon: () => <div data-testid="moon-icon" />,
 }))
 
 describe("ModeToggle", () => {

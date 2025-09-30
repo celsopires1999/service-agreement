@@ -1,21 +1,15 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
 // Mock the auth function to control the session state in tests.
 const mockAuth = jest.fn()
-jest.mock("../../../auth", () => ({
+jest.mock("@/auth", () => ({
     auth: () => mockAuth(),
 }))
 
 // Mock the SignOut component as its functionality is tested separately.
-jest.mock("../SignOut", () => ({
+jest.mock("@/app/components/SignOut", () => ({
     SignOut: () => <div data-testid="sign-out-component" />,
-}))
-
-// Mock the lucide-react icon for this component.
-jest.mock("lucide-react", () => ({
-    CircleUserIcon: () => <div data-testid="circle-user-icon" />,
 }))
 
 describe("UserMenu", () => {
@@ -37,7 +31,7 @@ describe("UserMenu", () => {
         // Find the trigger button and click it to open the menu.
         const triggerButton = screen.getByRole("button", { name: /User menu/i })
         expect(triggerButton).toBeInTheDocument()
-        expect(screen.getByTestId("circle-user-icon")).toBeInTheDocument()
+        expect(screen.getByTestId("circle-user-icon-icon")).toBeInTheDocument()
 
         await userEvent.click(triggerButton)
 

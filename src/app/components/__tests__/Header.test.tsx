@@ -1,19 +1,5 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-
-// Mock Lucide React icons
-jest.mock("lucide-react", () => ({
-    HomeIcon: () => <div data-testid="home-icon" />,
-    HandshakeIcon: () => <div data-testid="handshake-icon" />,
-    FileIcon: () => <div data-testid="file-icon" />,
-    CpuIcon: () => <div data-testid="cpu-icon" />,
-    EuroIcon: () => <div data-testid="euro-icon" />,
-    UsersRoundIcon: () => <div data-testid="users-round-icon" />,
-    Sun: () => <div data-testid="sun-icon" />,
-    Moon: () => <div data-testid="moon-icon" />,
-    LogOut: () => <div data-testid="logout-icon" />,
-}))
 
 // Mock next/link
 jest.mock("next/link", () => {
@@ -40,7 +26,7 @@ jest.mock("next-themes", () => ({
 }))
 
 // Mock the async UserMenu component
-jest.mock("../UserMenu", () => ({
+jest.mock("@/app/components/UserMenu", () => ({
     UserMenu: () => (
         <button aria-label="User menu" title="User menu">
             <div data-testid="circle-user-icon" />

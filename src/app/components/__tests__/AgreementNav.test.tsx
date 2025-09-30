@@ -1,16 +1,6 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { AgreementNav } from "../AgreementNav"
-
-// Mock Lucide React icons
-jest.mock("lucide-react", () => ({
-    ChevronRight: () => <div data-testid="chevron-right-icon" />,
-    EditIcon: () => <div data-testid="edit-icon" />,
-    HandCoinsIcon: () => <div data-testid="hand-coins-icon" />,
-    TablePropertiesIcon: () => <div data-testid="table-properties-icon" />,
-    UsersRoundIcon: () => <div data-testid="users-round-icon" />,
-}))
 
 // Mock do componente Link do Next.js para funcionar no ambiente de teste
 jest.mock("next/link", () => {

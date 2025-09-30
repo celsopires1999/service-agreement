@@ -14,13 +14,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 // this function, which is not implemented in JSDOM.
 window.HTMLElement.prototype.scrollIntoView = jest.fn()
 
-// Mock for lucide-react icons.
-jest.mock("lucide-react", () => ({
-    ChevronsUpDown: () => <div data-testid="chevrons-icon" />,
-    Check: () => <div data-testid="check-icon" />,
-    Search: () => <div data-testid="search-icon" />,
-}))
-
 const mockData = [
     { id: "1", description: "Strategic Master Plan" },
     { id: "2", description: "Urban Zoning" },

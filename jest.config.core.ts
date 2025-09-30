@@ -32,7 +32,7 @@ const config: Config = {
     globalSetup:
         "<rootDir>/src/core/shared/infra/db/drizzle/jest.global-setup.ts",
     moduleNameMapper: {
-        "^@/src/(.*)$": "<rootDir>/src/$1",
+        "^@/(.*)$": "<rootDir>/src/$1",
     },
     transformIgnorePatterns: [
         "/node_modules/(?!(@testcontainers|testcontainers|drizzle-orm|pg|uuid)/)",

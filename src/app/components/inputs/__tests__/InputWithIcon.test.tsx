@@ -3,11 +3,6 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { InputWithIcon } from "../InputWithIcon"
 
-// Mock for lucide-react icons used in the component
-jest.mock("lucide-react", () => ({
-    Search: () => <svg data-testid="search-icon" />,
-}))
-
 describe("InputWithIcon", () => {
     it("should render the input with a default search icon", () => {
         render(<InputWithIcon placeholder="Search..." />)
@@ -20,11 +15,11 @@ describe("InputWithIcon", () => {
     })
 
     it("should render the input with a custom icon", () => {
-        const customIcon = <svg data-testid="custom-icon" />
+        const customIcon = <svg data-testid="-custom-icon" />
         render(<InputWithIcon icon={customIcon} />)
 
-        expect(screen.getByTestId("custom-icon")).toBeInTheDocument()
-        expect(screen.queryByTestId("search-icon")).not.toBeInTheDocument()
+        expect(screen.getByTestId("-custom-icon")).toBeInTheDocument()
+        expect(screen.queryByTestId("-search-icon")).not.toBeInTheDocument()
     })
 
     it("should allow user to type into the input", async () => {

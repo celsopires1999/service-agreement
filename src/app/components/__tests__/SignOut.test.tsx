@@ -1,18 +1,12 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { SignOut } from "../SignOut"
 
 // Mock the server action. We need to mock the module and then provide a mock implementation for the action.
 const mockLogout = jest.fn()
-jest.mock("../../../actions/logoutAction", () => ({
+jest.mock("@/actions/logoutAction", () => ({
     // The key here must match the exported function name from the action file.
     logout: () => mockLogout(),
-}))
-
-// Mock the lucide-react icon for this component.
-jest.mock("lucide-react", () => ({
-    LogOut: () => <div data-testid="logout-icon" />,
 }))
 
 describe("SignOut", () => {
@@ -27,7 +21,7 @@ describe("SignOut", () => {
         expect(button).toBeInTheDocument()
         expect(button).toHaveAttribute("type", "submit")
         expect(button).toHaveAttribute("title", "Log Out")
-        expect(screen.getByTestId("logout-icon")).toBeInTheDocument()
+        expect(screen.getByTestId("log-out-icon")).toBeInTheDocument()
     })
 
     it("should call the logout server action when the button is clicked", async () => {

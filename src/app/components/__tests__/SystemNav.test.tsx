@@ -1,11 +1,5 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import { SystemNav } from "../SystemNav"
-
-// Mock Lucide React icons
-jest.mock("lucide-react", () => ({
-    ChevronRight: () => <div data-testid="chevron-right-icon" />,
-}))
 
 // Mock the Next.js Link component to work in the test environment.
 jest.mock("next/link", () => {

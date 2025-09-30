@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { LucideIcon } from "lucide-react"
@@ -25,11 +24,6 @@ jest.mock("next/link", () => {
         </a>
     )
 })
-
-// Mock Lucide React icons
-jest.mock("lucide-react", () => ({
-    LucideIcon: () => <div data-testid="lucide-icon" />,
-}))
 
 describe("NavButtonMenu", () => {
     const label = "Test Menu"

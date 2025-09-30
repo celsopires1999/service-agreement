@@ -4,10 +4,6 @@ import userEvent from "@testing-library/user-event"
 import { FormProvider, useForm } from "react-hook-form"
 import { InputURL } from "../InputURL"
 
-// Mock do ícone ExternalLink para isolar o teste do componente de ícone real.
-jest.mock("lucide-react", () => ({
-    ExternalLink: () => <div data-testid="external-link-icon" />,
-}))
 type TestSchema = {
     documentUrl: string
 }

@@ -11,11 +11,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
     disconnect: jest.fn(),
 }))
 
-// Mock para lucide-react
-jest.mock("lucide-react", () => ({
-    Check: () => <svg data-testid="check-icon" />,
-}))
-
 const TestSchema = z.object({
     testField: z.boolean(),
 })

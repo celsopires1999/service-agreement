@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import { SearchButton } from "../SearchButton"
 
@@ -6,13 +5,6 @@ import { SearchButton } from "../SearchButton"
 jest.mock("react-dom", () => ({
     ...jest.requireActual("react-dom"),
     useFormStatus: jest.fn(),
-}))
-
-// Mock the LoaderCircle icon from lucide-react
-jest.mock("lucide-react", () => ({
-    LoaderCircle: (props: { className?: string }) => (
-        <div data-testid="loader-circle" className={props.className} />
-    ),
 }))
 
 describe("SearchButton", () => {
@@ -37,6 +29,6 @@ describe("SearchButton", () => {
         render(<SearchButton />)
         const searchButton = screen.getByRole("button") // No specific name when pending, as text is replaced by icon
         expect(searchButton).toBeDisabled()
-        expect(screen.getByTestId("loader-circle")).toBeInTheDocument()
+        expect(screen.getByTestId("loader-circle-icon")).toBeInTheDocument()
     })
 })

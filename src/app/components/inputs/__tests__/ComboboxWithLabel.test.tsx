@@ -15,13 +15,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 // Mock for scrollIntoView, needed for cmdk (Command) component.
 Element.prototype.scrollIntoView = jest.fn()
 
-// Mock for lucide-react icons used in the component.
-jest.mock("lucide-react", () => ({
-    Check: () => <svg data-testid="check-icon" />,
-    ChevronsUpDown: () => <svg data-testid="chevrons-up-down-icon" />,
-    Search: () => <svg data-testid="search-icon" />,
-}))
-
 const testData = [
     { id: "1", description: "First Item" },
     { id: "2", description: "Second Item" },

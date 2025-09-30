@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import { LucideIcon } from "lucide-react"
 import React from "react"
@@ -10,7 +9,7 @@ const MockIcon = (() => (
 )) as unknown as LucideIcon
 
 // Mock the Tooltip components to simplify testing
-jest.mock("../../../components/ui/tooltip", () => ({
+jest.mock("@/components/ui/tooltip", () => ({
     Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     TooltipContent: ({ children }: { children: React.ReactNode }) => (
         <div>{children}</div>

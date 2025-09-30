@@ -1,4 +1,3 @@
-import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { FormControlButtons } from "../FormControlButtons"
@@ -11,13 +10,6 @@ jest.mock("next/navigation", () => ({
             back: mockRouterBack,
         }
     },
-}))
-
-// Mock the LoaderCircle icon from lucide-react for testing purposes
-jest.mock("lucide-react", () => ({
-    LoaderCircle: (props: { className?: string }) => (
-        <div data-testid="loader-circle" className={props.className} />
-    ),
 }))
 
 describe("FormControlButtons", () => {
@@ -42,7 +34,9 @@ describe("FormControlButtons", () => {
         expect(
             screen.getByRole("button", { name: /Reset/i }),
         ).toBeInTheDocument()
-        expect(screen.queryByTestId("loader-circle")).not.toBeInTheDocument()
+        expect(
+            screen.queryByTestId("-loader-circle-icon"),
+        ).not.toBeInTheDocument()
     })
 
     it("should show 'Saving' state and disable the save button when isSaving is true", () => {
@@ -52,7 +46,7 @@ describe("FormControlButtons", () => {
         expect(saveButton).toBeInTheDocument()
         expect(saveButton).toBeDisabled()
 
-        expect(screen.getByTestId("loader-circle")).toBeInTheDocument()
+        expect(screen.getByTestId("loader-circle-icon")).toBeInTheDocument()
     })
 
     it("should call router.back when the Back button is clicked", async () => {

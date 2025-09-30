@@ -13,11 +13,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 // this function, which is not implemented in JSDOM.
 window.HTMLElement.prototype.scrollIntoView = jest.fn()
 
-// Mock for lucide-react icons.
-jest.mock("lucide-react", () => ({
-    ListPlus: () => <div data-testid="list-plus-icon" />,
-}))
-
 // Mock for the next/link component to behave like a simple anchor tag in tests.
 jest.mock("next/link", () => {
     // eslint-disable-next-line react/display-name
