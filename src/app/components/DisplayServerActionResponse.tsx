@@ -1,11 +1,13 @@
-type Props = {
-    result: {
-        data?: {
-            message?: string
-        }
-        serverError?: string
-        validationErrors?: Record<string, string[] | undefined>
+export type ServerActionResponse = {
+    data?: {
+        message?: string
     }
+    serverError?: string
+    validationErrors?: Record<string, string[] | undefined>
+}
+
+type Props = {
+    result: ServerActionResponse
     showErrorOnly?: boolean
 }
 
