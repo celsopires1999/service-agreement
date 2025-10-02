@@ -20,7 +20,7 @@ const config: Config = {
     // coverageProvider: "v8",
     displayName: "ui",
     testEnvironment: "jsdom",
-    testRegex: ["(/__tests__/.*|(\.|/)(test|spec|int-spec))\.(tsx|jsx)$"],
+    testRegex: ["((\\.|/)(test|spec|int-spec))\\.(tsx|jsx)$"],
 
     testPathIgnorePatterns: [
         "/node_modules/",

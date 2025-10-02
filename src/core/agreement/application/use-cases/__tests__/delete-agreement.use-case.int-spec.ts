@@ -8,7 +8,7 @@ import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/us
 import { DB } from "@/db"
 import { agreements, plans, services, systems, userLists } from "@/db/schema"
 import { count } from "drizzle-orm"
-import { createAgreementRelations } from "../__tests__helpers/agreement-test-helpers"
+import { createAgreementRelations } from "./agreement-test-helpers"
 import { DeleteAgreementUseCase } from "../delete-agreement.use-case"
 
 describe("DeleteAgreementUseCase Integration Tests", () => {

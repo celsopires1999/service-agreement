@@ -20,7 +20,7 @@ const config: Config = {
     // coverageProvider: "v8",
     displayName: "core",
     testEnvironment: "node",
-    testRegex: ["(/__tests__/.*|(\.|/)(test|spec|int-spec))\\.[jt]s?$"],
+    testRegex: ["((\\.|/)(test|spec|int-spec))\\.[jt]s?$"],
     testPathIgnorePatterns: [
         "/node_modules/",
         "/.next/",

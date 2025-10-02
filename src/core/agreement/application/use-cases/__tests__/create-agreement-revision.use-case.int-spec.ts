@@ -6,7 +6,7 @@ import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
 import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
-import { createAgreementRelations } from "../__tests__helpers/agreement-test-helpers"
+import { createAgreementRelations } from "./agreement-test-helpers"
 import { CreateAgreementRevisionUseCase } from "../create-agreement-revision.use-case"
 
 describe("CreateAgreementRevisionUseCase Integration Tests", () => {
