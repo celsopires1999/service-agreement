@@ -75,8 +75,6 @@ export function PlanForm({ plans }: Props) {
     })
 
     async function submitForm(data: insertPlanSchemaType) {
-        console.log(data)
-
         resetSaveAction()
         try {
             await executeSave(data)

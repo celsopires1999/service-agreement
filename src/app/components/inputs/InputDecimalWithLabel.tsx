@@ -64,7 +64,11 @@ export function InputDecimalWithLabel<Schema>({
                 <FormItem>
                     <FormLabel
                         className="text-base font-semibold"
-                        htmlFor={nameInSchema}
+                        htmlFor={
+                            isEditing
+                                ? nameInSchema
+                                : `${nameInSchema}-formatted`
+                        }
                     >
                         {fieldTitle}
                     </FormLabel>
