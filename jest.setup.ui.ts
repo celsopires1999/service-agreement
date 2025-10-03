@@ -16,3 +16,17 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
     unobserve: jest.fn(),
     disconnect: jest.fn(),
 }))
+
+jest.mock("next-safe-action/hooks", () => ({
+    useAction: jest.fn(),
+}))
+
+jest.mock("next/navigation", () => ({
+    useRouter: jest.fn(),
+    useSearchParams: jest.fn(),
+    ReadonlyURLSearchParams: URLSearchParams,
+}))
+
+jest.mock("@/hooks/use-toast", () => ({
+    useToast: jest.fn(),
+}))

@@ -24,28 +24,42 @@ You are a Senior Software Engineer. Your task is to write a comprehensive unit t
 
 10. **Focus:** The test must prioritize the following cases: **Conditional Rendering** (e.g., new vs. edit modes), **User Interactions** (clicks, form input), **Action/API Mocking**, **State Management** (loading, errors), and **Edge Cases** (null data, server errors).
 11. **`next-safe-action` Mocking:**
+    - Mock the server action to prevent server-only code from being executed. In the project a server action is called by `useAction`.
     - The `useAction` hook from `next-safe-action/hooks` must be mocked.
-    - Use a centralized `mockImplementation` in a `beforeEach` block to control the hook's return value for all tests.
+    - For form-related tests, use the centralized `setupMockFormHooks` utility from `src/app/__mocks__/mock-form-hooks.ts`. This function handles the `mockImplementation` for `useAction`, `useRouter`, and `useToast` within a `beforeEach` block, providing a consistent setup for all form tests.
     - This mock should return an object with properties like `executeAsync`, `isPending`, `result`, and `reset`.
-    - The mocked `executeAsync` function should simulate calling the action and its `onSuccess` callback, allowing for clean testing of success flows.
-    - Example of mocking the `onSuccess` callback:
+    - The mocked `executeAsync` function should simulate calling the action and its `onSuccess` e `onError` callbacks, allowing for clean testing of both success and failure flows.
+    - Example of a complete `useAction` mock:
         ```typescript
         mockUseAction.mockImplementation((_action, options) => ({
-            executeAsync: jest.fn(async (...args) => {
-                const result = await mockExecute(...args) // mockExecute is a separate jest.fn()
+            executeAsync: jest.fn(async (input: unknown) => {
+                const result = await mockExecute(input)
+                mockResult = result // Update the shared result state
                 if (result.data && options?.onSuccess) {
                     options.onSuccess({ data: result.data, status: 200 })
                 }
+                if (result.serverError && options?.onError) {
+                    options.onError({
+                        error: { serverError: result.serverError },
+                    })
+                }
+                return result
             }),
-            // ... other properties
+            isPending: false,
+            get result() {
+                return mockResult
+            },
+            reset: mockReset,
         }))
         ```
+    - **Testing Conditional UI after Action:** To test UI changes that occur after a successful action (e.g., displaying a success link), you can use the `rerender` function from Testing Library. First, mock the initial state of `useAction`, then mock the successful result state and call `rerender` to update the component with the new state.
 12. **Environment and Hook Mocking:**
     - Manually mock Next.js features like `next/navigation` (`useSearchParams`, `useRouter`).
     - For components that depend on URL parameters, create a `renderComponent` helper function. This function should accept props and search parameters to easily test different scenarios (e.g., `renderComponent({ user: mockUser }, { userId: '123' })`).
     - Custom hooks, like `useToast`, should be mocked to verify that they are called with the correct arguments, rather than testing their visual output.
-13. **JSDOM Polyfills:** If using UI components that rely on newer browser APIs (e.g., Shadcn's `Select`), add necessary polyfills at the top of the `beforeEach` block to prevent errors in the JSDOM environment.
-    - Example: `Element.prototype.hasPointerCapture = () => false;`
+13. **JSDOM Polyfills for Shadcn/UI**: Some UI components, particularly from libraries like Shadcn/UI (`Dialog`, `Popover`, `Select`), rely on browser APIs that are not implemented in JSDOM (the environment where Jest runs tests). This can lead to errors like `window.matchMedia is not a function`.
+    - To resolve this, these APIs must be polyfilled. Common polyfills needed include `ResizeObserver`, `window.matchMedia`, `Element.prototype.hasPointerCapture`, and `Element.prototype.scrollIntoView`.
+    - **Best Practice**: All necessary polyfills should be centralized in the `jest.setup.ui.ts` file. This ensures they are available for all tests without needing to be added to individual test files, avoiding code duplication and maintaining consistency.
 
 **REQUEST:**
 

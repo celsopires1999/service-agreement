@@ -1,9 +1,7 @@
-import { useToast } from "@/hooks/use-toast"
+import { setupMockFormHooks } from "@/app/__mocks__/mock-form-hooks"
 import { getAgreementType } from "@/lib/queries/agreement"
-import { render, screen, waitFor } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { useAction } from "next-safe-action/hooks"
-import { useRouter } from "next/navigation"
 import { AgreementRevisionForm } from "../AgreementRevisionForm"
 
 // Mock the server action to prevent server-only code from being executed
@@ -11,26 +9,8 @@ jest.mock("@/actions/createAgreementRevisionAction", () => ({
     createAgreementRevisionAction: jest.fn(),
 }))
 
-// Mock the next-safe-action hook
-jest.mock("next-safe-action/hooks", () => ({
-    useAction: jest.fn(),
-}))
-const mockUseAction = useAction as jest.Mock
-
-// Mock the Next.js router
-jest.mock("next/navigation", () => ({
-    useRouter: jest.fn(),
-    useSearchParams: jest.fn(() => ({
-        get: jest.fn(),
-    })),
-}))
-const mockUseRouter = useRouter as jest.Mock
-
-// Mock the useToast hook
-jest.mock("@/hooks/use-toast", () => ({
-    useToast: jest.fn(),
-}))
-const mockUseToast = useToast as jest.Mock
+const { mockExecute, mockReset, mockToast, mockRouterBack, mockUseAction } =
+    setupMockFormHooks()
 
 // Mock data
 const mockAgreement: getAgreementType = {
@@ -71,48 +51,16 @@ const mockServicesAmount = [
 ]
 
 describe("AgreementRevisionForm", () => {
-    let mockExecute: jest.Mock
-    let mockRouter: { back: jest.Mock }
-    let mockToast: jest.Mock
-
-    beforeEach(() => {
-        mockExecute = jest.fn()
-        mockRouter = { back: jest.fn() }
-        mockToast = jest.fn()
-
-        mockUseRouter.mockReturnValue(mockRouter)
-        mockUseToast.mockReturnValue({ toast: mockToast })
-
-        mockUseAction.mockImplementation((_action, options) => ({
-            executeAsync: jest.fn(async (input) => {
-                const result = await mockExecute(input)
-                if (result.data && options?.onSuccess) {
-                    options.onSuccess({ data: result.data, status: 200 })
-                }
-                if (result.serverError && options?.onError) {
-                    options.onError({
-                        error: { serverError: result.serverError },
-                    })
-                }
-                return result
-            }),
-            isPending: false,
-            result: {},
-            reset: jest.fn(),
-        }))
-    })
-
-    afterEach(() => {
-        jest.clearAllMocks()
-    })
-
-    const renderComponent = () => {
+    const renderComponent = (
+        props: Partial<React.ComponentProps<typeof AgreementRevisionForm>> = {},
+    ) => {
         return render(
             <AgreementRevisionForm
                 agreement={mockAgreement}
                 servicesCount={7}
                 plans={mockPlans}
                 servicesAmount={mockServicesAmount}
+                {...props}
             />,
         )
     }
@@ -155,7 +103,8 @@ describe("AgreementRevisionForm", () => {
                 agreement={mockAgreement}
                 servicesCount={7}
                 plans={mockPlans}
-                servicesAmount={[]}
+                // Casting to any to test with null/undefined
+                servicesAmount={undefined as any}
             />,
         )
         expect(
@@ -173,21 +122,20 @@ describe("AgreementRevisionForm", () => {
             },
         })
 
-        const { rerender } = render(
-            <AgreementRevisionForm
-                agreement={mockAgreement}
-                servicesCount={7}
-                plans={mockPlans}
-                servicesAmount={mockServicesAmount}
-            />,
-        )
+        const { rerender } = renderComponent()
 
         // Fill the form
-        await user.click(screen.getByLabelText("Provider Plan"))
-        await user.click(screen.getByRole("option", { name: "PP02" }))
+        const providerPlanCombobox = screen.getByRole("combobox", {
+            name: /provider plan/i,
+        })
+        await user.click(providerPlanCombobox)
+        await user.click(await screen.findByRole("option", { name: "PP02" }))
 
-        await user.click(screen.getByLabelText("Local Plan"))
-        await user.click(screen.getByRole("option", { name: "LP02" }))
+        const localPlanCombobox = screen.getByRole("combobox", {
+            name: /local plan/i,
+        })
+        await user.click(localPlanCombobox)
+        await user.click(await screen.findByRole("option", { name: "LP02" }))
 
         const revisionDateInput = screen.getByLabelText("Revision Date")
         await user.clear(revisionDateInput)
@@ -218,7 +166,7 @@ describe("AgreementRevisionForm", () => {
         // We need to re-render the component with the updated result from the action
         // to see the conditionally rendered link.
         mockUseAction.mockReturnValueOnce({
-            executeAsync: mockExecute,
+            executeAsync: jest.fn(),
             isPending: false,
             result: {
                 data: {
@@ -226,7 +174,7 @@ describe("AgreementRevisionForm", () => {
                     message: "Revision created successfully.",
                 },
             },
-            reset: jest.fn(),
+            reset: mockReset,
         })
         rerender(
             <AgreementRevisionForm
@@ -258,10 +206,10 @@ describe("AgreementRevisionForm", () => {
         await user.click(screen.getByRole("button", { name: /save/i }))
 
         expect(
-            await screen.findByText("provider plan is invalid"),
+            await screen.findByText(/provider plan is invalid/i),
         ).toBeInTheDocument()
         expect(
-            await screen.findByText("local plan is invalid"),
+            await screen.findByText(/local plan is invalid/i),
         ).toBeInTheDocument()
         expect(mockExecute).not.toHaveBeenCalled()
     })
@@ -275,12 +223,13 @@ describe("AgreementRevisionForm", () => {
         renderComponent()
 
         // Fill the form
-        await user.click(screen.getByLabelText("Provider Plan"))
-        await user.click(screen.getByRole("option", { name: "PP02" }))
-        // await user.click(screen.getByText("PP-02"))
-        await user.click(screen.getByLabelText("Local Plan"))
-        // await user.click(screen.getByText("LP-02"))
-        await user.click(screen.getByRole("option", { name: "LP02" }))
+        await user.click(
+            screen.getByRole("combobox", { name: /provider plan/i }),
+        )
+        await user.click(await screen.findByRole("option", { name: "PP02" }))
+
+        await user.click(screen.getByRole("combobox", { name: /local plan/i }))
+        await user.click(await screen.findByRole("option", { name: "LP02" }))
 
         // Submit
         await user.click(screen.getByRole("button", { name: /save/i }))
@@ -300,7 +249,7 @@ describe("AgreementRevisionForm", () => {
 
         await user.click(screen.getByRole("button", { name: /back/i }))
 
-        expect(mockRouter.back).toHaveBeenCalledTimes(1)
+        expect(mockRouterBack).toHaveBeenCalledTimes(1)
     })
 
     it("should reset the form to its default values when Reset button is clicked", async () => {
@@ -308,8 +257,10 @@ describe("AgreementRevisionForm", () => {
         renderComponent()
 
         // Change form values
-        await user.click(screen.getByLabelText("Provider Plan"))
-        await user.click(screen.getByRole("option", { name: "PP02" }))
+        await user.click(
+            screen.getByRole("combobox", { name: /provider plan/i }),
+        )
+        await user.click(await screen.findByRole("option", { name: "PP02" }))
 
         const revisionDateInput = screen.getByLabelText("Revision Date")
         await user.clear(revisionDateInput)
@@ -318,7 +269,7 @@ describe("AgreementRevisionForm", () => {
         // Verify changes
         const providerPlanSelect = screen.getByRole("combobox", {
             name: /provider plan/i,
-        })
+        }) as HTMLButtonElement
         expect(providerPlanSelect).toHaveTextContent("PP02")
         expect(revisionDateInput).toHaveValue("2025-12-31")
 
@@ -326,7 +277,9 @@ describe("AgreementRevisionForm", () => {
         await user.click(screen.getByRole("button", { name: /reset/i }))
 
         // Verify form is reset
-        expect(providerPlanSelect).toHaveTextContent("Select")
+        expect(
+            within(providerPlanSelect).getByText("Select"),
+        ).toBeInTheDocument()
         expect(revisionDateInput).toHaveValue(
             new Date().toISOString().slice(0, 10),
         )
@@ -334,14 +287,14 @@ describe("AgreementRevisionForm", () => {
 
     it("should display a success message from DisplayServerActionResponse", () => {
         mockUseAction.mockReturnValue({
-            executeAsync: jest.fn(),
+            executeAsync: mockExecute,
             isPending: false,
             result: {
                 data: {
                     message: "Revision successfully created.",
                 },
             },
-            reset: jest.fn(),
+            reset: mockReset,
         })
 
         renderComponent()
@@ -353,12 +306,12 @@ describe("AgreementRevisionForm", () => {
 
     it("should display a server error message from DisplayServerActionResponse", () => {
         mockUseAction.mockReturnValue({
-            executeAsync: jest.fn(),
+            executeAsync: mockExecute,
             isPending: false,
             result: {
                 serverError: "Internal Server Error",
             },
-            reset: jest.fn(),
+            reset: mockReset,
         })
 
         renderComponent()
@@ -368,7 +321,7 @@ describe("AgreementRevisionForm", () => {
 
     it("should display validation errors from DisplayServerActionResponse", () => {
         mockUseAction.mockReturnValue({
-            executeAsync: jest.fn(),
+            executeAsync: mockExecute,
             isPending: false,
             result: {
                 validationErrors: {
@@ -376,7 +329,7 @@ describe("AgreementRevisionForm", () => {
                     localPlanId: ["Local plan is required"],
                 },
             },
-            reset: jest.fn(),
+            reset: mockReset,
         })
 
         renderComponent()

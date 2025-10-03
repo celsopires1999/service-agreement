@@ -1,44 +1,24 @@
-// import { saveUserAction } from "@/actions/saveUserAction"
-import { UserForm } from "../UserForm"
-import { useToast } from "@/hooks/use-toast"
+import { setupMockFormHooks } from "@/app/__mocks__/mock-form-hooks"
 import { type selectUserSchemaType } from "@/zod-schemas/user"
-import { render, screen, waitFor, within } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { useAction } from "next-safe-action/hooks"
-import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation"
+import { ReadonlyURLSearchParams } from "next/navigation"
+import { UserForm } from "../UserForm"
 
 // Mock the server action to prevent server-only code from being executed
 jest.mock("@/actions/saveUserAction", () => ({
     saveUserAction: jest.fn(),
 }))
 
-// Mock next/navigation
-jest.mock("next/navigation", () => ({
-    useSearchParams: jest.fn(),
-    ReadonlyURLSearchParams: URLSearchParams,
-    useRouter: () => ({
-        back: jest.fn(),
-    }),
-}))
+const {
+    mockExecute,
+    mockReset,
+    mockToast,
+    mockUseAction,
+    mockUseSearchParams,
+} = setupMockFormHooks()
 
-// Mock next-safe-action
-jest.mock("next-safe-action/hooks", () => ({
-    useAction: jest.fn(),
-}))
-
-// Mock useToast hook
-jest.mock("@/hooks/use-toast", () => ({
-    useToast: jest.fn(),
-}))
-
-const mockUseSearchParams = useSearchParams as jest.Mock
-const mockUseAction = useAction as jest.Mock
-const mockUseToast = useToast as jest.Mock
-
-const mockExecute = jest.fn()
-const mockReset = jest.fn()
-const mockToast = jest.fn()
-
+// Mock data
 const mockUser: selectUserSchemaType = {
     userId: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
     name: "John Doe",
@@ -49,22 +29,6 @@ const mockUser: selectUserSchemaType = {
 }
 
 describe("UserForm", () => {
-    beforeEach(() => {
-        jest.clearAllMocks()
-        mockUseAction.mockImplementation((_action, options) => ({
-            executeAsync: jest.fn(async (...args) => {
-                const result = await mockExecute(...args)
-                if (result.data && options?.onSuccess) {
-                    options.onSuccess({ data: result.data, status: 200 })
-                }
-            }),
-            isPending: false,
-            result: {},
-            reset: mockReset,
-        }))
-        mockUseToast.mockReturnValue({ toast: mockToast })
-    })
-
     const renderComponent = (
         props: { user?: selectUserSchemaType },
         searchParams: { [key: string]: string } = {},
@@ -72,7 +36,13 @@ describe("UserForm", () => {
         mockUseSearchParams.mockReturnValue(
             new ReadonlyURLSearchParams(new URLSearchParams(searchParams)),
         )
-        return render(<UserForm {...props} />)
+        // Re-render with the updated result to simulate the hook's state change
+        const { rerender, ...rest } = render(<UserForm {...props} />)
+        return {
+            ...rest,
+            rerender: (newProps?: { user?: selectUserSchemaType }) =>
+                rerender(<UserForm {...(newProps || props)} />),
+        }
     }
 
     it("renders the form for a new user correctly", async () => {
@@ -150,34 +120,32 @@ describe("UserForm", () => {
     })
 
     it("displays a server error message when the action fails", async () => {
-        mockUseAction.mockReturnValue({
-            executeAsync: mockExecute,
-            isPending: false,
-            result: { serverError: "Unauthorized" },
-            reset: mockReset,
-        })
-        renderComponent({ user: mockUser }, { userId: mockUser.userId })
-
-        const alert = screen.getByRole("alert")
-        expect(within(alert).getByText(/Unauthorized/)).toBeInTheDocument()
-    })
-
-    it("displays a toast notification on action error", async () => {
         const user = userEvent.setup()
-        mockExecute.mockRejectedValueOnce(new Error("Server is down"))
+        mockExecute.mockResolvedValue({ serverError: "Unauthorized" })
 
-        renderComponent({})
+        const { rerender } = renderComponent(
+            { user: mockUser },
+            { userId: mockUser.userId },
+        )
 
-        await user.type(screen.getByLabelText(/Name/i), "Test")
-        await user.type(screen.getByLabelText(/Email/i), "test@test.com")
+        // Modify a field and save to trigger the action
+        await user.clear(screen.getByLabelText(/Name/i))
+        await user.type(screen.getByLabelText(/Name/i), "New Name")
         await user.click(screen.getByRole("button", { name: /Save/i }))
 
         await waitFor(() => {
             expect(mockToast).toHaveBeenCalledWith({
                 variant: "destructive",
                 title: "Error",
-                description: "Action error: Server is down",
+                description: "Unauthorized",
             })
+        })
+
+        // Rerender to reflect the updated `result` from the action
+        rerender()
+
+        await waitFor(() => {
+            expect(screen.getByText(/Unauthorized/i)).toBeInTheDocument()
         })
     })
 
