@@ -4,13 +4,6 @@ import { FormProvider, useForm } from "react-hook-form"
 import { z } from "zod"
 import { CheckboxWithLabel } from "../CheckboxWithLabel"
 
-// Mock for ResizeObserver.
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-}))
-
 const TestSchema = z.object({
     testField: z.boolean(),
 })

@@ -5,16 +5,6 @@ import { FormProvider, useForm, type UseFormReturn } from "react-hook-form"
 import { z } from "zod"
 import { ComboboxWithLabel } from "../ComboboxWithLabel"
 
-// Mock for ResizeObserver, commonly needed for Radix UI components like Popover.
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-}))
-
-// Mock for scrollIntoView, needed for cmdk (Command) component.
-Element.prototype.scrollIntoView = jest.fn()
-
 const testData = [
     { id: "1", description: "First Item" },
     { id: "2", description: "Second Item" },

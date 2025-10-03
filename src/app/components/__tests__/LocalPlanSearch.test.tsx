@@ -2,18 +2,6 @@ import { LocalPlanSearch } from "../LocalPlanSearch"
 import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
-// Mock for ResizeObserver. Components like Shadcn/ui's Popover use
-// ResizeObserver, which is not available in Jest's JSDOM environment.
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-}))
-
-// Mock for scrollIntoView. The Command component from Shadcn/ui uses
-// this function, which is not implemented in JSDOM.
-window.HTMLElement.prototype.scrollIntoView = jest.fn()
-
 const mockData = [
     { id: "1", description: "Strategic Master Plan" },
     { id: "2", description: "Urban Zoning" },

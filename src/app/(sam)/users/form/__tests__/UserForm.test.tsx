@@ -50,15 +50,6 @@ const mockUser: selectUserSchemaType = {
 
 describe("UserForm", () => {
     beforeEach(() => {
-        // Polyfill for target.hasPointerCapture
-        if (!Element.prototype.hasPointerCapture) {
-            Element.prototype.hasPointerCapture = () => false
-        }
-        // Polyfill for scrollIntoView
-        if (!Element.prototype.scrollIntoView) {
-            Element.prototype.scrollIntoView = jest.fn()
-        }
-
         jest.clearAllMocks()
         mockUseAction.mockImplementation((_action, options) => ({
             executeAsync: jest.fn(async (...args) => {

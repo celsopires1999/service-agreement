@@ -1,18 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { IconButtonWithTooltip } from "../IconButtonWithTooltip"
 
-// Mock for ResizeObserver. Components from libraries like Shadcn/ui often use
-// ResizeObserver, which is not available in Jest's JSDOM environment.
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-}))
-
-// Mock for scrollIntoView. Components like Shadcn/ui's Command use
-// this function, which is not implemented in JSDOM.
-window.HTMLElement.prototype.scrollIntoView = jest.fn()
-
 // Mock for the next/link component to behave like a simple anchor tag in tests.
 jest.mock("next/link", () => {
     // eslint-disable-next-line react/display-name

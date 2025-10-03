@@ -51,7 +51,13 @@ export function SelectWithLabel<Schema>({
                         {fieldTitle}
                     </FormLabel>
 
-                    <Select {...field} onValueChange={field.onChange}>
+                    <Select
+                        {...field}
+                        onValueChange={(value) => {
+                            field.onChange(value)
+                            form.trigger(nameInSchema)
+                        }}
+                    >
                         <FormControl>
                             <SelectTrigger
                                 id={nameInSchema}

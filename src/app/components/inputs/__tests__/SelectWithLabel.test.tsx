@@ -5,10 +5,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SelectWithLabel } from "../SelectWithLabel"
 
-// JSDOM doesn't implement all browser APIs. Radix UI (used by shadcn) uses these.
-window.HTMLElement.prototype.hasPointerCapture = jest.fn()
-window.HTMLElement.prototype.scrollIntoView = jest.fn()
-
 const testSchema = z.object({
     testField: z.string().min(1, "Selection is required"),
 })
@@ -70,6 +66,10 @@ describe("SelectWithLabel", () => {
 
         // The value displayed in the trigger should update
         expect(selectTrigger).toHaveTextContent("Option 2")
+
+        // After selection error message is not allowed
+        const errorMessage = screen.queryByText("Selection is required")
+        expect(errorMessage).not.toBeInTheDocument()
 
         // The underlying form value should be updated
         const submitButton = screen.getByRole("button", { name: "Submit" })

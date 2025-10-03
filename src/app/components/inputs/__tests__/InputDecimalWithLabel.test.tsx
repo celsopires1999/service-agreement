@@ -5,13 +5,6 @@ import { FormProvider, useForm, type UseFormReturn } from "react-hook-form"
 import { z } from "zod"
 import { InputDecimalWithLabel } from "../InputDecimalWithLabel"
 
-// Mock for ResizeObserver, commonly needed for UI components.
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-}))
-
 const TestSchema = z.object({
     decimalField: z.string().min(1, "Field is required"),
 })
