@@ -100,6 +100,9 @@ jobs:
       - name: run unit and integration tests
         run: docker compose -f docker-compose.ci.yaml exec -T sav npm run test
 
+      - name: Copy coverage report from container
+        run: docker compose -f docker-compose.ci.yaml cp sav:/home/node/app/coverage ./coverage
+
       - name: install playwright
         run: docker compose -f docker-compose.ci.yaml exec -T sav npx playwright install chromium
 
@@ -108,5 +111,6 @@ jobs:
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
+        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref_name == 'main')
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
