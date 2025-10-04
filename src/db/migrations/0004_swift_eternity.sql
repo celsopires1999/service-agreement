@@ -1,2 +1,0 @@
-ALTER TABLE "agreements" DROP CONSTRAINT "agreements_year_code_revision_unique";--> statement-breakpoint
-ALTER TABLE "agreements" ADD CONSTRAINT "agreements_year_code_local_plan_id_unique" UNIQUE("year","code","local_plan_id");

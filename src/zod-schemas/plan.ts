@@ -8,7 +8,7 @@ export const insertPlanSchema = createInsertSchema(plans, {
     code: (schema) =>
         schema
             .min(1, "Code is required")
-            .max(20, "Code must be 10 characters or less"),
+            .max(20, "Code must be 20 characters or less"),
     description: (schema) =>
         schema
             .min(1, "Description is required")

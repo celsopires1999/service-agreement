@@ -1,5 +1,5 @@
-import { LocalPlanSearch } from "@/components/LocalPlanSearch"
-import { SearchButton } from "@/components/SearchButton"
+import { LocalPlanSearch } from "@/app/components/LocalPlanSearch"
+import { SearchButton } from "@/app/components/SearchButton"
 import { Input } from "@/components/ui/input"
 import { getPlansForSearch } from "@/lib/queries/plan"
 import Form from "next/form"

@@ -1,11 +1,11 @@
 "use server"
 
+import { DeletePlanUseCase } from "@/core/plan/application/use-cases/delete-plan.use-case"
+import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
-import { plans } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
-import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -34,15 +34,15 @@ export const deletePlanAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
-            const result = await db
-                .delete(plans)
-                .where(eq(plans.planId, params.planId))
-                .returning({ deletedId: plans.planId })
+            const deletePlan = new DeletePlanUseCase(
+                new PlanDrizzleRepository(db),
+            )
+            await deletePlan.execute({ planId: params.planId })
 
-            revalidatePath(`/systems/`)
+            revalidatePath("/plans")
 
             return {
-                message: `Plan ID #${result[0].deletedId} deleted successfully.`,
+                message: `Plan ID #${params.planId} deleted successfully.`,
             }
         },
     )

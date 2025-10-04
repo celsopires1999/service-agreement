@@ -1,11 +1,11 @@
 "use server"
 
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { DeleteSystemUseCase } from "@/core/system/application/use-cases/delete-system.use-case"
+import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 import { db } from "@/db"
-import { systems } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
-import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -39,15 +39,15 @@ export const deleteSystemAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
-            const result = await db
-                .delete(systems)
-                .where(eq(systems.systemId, params.systemId))
-                .returning({ deletedId: systems.systemId })
+            const deleteSystem = new DeleteSystemUseCase(
+                new SystemDrizzleRepository(db),
+            )
+            await deleteSystem.execute({ systemId: params.systemId })
 
             revalidatePath(`/systems/`)
 
             return {
-                message: `System ID #${result[0].deletedId} deleted successfully.`,
+                message: `System ID #${params.systemId} deleted successfully.`,
             }
         },
     )

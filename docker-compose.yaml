@@ -1,37 +1,41 @@
 services:
-    sav:
-        build:
-            context: .
-            dockerfile: Dockerfile.dev
-        volumes:
-            - .:/home/node/app
-        ports:
-            - 3000:3000
-        extra_hosts:
-            - host.docker.internal:host-gateway
+  sav:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_GID: 989
+    command: .docker/start.sh
+    volumes:
+      - .:/home/node/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3000:3000
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
-    db:
-        image: postgres:latest
-        restart: unless-stopped
-        volumes:
-            - postgres-data:/var/lib/postgresql/data
-            - ./.docker/postgres/user/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
-        environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: postgres
-            POSTGRES_HOSTNAME: localhost
-        ports:
-            - 5432:5432
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./.docker/postgres/user/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_HOSTNAME: localhost
+    ports:
+      - 5432:5432
 
-    pgadmin:
-        image: dpage/pgadmin4
-        restart: unless-stopped
-        ports:
-            - 9080:80
-        environment:
-            PGADMIN_DEFAULT_EMAIL: user@domain.com
-            PGADMIN_DEFAULT_PASSWORD: SuperSecret
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9080:80
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: user@domain.com
+  #     PGADMIN_DEFAULT_PASSWORD: SuperSecret
 
 volumes:
-    postgres-data:
+  postgres-data:

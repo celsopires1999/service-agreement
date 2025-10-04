@@ -1,7 +1,12 @@
 "use server"
 
 import { CreateAgreementRevisionUseCase } from "@/core/agreement/application/use-cases/create-agreement-revision.use-case"
+import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/agreement-drizzle.repository"
+import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
+import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
+import { db } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -29,7 +34,13 @@ export const createAgreementRevisionAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
-            const uc = new CreateAgreementRevisionUseCase()
+            const uow = new UnitOfWorkDrizzle(db, {
+                agreement: (db) => new AgreementDrizzleRepository(db),
+                service: (db) => new ServiceDrizzleRepository(db),
+                userList: (db) => new UserListDrizzleRepository(db),
+            })
+
+            const uc = new CreateAgreementRevisionUseCase(uow)
 
             const result = await uc.execute({
                 agreementId: params.agreementId,

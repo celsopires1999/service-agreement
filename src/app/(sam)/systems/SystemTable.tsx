@@ -1,7 +1,7 @@
 "use client"
 import { deleteSystemAction } from "@/actions/deleteSystemAction"
-import { AlertConfirmation } from "@/components/AlertConfirmation"
-import Deleting from "@/components/Deleting"
+import { AlertConfirmation } from "@/app/components/AlertConfirmation"
+import Deleting from "@/app/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
     Table,

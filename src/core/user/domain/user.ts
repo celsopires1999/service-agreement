@@ -1,62 +1,58 @@
-// import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { Uuid } from "@/core/shared/domain/value-objects/uuid"
+import { UserValidator } from "./user.validator"
+import { RoleType } from "./role"
 
-export const Role = {
-    ADMIN: "admin",
-    VIEWER: "viewer",
-    VALIDATOR: "validator",
-} as const
+export type UserConstructorProps = {
+    userId: string
+    email: string
+    name: string
+    role: RoleType
+}
 
-export type RoleType = (typeof Role)[keyof typeof Role]
+export type UserCreateCommand = Omit<UserConstructorProps, "userId">
 
-// export type UserConstructorProps = {
-//     userId: string
-//     email: string
-//     name: string
-//     role: RoleType
-// }
+export class User {
+    userId: string
+    email: string
+    name: string
+    role: RoleType
 
-// export type UserCreateCommand = Omit<UserConstructorProps, "userId">
+    constructor(props: UserConstructorProps) {
+        this.userId = props.userId
+        this.email = props.email.trim().toLowerCase()
+        this.name = props.name.trim()
+        this.role = props.role
+    }
 
-// export class User {
-//     userId: string
-//     email: string
-//     name: string
-//     role: RoleType
+    static create(props: UserCreateCommand): User {
+        return new User({
+            ...props,
+            userId: new Uuid().toString(),
+        })
+    }
 
-//     constructor(props: UserConstructorProps) {
-//         this.userId = props.userId
-//         this.email = props.email.trim().toLowerCase()
-//         this.name = props.name.trim()
-//         this.role = props.role
-//     }
+    changeEmail(email: string): void {
+        this.email = email.trim().toLowerCase()
+    }
 
-//     static create(props: UserCreateCommand): User {
-//         return new User({
-//             userId: crypto.randomUUID(),
-//             ...props,
-//         })
-//     }
+    changeName(name: string): void {
+        this.name = name.trim()
+    }
+    changeRole(role: RoleType): void {
+        this.role = role
+    }
 
-//     changeEmail(email: string): void {
-//         this.email = email.trim().toLowerCase()
-//     }
+    validate(): void {
+        const validator = new UserValidator()
+        validator.validate(this)
+    }
 
-//     changeName(name: string): void {
-//         this.name = name.trim()
-//     }
-//     changeRole(role: RoleType): void {
-//         this.role = role
-//     }
-
-//     validate(): void {
-//         if (!this.email) {
-//             throw new ValidationError("Email is required")
-//         }
-//         if (!this.name) {
-//             throw new ValidationError("Name is required")
-//         }
-//         if (!this.role) {
-//             throw new ValidationError("Role is required")
-//         }
-//     }
-// }
+    toJSON() {
+        return {
+            userId: this.userId,
+            email: this.email,
+            name: this.name,
+            role: this.role.toString(),
+        }
+    }
+}

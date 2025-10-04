@@ -1,11 +1,12 @@
 "use server"
 
-import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { CreatePlanUseCase } from "@/core/plan/application/use-cases/create-plan.use-case"
+import { UpdatePlanUseCase } from "@/core/plan/application/use-cases/update-plan.use-case"
+import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { db } from "@/db"
-import { plans } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { insertPlanSchema, type insertPlanSchemaType } from "@/zod-schemas/plan"
@@ -29,42 +30,36 @@ export const savePlanAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const planRepo = new PlanDrizzleRepository(db)
+
             if (plan.planId === "(New)") {
-                const result = await db
-                    .insert(plans)
-                    .values({
-                        code: plan.code,
-                        description: plan.description,
-                        euro: plan.euro,
-                        planDate: plan.planDate,
-                    })
-                    .returning({ createdAt: plans.createdAt })
-
-                revalidatePath("/plans")
-
-                return {
-                    message: `Plan created successfully`,
-                    createdAt: result[0].createdAt,
-                }
-            }
-            // Existing plan
-            // updatedAt is set by the database
-            const result = await db
-                .update(plans)
-                .set({
+                const createPlan = new CreatePlanUseCase(planRepo)
+                await createPlan.execute({
                     code: plan.code,
                     description: plan.description,
                     euro: plan.euro,
                     planDate: plan.planDate,
                 })
-                .where(eq(plans.planId, plan.planId))
-                .returning({ updatedAt: plans.updatedAt })
 
+                revalidatePath("/plans")
+
+                return {
+                    message: `Plan created successfully`,
+                }
+            }
+            // Existing plan
+            const updatePlan = new UpdatePlanUseCase(planRepo)
+            await updatePlan.execute({
+                planId: plan.planId,
+                code: plan.code,
+                description: plan.description,
+                euro: plan.euro,
+                planDate: plan.planDate,
+            })
             revalidatePath("/plans")
 
             return {
                 message: `Plan updated successfully`,
-                createdAt: result[0].updatedAt,
             }
         },
     )

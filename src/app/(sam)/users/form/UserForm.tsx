@@ -1,9 +1,9 @@
 "use client"
 
 import { saveUserAction } from "@/actions/saveUserAction"
-import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
-import { FormControlButtons } from "@/components/FormControlButtons"
-import { InputWithLabel } from "@/components/inputs/InputWithLabel"
+import { DisplayServerActionResponse } from "@/app/components/DisplayServerActionResponse"
+import { FormControlButtons } from "@/app/components/FormControlButtons"
+import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 import {

@@ -1,9 +1,10 @@
-import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
+import { UserListRepository } from "../../domain/user-list.respository"
 
 export class DeleteUserListUseCase {
+    constructor(private readonly userListRepo: UserListRepository) {}
+
     async execute(input: DeleteUserListInput): Promise<DeleteUserListOutput> {
-        const userListRepo = new UserListDrizzleRepository()
-        const userListId = await userListRepo.delete(input.serviceId)
+        const userListId = await this.userListRepo.delete(input.serviceId)
 
         return {
             userListId,

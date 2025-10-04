@@ -1,6 +1,6 @@
 "use client"
 import { deleteServiceSystemAction } from "@/actions/deleteServiceSystemAction"
-import Deleting from "@/components/Deleting"
+import Deleting from "@/app/components/Deleting"
 import { Button } from "@/components/ui/button"
 import {
     Table,

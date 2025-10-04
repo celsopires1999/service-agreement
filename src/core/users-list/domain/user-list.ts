@@ -1,5 +1,6 @@
-import { v4 as uuidv4 } from "uuid"
+import { Uuid } from "@/core/shared/domain/value-objects/uuid"
 import { UserListItem, UserListItemCreateCommand } from "./user-list-item"
+import { UserListValidator } from "./user-list.validator"
 
 export type UserListContructorProps = {
     userListId: string
@@ -29,14 +30,10 @@ export class UserList {
     static create(props: UserListCreateCommand) {
         return new UserList({
             ...props,
-            userListId: uuidv4(),
+            userListId: new Uuid().toString(),
             usersNumber: 0,
             items: [],
         })
-    }
-
-    changeUsersNumber(newUsersNumber: number) {
-        this.usersNumber = newUsersNumber
     }
 
     addItem(item: UserListItemCreateCommand) {
@@ -49,5 +46,19 @@ export class UserList {
             (i) => i.userListItemId !== userListItemId,
         )
         this.usersNumber = this.items.length
+    }
+
+    validate() {
+        const validator = new UserListValidator()
+        validator.validate(this)
+    }
+
+    toJSON() {
+        return {
+            userListId: this.userListId,
+            serviceId: this.serviceId,
+            usersNumber: this.usersNumber,
+            items: this.items,
+        }
     }
 }

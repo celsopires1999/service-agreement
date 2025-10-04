@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/BackButton"
+import { BackButton } from "@/app/components/BackButton"
 import { getSystem } from "@/lib/queries/system"
 import { SystemForm } from "./SystemForm"
 

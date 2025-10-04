@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/BackButton"
+import { BackButton } from "@/app/components/BackButton"
 import { getService } from "@/lib/queries/service"
 import { getAgreement } from "@/lib/queries/agreement"
 import { getUserListItemsByServiceId } from "@/lib/queries/userList"

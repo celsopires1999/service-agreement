@@ -1,17 +1,17 @@
 "use server"
 
-import { eq } from "drizzle-orm"
-import { flattenValidationErrors } from "next-safe-action"
-
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { CreateSystemUseCase } from "@/core/system/application/use-cases/create-system.use-case"
+import { UpdateSystemUseCase } from "@/core/system/application/use-cases/update-system.use-case"
+import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 import { db } from "@/db"
-import { systems } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
     insertSystemSchema,
     type insertSystemSchemaType,
 } from "@/zod-schemas/system"
+import { flattenValidationErrors } from "next-safe-action"
 import { revalidatePath } from "next/cache"
 
 export const saveSystemAction = actionClient
@@ -27,7 +27,6 @@ export const saveSystemAction = actionClient
             parsedInput: insertSystemSchemaType
         }) => {
             // New System
-            // createdAt and updatedAt are set by the database
             const session = await getSession()
 
             if (
@@ -37,40 +36,39 @@ export const saveSystemAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const systemRepo = new SystemDrizzleRepository(db)
+
             if (system.systemId === "" || system.systemId === "(New)") {
-                const result = await db
-                    .insert(systems)
-                    .values({
-                        name: system.name.trim(),
-                        description: system.description.trim(),
-                        applicationId: system.applicationId.trim(),
-                    })
-                    .returning({ insertedId: systems.systemId })
+                const createSystem = new CreateSystemUseCase(systemRepo)
 
-                revalidatePath("/systems")
-
-                return {
-                    message: `System ID #${result[0].insertedId} created successfully`,
-                    systemId: result[0].insertedId,
-                }
-            }
-            // Existing system
-            // updatedAt is set by the database
-            const result = await db
-                .update(systems)
-                .set({
+                const result = await createSystem.execute({
                     name: system.name.trim(),
                     description: system.description.trim(),
                     applicationId: system.applicationId.trim(),
                 })
-                .where(eq(systems.systemId, system.systemId!))
-                .returning({ updatedId: systems.systemId })
+
+                revalidatePath("/systems")
+
+                return {
+                    message: `System ID #${result.systemId} created successfully`,
+                    systemId: result.systemId,
+                }
+            }
+            // Existing system
+            const updateSystem = new UpdateSystemUseCase(systemRepo)
+
+            await updateSystem.execute({
+                systemId: system.systemId,
+                name: system.name.trim(),
+                description: system.description.trim(),
+                applicationId: system.applicationId.trim(),
+            })
 
             revalidatePath("/systems")
 
             return {
-                message: `System ID #${result[0].updatedId} updated successfully`,
-                systemId: result[0].updatedId,
+                message: `System ID #${system.systemId} updated successfully`,
+                systemId: system.systemId,
             }
         },
     )

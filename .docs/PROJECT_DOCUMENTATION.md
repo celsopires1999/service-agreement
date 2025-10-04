@@ -95,6 +95,7 @@ Run e2e tests with:
 
 ```bash
 npm run test:e2e -- --repeat-each 2
+npm run test:e2e -- -g "should navigate to edit agreement form" --repeat-each 5
 ```
 
 ## Additional Resources

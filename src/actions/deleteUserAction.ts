@@ -1,11 +1,11 @@
 "use server"
 
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { DeleteUserUseCase } from "@/core/user/application/use-cases/delete-user.use-case"
+import { UserDrizzleRepository } from "@/core/user/infra/db/drizzle/user-drizzle.repository"
 import { db } from "@/db"
-import { users } from "@/db/schema"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
-import { eq } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 import { cookies } from "next/headers"
 import { z } from "zod"
@@ -34,17 +34,18 @@ export const deleteUserAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
-            const result = await db
-                .delete(users)
-                .where(eq(users.userId, params.userId))
-                .returning({ deletedId: users.userId })
+            const userRepo = new UserDrizzleRepository(db)
+            const deleteUser = new DeleteUserUseCase(userRepo)
+            await deleteUser.execute({
+                userId: params.userId,
+            })
 
             // revalidatePath(`/users/`)
             const c = await cookies()
             c.set("force-refresh", JSON.stringify(Math.random()))
 
             return {
-                message: `User ID #${result[0].deletedId} deleted successfully.`,
+                message: `User ID #${params.userId} deleted successfully.`,
             }
         },
     )

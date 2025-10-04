@@ -1,0 +1,22 @@
+FROM node:24.9.0-slim AS development
+
+RUN apt update && \
+    apt install -y docker.io     
+
+ARG DOCKER_GID
+RUN groupadd -g ${DOCKER_GID} dockerhost || true && usermod -aG ${DOCKER_GID} node
+
+RUN npx playwright install-deps chromium
+
+USER node
+
+RUN mkdir /home/node/app
+
+WORKDIR /home/node/app
+
+COPY --chown=node:node . .
+RUN npm ci
+
+EXPOSE 3000 
+
+CMD [ "tail", "-f", "/dev/null" ]

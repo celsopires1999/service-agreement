@@ -1,9 +1,9 @@
 "use client"
 
 import { saveServiceSystemsAction } from "@/actions/saveServiceSystemsAction"
-import { ComboboxWithLabel } from "@/components/inputs/ComboboxWithLabel"
-import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
-import { InputWithLabel } from "@/components/inputs/InputWithLabel"
+import { ComboboxWithLabel } from "@/app/components/inputs/ComboboxWithLabel"
+import { InputDecimalWithLabel } from "@/app/components/inputs/InputDecimalWithLabel"
+import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
@@ -22,7 +22,7 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { ServiceHeader } from "./components/ServiceHeader"
 import { SystemsToServiceTable } from "./SystemsToServiceTable"
-import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
+import { DisplayServerActionResponse } from "@/app/components/DisplayServerActionResponse"
 
 type extendedSaveServiceSystemsSchemaType = saveServiceSystemsSchemaType & {
     amount: string

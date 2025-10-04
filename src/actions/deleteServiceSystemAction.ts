@@ -1,7 +1,10 @@
 "use server"
 
 import { RemoveServiceSystemUseCase } from "@/core/service/application/use-cases/remove-service-system.use-case"
+import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
+import { db } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
@@ -34,7 +37,11 @@ export const deleteServiceSystemAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
-            const uc = new RemoveServiceSystemUseCase()
+            const uow = new UnitOfWorkDrizzle(db, {
+                service: (db) => new ServiceDrizzleRepository(db),
+            })
+
+            const uc = new RemoveServiceSystemUseCase(uow)
             await uc.execute({
                 serviceId: params.serviceId,
                 systemId: params.systemId,

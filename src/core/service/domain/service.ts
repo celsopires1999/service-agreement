@@ -1,20 +1,10 @@
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
+import { Uuid } from "@/core/shared/domain/value-objects/uuid"
 import { toDecimal } from "@/lib/utils"
 import Decimal from "decimal.js"
-import { v4 as uuidv4 } from "uuid"
+import { currecyType, ServiceStatusType } from "./service.types"
+import { ServiceValidator } from "./service.validator"
 import { ServiceSystem } from "./serviceSystems"
-
-export type currecyType = "EUR" | "USD"
-
-export const ServiceStatus = {
-    CREATED: "created",
-    ASSIGNED: "assigned",
-    REJECTED: "rejected",
-    APPROVED: "approved",
-} as const
-
-export type ServiceStatusType =
-    (typeof ServiceStatus)[keyof typeof ServiceStatus]
 
 export type ServiceConstructorProps = {
     serviceId: string
@@ -34,6 +24,8 @@ export type ServiceConstructorProps = {
     documentUrl: string | null
     serviceSystems?: ServiceSystem[]
 }
+
+export type { currecyType, ServiceStatusType } from "./service.types"
 
 export type ServiceCreateCommand = Omit<
     ServiceConstructorProps,
@@ -83,7 +75,7 @@ export class Service {
     static create(props: ServiceCreateCommand) {
         return new Service({
             ...props,
-            serviceId: uuidv4(),
+            serviceId: new Uuid().toString(),
             amount: toDecimal(props.runAmount)
                 .add(toDecimal(props.chgAmount))
                 .toFixed(2),
@@ -233,6 +225,9 @@ export class Service {
     }
 
     validate() {
+        const validator = new ServiceValidator()
+        validator.validate(this)
+
         if (
             this.isChanged &&
             (this.prevStatus === "approved" || this.prevStatus === "rejected")
@@ -242,9 +237,8 @@ export class Service {
             )
         }
 
-        if (!Object.values(ServiceStatus).includes(this.status)) {
-            throw new ValidationError("Invalid status: " + this.status)
-        }
+        this.isChanged = false
+        this.prevStatus = this.status
 
         if (this.status !== "approved" && this.status !== "rejected") {
             return

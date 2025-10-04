@@ -1,9 +1,9 @@
 "use client"
 
 import { deleteServiceAction } from "@/actions/deleteServiceAction"
-import { AlertConfirmation } from "@/components/AlertConfirmation"
-import { AmountPresenter } from "@/components/AmountPresenter"
-import Deleting from "@/components/Deleting"
+import { AlertConfirmation } from "@/app/components/AlertConfirmation"
+import { AmountPresenter } from "@/app/components/AmountPresenter"
+import Deleting from "@/app/components/Deleting"
 import { Filter } from "@/components/react-table/Filter"
 import { NoFilter } from "@/components/react-table/NoFilter"
 import { Button } from "@/components/ui/button"

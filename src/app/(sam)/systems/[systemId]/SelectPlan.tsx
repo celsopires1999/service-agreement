@@ -1,6 +1,6 @@
 "use client"
 
-import { SearchButton } from "@/components/SearchButton"
+import { SearchButton } from "@/app/components/SearchButton"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {

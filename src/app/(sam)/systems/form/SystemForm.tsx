@@ -1,11 +1,11 @@
 "use client"
 
 import { saveSystemAction } from "@/actions/saveSystemAction"
-import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
-import { FormControlButtons } from "@/components/FormControlButtons"
-import { InputWithLabel } from "@/components/inputs/InputWithLabel"
-import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
-import { SystemNav } from "@/components/SystemNav"
+import { DisplayServerActionResponse } from "@/app/components/DisplayServerActionResponse"
+import { FormControlButtons } from "@/app/components/FormControlButtons"
+import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
+import { TextAreaWithLabel } from "@/app/components/inputs/TextAreaWithLabel"
+import { SystemNav } from "@/app/components/SystemNav"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 import {

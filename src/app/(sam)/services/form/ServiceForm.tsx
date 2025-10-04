@@ -1,15 +1,15 @@
 "use client"
 
 import { saveServiceAction } from "@/actions/saveServiceAction"
-import { AgreementNav } from "@/components/AgreementNav"
-import { BadgeWithTooltip } from "@/components/BadgeWithTooltip"
-import { DisplayServerActionResponse } from "@/components/DisplayServerActionResponse"
-import { FormControlButtons } from "@/components/FormControlButtons"
-import { InputDecimalWithLabel } from "@/components/inputs/InputDecimalWithLabel"
-import { InputURL } from "@/components/inputs/InputURL"
-import { InputWithLabel } from "@/components/inputs/InputWithLabel"
-import { SelectWithLabel } from "@/components/inputs/SelectWithLabel"
-import { TextAreaWithLabel } from "@/components/inputs/TextAreaWithLabel"
+import { AgreementNav } from "@/app/components/AgreementNav"
+import { BadgeWithTooltip } from "@/app/components/BadgeWithTooltip"
+import { DisplayServerActionResponse } from "@/app/components/DisplayServerActionResponse"
+import { FormControlButtons } from "@/app/components/FormControlButtons"
+import { InputDecimalWithLabel } from "@/app/components/inputs/InputDecimalWithLabel"
+import { InputURL } from "@/app/components/inputs/InputURL"
+import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
+import { SelectWithLabel } from "@/app/components/inputs/SelectWithLabel"
+import { TextAreaWithLabel } from "@/app/components/inputs/TextAreaWithLabel"
 import { Form } from "@/components/ui/form"
 import { useToast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
@@ -197,6 +197,7 @@ export function ServiceForm({
                         <InputURL<insertServiceSchemaType>
                             fieldTitle="Document URL"
                             nameInSchema="documentUrl"
+                            disabled={!isEditable}
                         />
 
                         <div className="mt-4 space-y-2">

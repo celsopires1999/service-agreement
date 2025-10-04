@@ -1,10 +1,10 @@
-FROM node:23.3.0-slim
+FROM node:24.9.0-slim
 
 RUN apt update && \
-    apt install -y curl gpg gnupg gpg-agent socat 
+apt install -y curl gpg gnupg gpg-agent socat docker.io 
 
-COPY .docker/start.sh /
-RUN chmod +x start.sh
+ARG DOCKER_GID=989
+RUN groupadd -g ${DOCKER_GID} dockerhost || true && usermod -aG ${DOCKER_GID} node
 
 RUN npx playwright install-deps chromium
 
@@ -13,5 +13,3 @@ USER node
 WORKDIR /home/node/app
 
 EXPOSE 3000 
-
-CMD ["/start.sh"]

@@ -1,6 +1,6 @@
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import Decimal from "decimal.js"
-import { currecyType } from "./service"
+import { currecyType } from "./service.types"
 import { validateDecimal } from "./utils"
 
 export type ServiceSystemConstructorProps = {
@@ -49,7 +49,7 @@ export class ServiceSystem {
         return new ServiceSystem({
             serviceId: props.serviceId,
             systemId: props.systemId,
-            allocation: props.allocation,
+            allocation: new Decimal(props.allocation).toFixed(6),
             amount,
             runAmount,
             chgAmount,
@@ -70,7 +70,7 @@ export class ServiceSystem {
         this.runAmount = runAmount
         this.chgAmount = chgAmount
         this.amount = amount
-        this.allocation = allocation
+        this.allocation = new Decimal(allocation).toFixed(6)
     }
 
     changeAmount(totalRunAmount: string, totalChgAmount: string) {
