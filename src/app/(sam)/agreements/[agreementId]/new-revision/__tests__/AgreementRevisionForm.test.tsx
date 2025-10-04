@@ -103,8 +103,7 @@ describe("AgreementRevisionForm", () => {
                 agreement={mockAgreement}
                 servicesCount={7}
                 plans={mockPlans}
-                // Casting to any to test with null/undefined
-                servicesAmount={undefined as any}
+                servicesAmount={undefined}
             />,
         )
         expect(

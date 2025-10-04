@@ -213,7 +213,7 @@ describe("ServiceForm", () => {
         await user.clear(screen.getByLabelText(/Name/i))
         await user.type(screen.getByLabelText(/Name/i), "Updated Service Name")
         await user.click(screen.getByRole("button", { name: "Save" }))
-        screen.logTestingPlaygroundURL()
+
         await waitFor(() => {
             expect(mockExecute).toHaveBeenCalled()
         })
