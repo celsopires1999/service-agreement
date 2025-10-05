@@ -28,5 +28,5 @@ jest.mock("next/navigation", () => ({
 }))
 
 jest.mock("@/hooks/use-toast", () => ({
-    useToast: jest.fn(),
+    toast: jest.fn(),
 }))

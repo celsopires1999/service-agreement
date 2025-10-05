@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { useAction } from "next-safe-action/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -12,7 +12,7 @@ export function setupMockFormHooks() {
     // Create mock functions that will be returned for use in tests
     const mockExecute = jest.fn()
     const mockReset = jest.fn()
-    const mockToast = jest.fn()
+    const mockToast = toast as jest.Mock
     const mockRouterBack = jest.fn()
     let mockResult: object | null = {
         data: null,
@@ -23,7 +23,6 @@ export function setupMockFormHooks() {
     // Cast mocks to their Jest types
     const mockUseSearchParams = useSearchParams as jest.Mock
     const mockUseAction = useAction as jest.Mock
-    const mockUseToast = useToast as jest.Mock
     const mockUseRouter = useRouter as jest.Mock
 
     beforeEach(() => {
@@ -31,8 +30,6 @@ export function setupMockFormHooks() {
 
         mockResult = { data: null, serverError: null, validationErrors: null }
         mockUseRouter.mockReturnValue({ back: mockRouterBack })
-        mockUseToast.mockReturnValue({ toast: mockToast })
-
         mockUseAction.mockImplementation((_action, options) => ({
             executeAsync: jest.fn(async (input: unknown) => {
                 const result = await mockExecute(input)
@@ -64,7 +61,6 @@ export function setupMockFormHooks() {
         mockToast,
         mockRouterBack,
         mockUseAction,
-        mockUseToast,
         mockUseRouter,
         mockUseSearchParams,
     }

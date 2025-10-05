@@ -11,7 +11,7 @@ import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/app/components/inputs/SelectWithLabel"
 import { TextAreaWithLabel } from "@/app/components/inputs/TextAreaWithLabel"
 import { Form } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
 import {
     insertServiceSchema,
@@ -39,8 +39,6 @@ export function ServiceForm({
     currencies,
     isEditable = true,
 }: Props) {
-    const { toast } = useToast()
-
     const defaultValues: insertServiceSchemaType = {
         serviceId: service?.serviceId ?? "(New)",
         agreementId: service?.agreementId ?? agreement.agreementId,

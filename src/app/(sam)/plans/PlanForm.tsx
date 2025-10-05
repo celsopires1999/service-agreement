@@ -3,7 +3,7 @@
 import { savePlanAction } from "@/actions/savePlanAction"
 import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { Form } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 
 import { FormControlButtons } from "@/app/components/FormControlButtons"
 import { getPlansType } from "@/lib/queries/plan"
@@ -18,8 +18,6 @@ type Props = {
 }
 
 export function PlanForm({ plans }: Props) {
-    const { toast } = useToast()
-
     const defaultValues: insertPlanSchemaType = {
         planId: "(New)",
         code: "",

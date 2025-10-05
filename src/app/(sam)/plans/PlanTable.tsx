@@ -42,7 +42,6 @@ type Props = {
 
 export function PlanTable({ data, handleUpdatePlan }: Props) {
     const router = useRouter()
-
     const searchParams = useSearchParams()
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
