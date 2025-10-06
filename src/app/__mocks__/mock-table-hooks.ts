@@ -47,5 +47,6 @@ export function setupMockTableHooks() {
         mockToast,
         mockRouterReplace,
         mockExecute,
+        mockUseSearchParams,
     }
 }
