@@ -1,10 +1,8 @@
-import { toast } from "@/hooks/use-toast"
+import { setupMockTableHooks } from "@/app/__mocks__/mock-table-hooks"
 import { getAgreementType } from "@/lib/queries/agreement"
 import { getServiceSearchResultsType } from "@/lib/queries/service"
 import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { useAction } from "next-safe-action/hooks"
-import { useRouter, useSearchParams } from "next/navigation"
 import { AgreementServiceTable } from "../AgreementServiceTable"
 
 // Mock the server action to prevent server-only code from being executed
@@ -12,10 +10,7 @@ jest.mock("@/actions/deleteServiceAction", () => ({
     deleteServiceAction: jest.fn(),
 }))
 
-const mockUseRouter = useRouter as jest.Mock
-const mockUseSearchParams = useSearchParams as jest.Mock
-const mockUseAction = useAction as jest.Mock
-const mockToast = toast as jest.Mock
+const { mockToast, mockRouterReplace, mockExecute } = setupMockTableHooks()
 
 const mockAgreement: getAgreementType = {
     agreementId: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
@@ -72,45 +67,6 @@ const mockServices: getServiceSearchResultsType[] = [
 ]
 
 describe("AgreementServiceTable", () => {
-    let mockRouterReplace: jest.Mock
-    let mockExecute: jest.Mock
-
-    beforeEach(() => {
-        jest.clearAllMocks()
-        mockRouterReplace = jest.fn()
-        mockExecute = jest.fn()
-
-        mockUseRouter.mockReturnValue({
-            replace: mockRouterReplace,
-            refresh: jest.fn(),
-        })
-
-        mockUseSearchParams.mockReturnValue(new URLSearchParams())
-
-        mockUseAction.mockImplementation((_action, { onSuccess, onError }) => ({
-            executeAsync: async (input: unknown) => {
-                try {
-                    const result = await mockExecute(input)
-                    if (result.serverError) {
-                        onError?.({ error: result, input })
-                    } else {
-                        onSuccess?.(result)
-                    }
-                    return result
-                } catch (e) {
-                    onError?.({
-                        error: { serverError: (e as Error).message },
-                        input,
-                    })
-                    throw e
-                }
-            },
-            isPending: false,
-            result: {},
-            reset: jest.fn(),
-        }))
-    })
-
     const renderComponent = (
         data: getServiceSearchResultsType[] = mockServices,
     ) => {
