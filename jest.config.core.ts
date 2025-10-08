@@ -21,16 +21,11 @@ const config: Config = {
     displayName: "core",
     testEnvironment: "node",
     testRegex: ["((\\.|/)(test|spec|int-spec))\\.[jt]s?$"],
-    testPathIgnorePatterns: [
-        "/node_modules/",
-        "/.next/",
-        "/coverage/",
-        "\\.helper\\.ts$",
-    ],
+    testPathIgnorePatterns: ["/node_modules/", "/.next/", "/coverage/"],
     // Add more setup options before each test is run
     // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
     globalSetup:
-        "<rootDir>/src/core/shared/infra/db/drizzle/jest.global-setup.ts",
+        "<rootDir>/src/core/shared/infra/db/drizzle/__tests__/jest.global.setup.ts",
     moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/src/$1",
     },

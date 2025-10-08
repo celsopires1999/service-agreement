@@ -2,7 +2,7 @@ import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/ag
 import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
 import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"

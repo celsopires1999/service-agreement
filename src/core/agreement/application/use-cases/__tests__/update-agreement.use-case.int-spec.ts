@@ -4,7 +4,7 @@ import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ServiceDataBuilder } from "@/core/service/domain/service-data-builder"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
 import { UpdateAgreementUseCase } from "../update-agreement.use-case"
 

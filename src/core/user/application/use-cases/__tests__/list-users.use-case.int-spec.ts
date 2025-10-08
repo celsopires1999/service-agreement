@@ -1,6 +1,6 @@
 import { UserDataBuilder } from "@/core/user/domain/user-data-builder"
 import { UserDrizzleRepository } from "@/core/user/infra/db/drizzle/user-drizzle.repository"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { ListUsersUseCase } from "../list-users.use-case"
 
 describe("ListUsersUseCase Integration Tests", () => {

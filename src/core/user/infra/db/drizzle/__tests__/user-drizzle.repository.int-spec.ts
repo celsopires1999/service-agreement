@@ -1,5 +1,5 @@
 import { UserDataBuilder } from "@/core/user/domain/user-data-builder"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { UserDrizzleRepository } from "../user-drizzle.repository"
 
 describe("UserDrizzleRepository Integration Tests", () => {

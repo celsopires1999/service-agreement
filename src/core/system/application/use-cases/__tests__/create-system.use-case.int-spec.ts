@@ -1,6 +1,6 @@
 import { SystemDataBuilder } from "@/core/system/domain/system-data-builder"
 import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { CreateSystemUseCase } from "../create-system.use-case"
 
 describe("CreateSystemUseCase Integration Tests", () => {

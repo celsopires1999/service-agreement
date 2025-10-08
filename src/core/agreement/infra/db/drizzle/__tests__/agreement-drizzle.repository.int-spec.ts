@@ -1,7 +1,7 @@
 import { AgreementDataBuilder } from "@/core/agreement/domain/agreement-data-builder"
 import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { AgreementDrizzleRepository } from "../agreement-drizzle.repository"
 
 describe("AgreementDrizzleRepository Integration Tests", () => {

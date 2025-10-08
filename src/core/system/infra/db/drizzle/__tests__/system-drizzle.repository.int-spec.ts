@@ -1,5 +1,5 @@
 import { SystemDataBuilder } from "@/core/system/domain/system-data-builder"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { SystemDrizzleRepository } from "../system-drizzle.repository"
 
 describe("SystemDrizzleRepository Integration Tests", () => {
@@ -40,11 +40,15 @@ describe("SystemDrizzleRepository Integration Tests", () => {
 
         await systemRepository.update(updatedSystem)
 
-        const fetchedUpdatedSystem = await systemRepository.find(aSystem.systemId)
+        const fetchedUpdatedSystem = await systemRepository.find(
+            aSystem.systemId,
+        )
         expect(fetchedUpdatedSystem).toBeDefined()
         expect(fetchedUpdatedSystem?.systemId).toBe(aSystem.systemId)
         expect(fetchedUpdatedSystem?.name).toBe("UPDATENAME")
-        expect(fetchedUpdatedSystem?.description).toBe(updatedSystem.description)
+        expect(fetchedUpdatedSystem?.description).toBe(
+            updatedSystem.description,
+        )
         expect(fetchedUpdatedSystem?.applicationId).toBe(
             updatedSystem.applicationId,
         )
