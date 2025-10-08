@@ -2,7 +2,7 @@ import { ValidationError } from "@/core/shared/domain/validators/validation.erro
 import { z } from "zod"
 import { Agreement } from "./agreement"
 
-export const agreementSchema = z.object({
+const agreementSchema = z.object({
     agreementId: z.string(),
     year: z
         .union([z.number(), z.string()])

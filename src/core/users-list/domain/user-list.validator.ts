@@ -2,7 +2,7 @@ import { ValidationError } from "@/core/shared/domain/validators/validation.erro
 import { z } from "zod"
 import { UserList } from "./user-list"
 
-export const userListItemSchema = z.object({
+const userListItemSchema = z.object({
     userListItemId: z.string().uuid("Invalid UUID for userListItemId"),
     name: z
         .string()
@@ -20,7 +20,7 @@ export const userListItemSchema = z.object({
     costCenter: z.string().length(9, "Cost Center must be 9 characters"),
 })
 
-export const userListSchema = z.object({
+const userListSchema = z.object({
     userListId: z.string().uuid("Invalid UUID for userListId"),
     serviceId: z.string().uuid("Invalid UUID for serviceId"),
     usersNumber: z.number().min(1, "User number must be at least 1"),

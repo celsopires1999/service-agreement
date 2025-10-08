@@ -2,7 +2,7 @@ import { ValidationError } from "@/core/shared/domain/validators/validation.erro
 import { z } from "zod"
 import { System } from "./system"
 
-export const systemSchema = z.object({
+const systemSchema = z.object({
     systemId: z.union([z.string().uuid("invalid UUID"), z.literal("(New)")]),
     name: z
         .string()

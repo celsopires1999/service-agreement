@@ -111,6 +111,20 @@ describe("AgreementRevisionForm", () => {
         ).toBeInTheDocument()
     })
 
+    it("should show 'no services yet' message for an empty services array", () => {
+        render(
+            <AgreementRevisionForm
+                agreement={mockAgreement}
+                servicesCount={0}
+                plans={mockPlans}
+                servicesAmount={[]}
+            />,
+        )
+        expect(
+            screen.getByText("There are no services yet"),
+        ).toBeInTheDocument()
+    })
+
     it("should submit the form with correct data and show success toast", async () => {
         const user = userEvent.setup()
         const newRevisionId = "e73673ff-eb97-4447-8a64-e723863af377"
@@ -238,6 +252,33 @@ describe("AgreementRevisionForm", () => {
                 variant: "destructive",
                 title: "Error",
                 description: "Save Failed",
+            })
+        })
+    })
+
+    it("should show an error toast if the action execution throws an error", async () => {
+        const user = userEvent.setup()
+        const errorMessage = "Network request failed"
+        mockExecute.mockRejectedValue(new Error(errorMessage))
+
+        renderComponent()
+
+        // Fill the form to make it valid
+        await user.click(
+            screen.getByRole("combobox", { name: /provider plan/i }),
+        )
+        await user.click(await screen.findByRole("option", { name: "PP01" }))
+
+        await user.click(screen.getByRole("combobox", { name: /local plan/i }))
+        await user.click(await screen.findByRole("option", { name: "LP02" }))
+
+        await user.click(screen.getByRole("button", { name: /save/i }))
+
+        await waitFor(() => {
+            expect(mockToast).toHaveBeenCalledWith({
+                variant: "destructive",
+                title: "Error",
+                description: `Action error: ${errorMessage}`,
             })
         })
     })

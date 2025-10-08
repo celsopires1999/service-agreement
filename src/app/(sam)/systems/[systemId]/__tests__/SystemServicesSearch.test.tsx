@@ -36,7 +36,7 @@ jest.mock("next/form", () => ({
         ...props
     }: {
         children: React.ReactNode
-        [key: string]: any
+        [key: string]: unknown
     }) => <form {...props}>{children}</form>,
 }))
 

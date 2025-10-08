@@ -72,7 +72,12 @@ describe("Service Unit Tests", () => {
         })
 
         it("should change amount", () => {
-            const service = builder.build()
+            const service = builder
+                .withServiceSystems([
+                    { allocation: "40" },
+                    { allocation: "60" },
+                ])
+                .build()
             const newRunAmount = "999.99"
             const newChgAmount = "99.99"
             service.changeAmount(newRunAmount, newChgAmount)
@@ -82,10 +87,32 @@ describe("Service Unit Tests", () => {
             expect(service.amount).toBe(
                 (+newRunAmount + +newChgAmount).toFixed(2),
             )
+            let totalSystemAmount = "0.00"
+            let totalSystemRunAmount = "0.00"
+            let totalSystemChgAmount = "0.00"
+            service.serviceSystems.forEach((system) => {
+                totalSystemAmount = (
+                    +totalSystemAmount + +system.amount
+                ).toFixed(2)
+                totalSystemRunAmount = (
+                    +totalSystemRunAmount + +system.runAmount
+                ).toFixed(2)
+                totalSystemChgAmount = (
+                    +totalSystemChgAmount + +system.chgAmount
+                ).toFixed(2)
+            })
+            expect(totalSystemAmount).toBe(service.amount)
+            expect(totalSystemRunAmount).toBe(newRunAmount)
+            expect(totalSystemChgAmount).toBe(newChgAmount)
         })
 
         it("should change currency", () => {
-            const service = builder.build()
+            const service = builder
+                .withServiceSystems([
+                    { allocation: "40" },
+                    { allocation: "60" },
+                ])
+                .build()
             const newCurrency = "USD" as const
             service.changeCurrency(newCurrency)
             service.validate()
@@ -265,6 +292,44 @@ describe("Service Unit Tests", () => {
             expect(service.serviceSystems.length).toBe(1)
             expect(service.serviceSystems[0].systemId).toBe(systemId2)
             expect(service.isActive).toBe(false)
+        })
+    })
+
+    describe("changeServiceSystemAllocation method", () => {
+        it("should change a service system allocation", () => {
+            const service = builder
+                .withRunAmount("1000.00")
+                .withChgAmount("100.00")
+                .build()
+            const systemId = new Uuid().toString()
+            service.addServiceSystem(systemId, "50")
+
+            expect(service.serviceSystems[0].allocation).toBe("50.000000")
+            expect(service.serviceSystems[0].runAmount).toBe("500.00")
+            expect(service.serviceSystems[0].chgAmount).toBe("50.00")
+            expect(service.serviceSystems[0].amount).toBe("550.00")
+
+            service.changeServiceSystemAllocation(systemId, "75")
+            service.validate()
+
+            expect(service.serviceSystems.length).toBe(1)
+            expect(service.serviceSystems[0].systemId).toBe(systemId)
+            expect(service.serviceSystems[0].allocation).toBe("75.000000")
+            expect(service.serviceSystems[0].runAmount).toBe("750.00")
+            expect(service.serviceSystems[0].chgAmount).toBe("75.00")
+            expect(service.serviceSystems[0].amount).toBe("825.00")
+        })
+
+        it("should throw an error if service system is not found", () => {
+            const service = builder.build()
+            const systemId = new Uuid().toString()
+            expect(() =>
+                service.changeServiceSystemAllocation(systemId, "100"),
+            ).toThrow(
+                new ValidationError(
+                    `systemId #${systemId} not found to be updated`,
+                ),
+            )
         })
     })
 

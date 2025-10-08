@@ -7,7 +7,7 @@ import { z } from "zod"
 import { Service } from "./service"
 import { ServiceStatus } from "./service.types"
 
-export const serviceSystemsSchema = z.object({
+const serviceSystemsSchema = z.object({
     serviceId: z.string().uuid("Invalid UUID for serviceId in ServiceSystems"),
     systemId: z.string().uuid("Invalid UUID for systemId in ServiceSystems"),
     allocation: z
@@ -49,7 +49,7 @@ export const serviceSystemsSchema = z.object({
     }),
 })
 
-export const serviceSchema = z.object({
+const serviceSchema = z.object({
     serviceId: z.string().uuid("Invalid UUID for serviceId"),
     agreementId: z.string().uuid("Invalid UUID for agreementId"),
     name: z

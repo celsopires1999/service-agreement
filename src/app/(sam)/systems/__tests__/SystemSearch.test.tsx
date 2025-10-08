@@ -5,7 +5,7 @@ import { SystemSearch } from "@/app/(sam)/systems/SystemSearch"
 
 // Mock the 'next/form' component to render a standard form element
 jest.mock("next/form", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line
     return ({ children, ...props }: any) => (
         <form {...props} data-testid="system-search-form">
             {children}
