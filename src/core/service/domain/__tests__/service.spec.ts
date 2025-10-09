@@ -58,17 +58,35 @@ describe("Service Unit Tests", () => {
         it("should change name", () => {
             const service = builder.build()
             const newName = "new name"
+            expect(service["isChanged"]).toBe(false)
+
             service.changeName(newName)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.name).toBe(newName)
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same name should not mark as changed
+            service.changeName(newName)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change description", () => {
             const service = builder.build()
             const newDescription = "new description"
+            expect(service["isChanged"]).toBe(false)
+
             service.changeDescription(newDescription)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.description).toBe(newDescription)
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same description should not mark as changed
+            service.changeDescription(newDescription)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change amount", () => {
@@ -81,7 +99,9 @@ describe("Service Unit Tests", () => {
             const newRunAmount = "999.99"
             const newChgAmount = "99.99"
             service.changeAmount(newRunAmount, newChgAmount)
+            expect(service["isChanged"]).toBe(true)
             service.validate()
+            expect(service["isChanged"]).toBe(false)
             expect(service.runAmount).toBe(newRunAmount)
             expect(service.chgAmount).toBe(newChgAmount)
             expect(service.amount).toBe(
@@ -104,6 +124,10 @@ describe("Service Unit Tests", () => {
             expect(totalSystemAmount).toBe(service.amount)
             expect(totalSystemRunAmount).toBe(newRunAmount)
             expect(totalSystemChgAmount).toBe(newChgAmount)
+
+            // Calling with the same runAmount and chgAmount should not mark as changed
+            service.changeAmount(newRunAmount, newChgAmount)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change currency", () => {
@@ -114,65 +138,136 @@ describe("Service Unit Tests", () => {
                 ])
                 .build()
             const newCurrency = "USD" as const
+            expect(service["isChanged"]).toBe(false)
+
             service.changeCurrency(newCurrency)
+            expect(service["isChanged"]).toBe(true)
+
             service.validate()
+            expect(service["isChanged"]).toBe(false)
             expect(service.currency).toBe(newCurrency)
+            service.serviceSystems.forEach((system) => {
+                expect(system.currency).toBe(newCurrency)
+            })
+
+            // Calling with the same currency should not mark as changed
+            service.changeCurrency(newCurrency)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change responsibleEmail", () => {
             const service = builder.build()
             const newEmail = "new.email@example.com"
+            expect(service["isChanged"]).toBe(false)
+
             service.changeResponsibleEmail(newEmail)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.responsibleEmail).toBe(newEmail.toLowerCase())
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same email should not mark as changed
+            service.changeResponsibleEmail(newEmail)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change providerAllocation", () => {
             const service = builder.build()
             const newAllocation = "75"
+            expect(service["isChanged"]).toBe(false)
+
             service.changeProviderAllocation(newAllocation)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.providerAllocation).toBe(newAllocation)
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same allocation should not mark as changed
+            service.changeProviderAllocation(newAllocation)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change localAllocation", () => {
             const service = builder.build()
             const newAllocation = "25"
+            expect(service["isChanged"]).toBe(false)
+
             service.changeLocalAllocation(newAllocation)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.localAllocation).toBe(newAllocation)
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same allocation should not mark as changed
+            service.changeLocalAllocation(newAllocation)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change validatorEmail", () => {
             const service = builder.build()
             const newEmail = "new.validator@example.com"
+            expect(service["isChanged"]).toBe(false)
+
             service.changeValidatorEmail(newEmail)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.validatorEmail).toBe(newEmail.toLowerCase())
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same email should not mark as changed
+            service.changeValidatorEmail(newEmail)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change documentUrl", () => {
             const service = builder.build()
             const newUrl = "https://example.com/doc"
+            expect(service["isChanged"]).toBe(false)
+
             service.changeDocumentUrl(newUrl)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.documentUrl).toBe(newUrl)
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same url should not mark as changed
+            service.changeDocumentUrl(newUrl)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change documentUrl to null", () => {
             const service = builder.build()
             const newUrl = null
+            expect(service["isChanged"]).toBe(false)
+
             service.changeDocumentUrl(newUrl)
-            service.validate()
+            expect(service["isChanged"]).toBe(true)
+
             expect(service.documentUrl).toBe(newUrl)
+            service.validate()
+            expect(service["isChanged"]).toBe(false)
+
+            // Calling with the same url should not mark as changed
+            service.changeDocumentUrl(newUrl)
+            expect(service["isChanged"]).toBe(false)
         })
 
         it("should change status", () => {
             const service = builder
                 .withServiceSystems([{ allocation: "100" }])
                 .build()
+            service.changeActivationStatusBasedOnAllocation() // isActive becomes true
             const newStatus = "approved" as const
+
+            // changeStatus does not set the isChanged flag
             service.changeStatus(newStatus)
+            expect(service["isChanged"]).toBe(false)
+
             service.validate()
             expect(service.status).toBe(newStatus)
         })

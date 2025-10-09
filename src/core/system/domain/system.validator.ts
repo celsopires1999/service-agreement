@@ -3,7 +3,7 @@ import { z } from "zod"
 import { System } from "./system"
 
 const systemSchema = z.object({
-    systemId: z.union([z.string().uuid("invalid UUID"), z.literal("(New)")]),
+    systemId: z.string().uuid("invalid UUID"),
     name: z
         .string()
         .min(1, "Name is required")

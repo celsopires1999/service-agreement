@@ -111,15 +111,11 @@ const serviceSchema = z.object({
     }),
     validatorEmail: z.string().email("Invalid validator email address"),
     documentUrl: z
-        .unknown()
-        .transform((value) => (value === "" ? null : value))
-        .pipe(
-            z
-                .string()
-                .url("Invalid URL")
-                .max(300, "Document URL must be 300 characters or less")
-                .nullable(),
-        ),
+        .string()
+        .url("Invalid URL")
+        .max(300, "Document URL must be 300 characters or less")
+        .nullable(),
+
     serviceSystems: z.array(serviceSystemsSchema).optional(),
 })
 
