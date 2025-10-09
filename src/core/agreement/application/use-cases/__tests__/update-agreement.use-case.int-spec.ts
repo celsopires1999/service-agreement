@@ -60,7 +60,7 @@ describe("UpdateAgreementUseCase Integration Tests", () => {
                 code: "NEW-CODE",
                 revision: 2,
                 isRevised: false,
-                revisionDate: new Date().toISOString(),
+                revisionDate: new Date().toISOString().slice(0, 10),
                 providerPlanId: newProviderPlan.planId,
                 localPlanId: newLocalPlan.planId,
                 name: "Updated Agreement Name",

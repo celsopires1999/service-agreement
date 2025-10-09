@@ -52,12 +52,11 @@ describe("AgreementValidator Unit Tests", () => {
                 expected: "Year must be a number between 2024 and 2125.",
             },
             {
-                label: "year string",
+                label: "year as string",
                 mutator: (props: Agreement) =>
                     (props.year = "invalid-year" as unknown as number),
                 expected: "Year must be a number between 2024 and 2125.",
             },
-
             {
                 label: "code too short",
                 mutator: (props: Agreement) => (props.code = ""),
@@ -140,6 +139,141 @@ describe("AgreementValidator Unit Tests", () => {
                 mutator: (props: Agreement) =>
                     (props.documentUrl = "not-a-url"),
                 expected: "Invalid URL.",
+            },
+        ]
+
+        test.each(arrange)("for $label", ({ mutator, expected }) => {
+            const agreement = builder.build()
+            mutator(agreement)
+            expect(() => validator.validate(agreement)).toThrow(
+                new ValidationError(expected),
+            )
+        })
+    })
+
+    // These test cases are for null or undefined properties which are not allowed by Typescript
+    // We do not expect to get these types of errors from the validator
+    describe("should throw validation error for null or undefined properties", () => {
+        const arrange = [
+            {
+                label: "year null",
+                mutator: (props: Agreement) =>
+                    (props.year = null as unknown as number),
+                expected: "Invalid input.",
+            },
+            {
+                label: "year undefined",
+                mutator: (props: Agreement) =>
+                    (props.year = undefined as unknown as number),
+                expected: "Invalid input.",
+            },
+            {
+                label: "code null",
+                mutator: (props: Agreement) =>
+                    (props.code = null as unknown as string),
+                expected: "Expected string, received null.",
+            },
+            {
+                label: "code undefined",
+                mutator: (props: Agreement) =>
+                    (props.code = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "revision null",
+                mutator: (props: Agreement) =>
+                    (props.revision = null as unknown as number),
+                expected: "Invalid input.",
+            },
+            {
+                label: "revision undefined",
+                mutator: (props: Agreement) =>
+                    (props.revision = undefined as unknown as number),
+                expected: "Invalid input.",
+            },
+            {
+                label: "revision date null",
+                mutator: (props: Agreement) =>
+                    (props.revisionDate = null as unknown as string),
+                expected: "Expected string, received null.",
+            },
+            {
+                label: "revision date undefined",
+                mutator: (props: Agreement) =>
+                    (props.revisionDate = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "name null",
+                mutator: (props: Agreement) =>
+                    (props.name = null as unknown as string),
+                expected: "Expected string, received null.",
+            },
+            {
+                label: "name undefined",
+                mutator: (props: Agreement) =>
+                    (props.name = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "providerPlanId null",
+                mutator: (props: Agreement) =>
+                    (props.providerPlanId = null as unknown as string),
+                expected: "Expected string, received null.",
+            },
+            {
+                label: "providerPlanId undefined",
+                mutator: (props: Agreement) =>
+                    (props.providerPlanId = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "localPlanId null",
+                mutator: (props: Agreement) =>
+                    (props.localPlanId = null as unknown as string),
+                expected: "Expected string, received null.",
+            },
+            {
+                label: "localPlanId undefined",
+                mutator: (props: Agreement) =>
+                    (props.localPlanId = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "description null",
+                mutator: (props: Agreement) =>
+                    (props.description = null as unknown as string),
+                expected: "Expected string, received null.",
+            },
+            {
+                label: "description undefined",
+                mutator: (props: Agreement) =>
+                    (props.description = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "contact email null",
+                mutator: (props: Agreement) =>
+                    (props.contactEmail = null as unknown as string),
+                expected: "Expected string, received null.",
+            },
+            {
+                label: "contact email undefined",
+                mutator: (props: Agreement) =>
+                    (props.contactEmail = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "comment undefined",
+                mutator: (props: Agreement) =>
+                    (props.comment = undefined as unknown as string),
+                expected: "Required.",
+            },
+            {
+                label: "document url undefined",
+                mutator: (props: Agreement) =>
+                    (props.documentUrl = undefined as unknown as string),
+                expected: "Required.",
             },
         ]
 

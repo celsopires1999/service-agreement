@@ -40,7 +40,6 @@ const agreementSchema = z.object({
         .string()
         .min(1, "Code is required")
         .max(20, "Code must be 20 characters or less"),
-
     revision: z
         .union([z.number(), z.string()])
         .refine(
@@ -71,18 +70,8 @@ const agreementSchema = z.object({
             }
             return value
         }),
-
     isRevised: z.boolean(),
-
-    revisionDate: z.coerce.date({
-        errorMap: (issue, ctx) => {
-            if (issue.code === "invalid_date") {
-                return { message: "Revision date is invalid" }
-            }
-            return { message: ctx.defaultError }
-        },
-    }),
-
+    revisionDate: z.string().date("Revision date is invalid"),
     name: z
         .string()
 
@@ -101,15 +90,10 @@ const agreementSchema = z.object({
         .max(500, "Comment must be 500 characters or less")
         .nullable(),
     documentUrl: z
-        .unknown()
-        .transform((value) => (value === "" ? null : value))
-        .pipe(
-            z
-                .string()
-                .url("Invalid URL")
-                .max(300, "Document URL must be 300 characters or less")
-                .nullable(),
-        ),
+        .string()
+        .url("Invalid URL")
+        .max(300, "Document URL must be 300 characters or less")
+        .nullable(),
 })
 
 export class AgreementValidator {
