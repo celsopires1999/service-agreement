@@ -39,6 +39,7 @@ export class SaveServiceSystemUseCase {
             } else {
                 entity.addServiceSystem(input.systemId, input.allocation)
             }
+            entity.validate()
 
             entity.changeActivationStatusBasedOnAllocation()
 

@@ -29,17 +29,11 @@ export class UnitOfWorkDrizzle implements UnitOfWork {
         return this.db.transaction(async (trx) => {
             this.repositories = {}
 
-            Object.keys(this.repositoryFactories).forEach((name) => {
+            for (const name of Object.keys(this.repositoryFactories)) {
                 this.repositories[name] = this.repositoryFactories[name](trx)
-            })
-
-            try {
-                const result = await work(this)
-                return result
-            } catch (err) {
-                // when propagating error, Drizzle automatically rolls back
-                throw err
             }
+
+            return await work(this)
         })
     }
 }

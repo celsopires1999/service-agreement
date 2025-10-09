@@ -61,12 +61,12 @@ export class CreateAgreementRevisionUseCase {
 
                 newService.validate()
 
-                service.serviceSystems.forEach((serviceSystem) => {
+                for (const serviceSystem of service.serviceSystems) {
                     newService.addServiceSystem(
                         serviceSystem.systemId,
                         serviceSystem.allocation,
                     )
-                })
+                }
 
                 newService.changeActivationStatusBasedOnAllocation()
 
@@ -79,8 +79,8 @@ export class CreateAgreementRevisionUseCase {
                     items: [],
                 })
 
-                if (sourceUserList) {
-                    sourceUserList.items.forEach((item) => {
+                if (sourceUserList?.items) {
+                    for (const item of sourceUserList.items) {
                         newUserList.addItem({
                             name: item.name,
                             email: item.email,
@@ -88,7 +88,7 @@ export class CreateAgreementRevisionUseCase {
                             area: item.area,
                             costCenter: item.costCenter,
                         })
-                    })
+                    }
                 }
 
                 await serviceRepo.insert(newService)

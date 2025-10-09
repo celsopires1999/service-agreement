@@ -114,9 +114,9 @@ export class Service {
         }
         this.isChanged = true
         this.currency = currency
-        this.serviceSystems.forEach((serviceSystem) => {
+        for (const serviceSystem of this.serviceSystems) {
             serviceSystem.changeCurrency(currency)
-        })
+        }
     }
 
     changeAmount(runAmount: string, chgAmount: string) {
@@ -128,9 +128,9 @@ export class Service {
         this.runAmount = runAmount
         this.chgAmount = chgAmount
         this.amount = amount
-        this.serviceSystems.forEach((serviceSystem) => {
+        for (const serviceSystem of this.serviceSystems) {
             serviceSystem.changeAmount(runAmount, chgAmount)
-        })
+        }
     }
 
     changeProviderAllocation(allocation: string) {
@@ -170,10 +170,11 @@ export class Service {
     }
 
     hasSystem(systemId: string) {
-        return !!this.serviceSystems.find((item) => item.systemId === systemId)
+        return !!this.serviceSystems.some((item) => item.systemId === systemId)
     }
 
     addServiceSystem(systemId: string, allocation: string) {
+        this.isChanged = true
         const serviceSystem = ServiceSystem.create({
             serviceId: this.serviceId,
             systemId,
@@ -197,6 +198,8 @@ export class Service {
             )
         }
 
+        this.isChanged = true
+
         serviceSystem.changeAllocation(
             this.runAmount,
             this.chgAmount,
@@ -205,6 +208,7 @@ export class Service {
     }
 
     removeServiceSystem(systemId: string) {
+        this.isChanged = true
         this.serviceSystems = this.serviceSystems.filter(
             (item) => item.systemId !== systemId,
         )
@@ -216,7 +220,7 @@ export class Service {
             new Decimal(0),
         )
 
-        if (allocation.eq(100.0)) {
+        if (allocation.eq(100)) {
             this.isActive = true
             return
         }

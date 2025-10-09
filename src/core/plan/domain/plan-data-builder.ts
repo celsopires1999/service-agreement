@@ -22,7 +22,7 @@ export class PlanDataBuilder<TBuild = unknown> {
     private _planDate: PropOrFactory<string> = (_index) =>
         new Date(this.chance.date({ year: 2024 })).toISOString().split("T")[0]
 
-    private countObjs: number
+    private readonly countObjs: number
 
     static aPlan() {
         return new PlanDataBuilder<Plan>()
@@ -32,7 +32,7 @@ export class PlanDataBuilder<TBuild = unknown> {
         return new PlanDataBuilder<Plan[]>(countObjs)
     }
 
-    private chance: Chance.Chance
+    private readonly chance: Chance.Chance
 
     private constructor(countObjs: number = 1) {
         this.countObjs = countObjs

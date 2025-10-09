@@ -11,9 +11,9 @@ const agreementSchema = z.object({
                 let year: number
 
                 if (typeof value === "string") {
-                    year = parseInt(value)
+                    year = Number.parseInt(value)
 
-                    if (isNaN(year)) {
+                    if (Number.isNaN(year)) {
                         return false
                     }
                 } else {
@@ -32,7 +32,7 @@ const agreementSchema = z.object({
         )
         .transform((value) => {
             if (typeof value === "string") {
-                return parseInt(value)
+                return Number.parseInt(value)
             }
             return value
         }),
@@ -46,8 +46,8 @@ const agreementSchema = z.object({
             (value) => {
                 let revision: number
                 if (typeof value === "string") {
-                    revision = parseInt(value)
-                    if (isNaN(revision)) {
+                    revision = Number.parseInt(value)
+                    if (Number.isNaN(revision)) {
                         return false
                     }
                 } else {
@@ -66,7 +66,7 @@ const agreementSchema = z.object({
         )
         .transform((value) => {
             if (typeof value === "string") {
-                return parseInt(value)
+                return Number.parseInt(value)
             }
             return value
         }),

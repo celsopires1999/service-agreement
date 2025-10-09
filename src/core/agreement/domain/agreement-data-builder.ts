@@ -45,7 +45,7 @@ export class AgreementDataBuilder<TBuild = unknown> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private _documentUrl: PropOrFactory<string | null> = (_index) => null
 
-    private countObjs: number
+    private readonly countObjs: number
 
     static anAgreement() {
         return new AgreementDataBuilder<Agreement>()
@@ -55,7 +55,7 @@ export class AgreementDataBuilder<TBuild = unknown> {
         return new AgreementDataBuilder<Agreement[]>(countObjs)
     }
 
-    private chance: Chance.Chance
+    private readonly chance: Chance.Chance
 
     private constructor(countObjs: number = 1) {
         this.countObjs = countObjs
@@ -214,7 +214,7 @@ export class AgreementDataBuilder<TBuild = unknown> {
                     agreementId: this._agreementId
                         ? this.callFactory(this._agreementId, index)
                         : new Uuid().toString(),
-                    year: parseInt(this.callFactory(this._year, index)),
+                    year: Number.parseInt(this.callFactory(this._year, index)),
                     code: this.callFactory(this._code, index),
                     revision: this.callFactory(this._revision, index),
                     isRevised: this.callFactory(this._isRevised, index),

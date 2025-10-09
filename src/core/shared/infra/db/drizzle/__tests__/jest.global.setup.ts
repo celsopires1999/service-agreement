@@ -13,6 +13,7 @@ export default async function globalSetup() {
             .withReuse()
             .start()
     } catch (e) {
+        console.error("Error on creating container: ", { origin: e })
         throw e
     }
 }

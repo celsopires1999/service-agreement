@@ -55,7 +55,7 @@ export class ServiceDataBuilder<TBuild = unknown> {
         _index,
     ) => []
 
-    private countObjs: number
+    private readonly countObjs: number
 
     static aService() {
         return new ServiceDataBuilder<Service>()
@@ -65,7 +65,7 @@ export class ServiceDataBuilder<TBuild = unknown> {
         return new ServiceDataBuilder<Service[]>(countObjs)
     }
 
-    private chance: Chance.Chance
+    private readonly chance: Chance.Chance
 
     private constructor(countObjs: number = 1) {
         this.countObjs = countObjs

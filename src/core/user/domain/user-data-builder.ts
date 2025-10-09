@@ -15,7 +15,7 @@ export class UserDataBuilder<TBuild = unknown> {
     private _role: PropOrFactory<RoleType> = (_index) =>
         this.chance.pickone(Object.values(Role))
 
-    private countObjs: number
+    private readonly countObjs: number
 
     static aUser() {
         return new UserDataBuilder<User>()
@@ -25,7 +25,7 @@ export class UserDataBuilder<TBuild = unknown> {
         return new UserDataBuilder<User[]>(countObjs)
     }
 
-    private chance: Chance.Chance
+    private readonly chance: Chance.Chance
 
     private constructor(countObjs: number = 1) {
         this.countObjs = countObjs

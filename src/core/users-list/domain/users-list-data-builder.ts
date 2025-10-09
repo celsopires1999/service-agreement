@@ -33,7 +33,7 @@ export class UserListDataBuilder<TBuild = unknown> {
         return items
     }
 
-    private countObjs: number
+    private readonly countObjs: number
 
     static aUserList() {
         return new UserListDataBuilder<UserList>()
@@ -43,7 +43,7 @@ export class UserListDataBuilder<TBuild = unknown> {
         return new UserListDataBuilder<UserList[]>(countObjs)
     }
 
-    private chance: Chance.Chance
+    private readonly chance: Chance.Chance
 
     private constructor(countObjs: number = 1) {
         this.countObjs = countObjs

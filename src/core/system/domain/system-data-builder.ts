@@ -19,7 +19,7 @@ export class SystemDataBuilder<TBuild = unknown> {
     private _applicationId: PropOrFactory<string> = (_index) =>
         this.chance.string({ length: 10 })
 
-    private countObjs: number
+    private readonly countObjs: number
 
     static aSystem() {
         return new SystemDataBuilder<System>()
@@ -29,7 +29,7 @@ export class SystemDataBuilder<TBuild = unknown> {
         return new SystemDataBuilder<System[]>(countObjs)
     }
 
-    private chance: Chance.Chance
+    private readonly chance: Chance.Chance
 
     private constructor(countObjs: number = 1) {
         this.countObjs = countObjs

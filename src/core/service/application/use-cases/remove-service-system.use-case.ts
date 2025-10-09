@@ -26,6 +26,7 @@ export class RemoveServiceSystemUseCase {
             }
 
             entity.removeServiceSystem(input.systemId)
+            entity.validate()
             entity.changeActivationStatusBasedOnAllocation()
 
             await repo.update(entity)

@@ -44,7 +44,7 @@ export class AgreementDrizzleRepository implements AgreementRepository {
                 comment: agreement.comment?.trim() ?? null,
                 documentUrl: agreement.documentUrl?.trim() ?? null,
             })
-            .where(eq(agreements.agreementId, agreement.agreementId!))
+            .where(eq(agreements.agreementId, agreement.agreementId))
     }
 
     async delete(agreementId: string): Promise<void> {
