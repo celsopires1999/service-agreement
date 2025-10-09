@@ -1,5 +1,5 @@
 import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { PlanDrizzleRepository } from "../plan-drizzle.repository"
 
 describe("PlanDrizzleRepository Integration Tests", () => {

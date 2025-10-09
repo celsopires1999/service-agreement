@@ -6,7 +6,7 @@ import { InputDecimalWithLabel } from "@/app/components/inputs/InputDecimalWithL
 import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
 import { getServiceSystemsSearchResultsType } from "@/lib/queries/serviceSystem"
 import { selectServiceSchemaType } from "@/zod-schemas/service"
@@ -46,8 +46,6 @@ export function SystemsToServiceForm({
     systems,
     isEditable = true,
 }: Props) {
-    const { toast } = useToast()
-
     const defaultValues: extendedSaveServiceSystemsSchemaType = {
         systemId: "",
         serviceId: service.serviceId,

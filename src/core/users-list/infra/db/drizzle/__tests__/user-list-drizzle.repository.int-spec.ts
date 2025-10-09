@@ -1,5 +1,4 @@
-
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { UserListDataBuilder } from "@/core/users-list/domain/users-list-data-builder"
 import { UserListDrizzleRepository } from "../user-list-drizzle.repository"
 import { Uuid } from "@/core/shared/domain/value-objects/uuid"
@@ -98,7 +97,9 @@ describe("UserListDrizzleRepository Integration Tests", () => {
             .build()
         await userListRepository.save(aUserList)
 
-        let foundUserList = await userListRepository.findById(aUserList.serviceId)
+        let foundUserList = await userListRepository.findById(
+            aUserList.serviceId,
+        )
         expect(foundUserList).toBeDefined()
 
         await userListRepository.delete(aUserList.serviceId)

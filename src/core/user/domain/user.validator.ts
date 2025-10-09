@@ -3,7 +3,7 @@ import { User } from "./user"
 import { z } from "zod"
 import { Role } from "./role"
 
-export const userSchema = z.object({
+const userSchema = z.object({
     userId: z.string().uuid("Invalid UUID for userId"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
     name: z

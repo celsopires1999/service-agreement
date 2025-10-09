@@ -1,7 +1,7 @@
 import { UserDataBuilder } from "@/core/user/domain/user-data-builder"
 import { UserDrizzleRepository } from "@/core/user/infra/db/drizzle/user-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { GetUserUseCase } from "../get-user.use-case"
 
 describe("GetUserUseCase Integration Tests", () => {

@@ -3,7 +3,7 @@ import { z } from "zod"
 import { Plan } from "./plan"
 import { isGreaterThanZero, isValidDecimalWithPrecision } from "@/lib/utils"
 
-export const planSchema = z.object({
+const planSchema = z.object({
     code: z
         .string()
         .min(1, "Code is required")

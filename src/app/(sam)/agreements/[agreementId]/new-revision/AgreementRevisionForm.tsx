@@ -6,7 +6,7 @@ import { FormControlButtons } from "@/app/components/FormControlButtons"
 import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { SelectWithLabel } from "@/app/components/inputs/SelectWithLabel"
 import { Form } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
 import {
     createAgreementRevisionSchema,
@@ -37,8 +37,6 @@ export function AgreementRevisionForm({
     plans,
     servicesAmount,
 }: Props) {
-    const { toast } = useToast()
-
     const defaultValues: createAgreementRevisionSchemaType = {
         agreementId: agreement?.agreementId ?? "",
         revisionDate: new Date().toISOString().slice(0, 10),

@@ -4,7 +4,7 @@ import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ServiceDataBuilder } from "@/core/service/domain/service-data-builder"
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
 import { UpdateAgreementUseCase } from "../update-agreement.use-case"
 
@@ -60,7 +60,7 @@ describe("UpdateAgreementUseCase Integration Tests", () => {
                 code: "NEW-CODE",
                 revision: 2,
                 isRevised: false,
-                revisionDate: new Date().toISOString(),
+                revisionDate: new Date().toISOString().slice(0, 10),
                 providerPlanId: newProviderPlan.planId,
                 localPlanId: newLocalPlan.planId,
                 name: "Updated Agreement Name",

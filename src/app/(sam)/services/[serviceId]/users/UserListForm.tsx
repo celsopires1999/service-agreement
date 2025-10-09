@@ -4,7 +4,7 @@ import { deleteUserListAction } from "@/actions/deleteUserListAction"
 import { AlertConfirmation } from "@/app/components/AlertConfirmation"
 import Deleting from "@/app/components/Deleting"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
 import { getUserListItemsByServiceIdType } from "@/lib/queries/userList"
 import { selectServiceSchemaType } from "@/zod-schemas/service"
@@ -22,7 +22,6 @@ type Props = {
 }
 
 export function UserListForm({ service, agreement, userListItems }: Props) {
-    const { toast } = useToast()
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
 
     const {

@@ -21,8 +21,6 @@ You are a Senior Software Engineer. Your task is to write a comprehensive unit t
     - This means you **do not** need to manually mock `lucide-react` in your individual test files.
 9.  **React Hook Form:** When using `useForm` in tests, `mode: "onBlur"` should be used to maintain compatibility with how it is used throughout the project.
 10. **Jest Configuration**: Jest configuration files must always be `*.ts` files because we are using TypeScript in the project.
-    **TEST SPECIFICATIONS:**
-
 11. **Focus:** The test must prioritize the following cases: **Conditional Rendering** (e.g., new vs. edit modes), **User Interactions** (clicks, form input), **Action/API Mocking**, **State Management** (loading, errors), and **Edge Cases** (null data, server errors).
 12. **`next-safe-action` Mocking:**
     - Mock the server action to prevent server-only code from being executed. In the project a server action is called by `useAction`.

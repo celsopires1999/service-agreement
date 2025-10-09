@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { getServiceSystemsSearchResultsType } from "@/lib/queries/serviceSystem"
 import { toDecimal } from "@/lib/utils"
 import {
@@ -43,8 +43,6 @@ export function SystemsToServiceTable({
     isEditable = true,
 }: Props) {
     const router = useRouter()
-    const { toast } = useToast()
-
     const searchParams = useSearchParams()
 
     const {

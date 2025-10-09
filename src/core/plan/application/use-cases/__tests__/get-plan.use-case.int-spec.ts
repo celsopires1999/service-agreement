@@ -1,7 +1,7 @@
 import { PlanDataBuilder } from "@/core/plan/domain/plan-data-builder"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { GetPlanUseCase } from "../get-plan.use-case"
 
 describe("GetPlanUseCase Integration Tests", () => {

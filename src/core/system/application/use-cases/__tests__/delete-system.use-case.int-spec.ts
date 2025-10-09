@@ -1,7 +1,7 @@
 import { SystemDataBuilder } from "@/core/system/domain/system-data-builder"
 import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { DeleteSystemUseCase } from "../delete-system.use-case"
 
 describe("DeleteSystemUseCase Integration Tests", () => {

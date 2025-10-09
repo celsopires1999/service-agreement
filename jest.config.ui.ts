@@ -22,12 +22,7 @@ const config: Config = {
     testEnvironment: "jsdom",
     testRegex: ["((\\.|/)(test|spec|int-spec))\\.(tsx|jsx)$"],
 
-    testPathIgnorePatterns: [
-        "/node_modules/",
-        "/.next/",
-        "/coverage/",
-        "\\.helper\\.ts$",
-    ],
+    testPathIgnorePatterns: ["/node_modules/", "/.next/", "/coverage/"],
     // Add more setup options before each test is run
     // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
     // globalSetup:

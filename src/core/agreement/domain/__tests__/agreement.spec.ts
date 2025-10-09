@@ -140,7 +140,9 @@ describe("Agreement Unit Tests", () => {
             const agreement = builder.build()
             const newRevisionDate = new Date(
                 Date.parse(agreement.revisionDate) + 180 * 24 * 60 * 60 * 1000,
-            ).toISOString()
+            )
+                .toISOString()
+                .slice(0, 10)
             const newProviderPlanId = builder.providerPlanId
             const newLocalPlanId = "c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a14"
 

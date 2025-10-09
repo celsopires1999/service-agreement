@@ -11,10 +11,10 @@ const config: Config = {
     ],
     coverageThreshold: {
         global: {
-            statements: 30,
-            branches: 30,
-            functions: 30,
-            lines: 30,
+            statements: 80,
+            branches: 65,
+            functions: 80,
+            lines: 80,
         },
     },
     projects: ["<rootDir>/jest.config.ui.ts", "<rootDir>/jest.config.core.ts"],

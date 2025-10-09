@@ -7,7 +7,7 @@ import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/app/components/inputs/TextAreaWithLabel"
 import { SystemNav } from "@/app/components/SystemNav"
 import { Form } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import {
     insertSystemSchema,
     type insertSystemSchemaType,
@@ -24,8 +24,6 @@ type Props = {
 }
 
 export function SystemForm({ system }: Props) {
-    const { toast } = useToast()
-
     const searchParams = useSearchParams()
     const hasSystemId = searchParams.has("systemId")
 

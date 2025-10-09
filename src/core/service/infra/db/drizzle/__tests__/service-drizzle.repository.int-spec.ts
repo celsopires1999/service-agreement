@@ -9,7 +9,7 @@ import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle
 import { ServiceDataBuilder } from "@/core/service/domain/service-data-builder"
 import { ServiceRepository } from "@/core/service/domain/service.repository"
 import { UnitOfWork } from "@/core/shared/domain/repositories/unit-of-work"
-import { setupTestDb } from "@/core/shared/infra/db/drizzle/setupTestDb.helper"
+import { setupTestDb } from "@/core/shared/infra/db/drizzle/__tests__/setupTestDb.helper"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
 import { System } from "@/core/system/domain/system"
 import { SystemDataBuilder } from "@/core/system/domain/system-data-builder"

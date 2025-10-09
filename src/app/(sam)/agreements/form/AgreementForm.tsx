@@ -10,7 +10,7 @@ import { InputURL } from "@/app/components/inputs/InputURL"
 import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { TextAreaWithLabel } from "@/app/components/inputs/TextAreaWithLabel"
 import { Form } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { getAgreementType } from "@/lib/queries/agreement"
 import {
     insertAgreementSchema,
@@ -36,8 +36,6 @@ type Props = {
 }
 
 export function AgreementForm({ agreement, plans, servicesAmount }: Props) {
-    const { toast } = useToast()
-
     const searchParams = useSearchParams()
     const hasAgreementId = searchParams.has("agreementId")
 

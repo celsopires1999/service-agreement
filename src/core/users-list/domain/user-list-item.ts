@@ -36,24 +36,4 @@ export class UserListItem {
             userListItemId: new Uuid().toString(),
         })
     }
-
-    changeName(name: string) {
-        this.name = name.trim()
-    }
-
-    changeEmail(email: string) {
-        this.email = email.trim().toLowerCase()
-    }
-
-    changeCorpUserId(corpUserId: string) {
-        this.corpUserId = corpUserId.trim()
-    }
-
-    changeArea(area: string) {
-        this.area = area.trim()
-    }
-
-    changeCostCenter(costCenter: string) {
-        this.costCenter = costCenter.trim()
-    }
 }

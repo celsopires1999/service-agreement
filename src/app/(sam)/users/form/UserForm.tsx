@@ -5,7 +5,7 @@ import { DisplayServerActionResponse } from "@/app/components/DisplayServerActio
 import { FormControlButtons } from "@/app/components/FormControlButtons"
 import { InputWithLabel } from "@/app/components/inputs/InputWithLabel"
 import { Form } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/hooks/use-toast"
 import {
     insertUserSchema,
     type insertUserSchemaType,
@@ -23,8 +23,6 @@ type Props = {
 }
 
 export function UserForm({ user }: Props) {
-    const { toast } = useToast()
-
     const searchParams = useSearchParams()
     const hasUserId = searchParams.has("userId")
 
