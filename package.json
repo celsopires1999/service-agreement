@@ -13,6 +13,8 @@
     "db:migrate": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/migrate.ts",
     "db:seed": "env $(cat .env.drizzle | grep -v '^#' | xargs) tsx ./src/db/seed.ts",
     "test": "jest --coverage",
+    "test:core": "jest --config jest.config.core.ts",
+    "test:ui": "jest --config jest.config.ui.ts",
     "test:watch": "jest --watch",
     "dev:test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) next dev --turbopack",
     "test:e2e": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright test",
