@@ -1,8 +1,13 @@
-"use client"
-import { deletePlanAction } from "@/actions/deletePlanAction"
-import { AlertConfirmation } from "@/app/components/AlertConfirmation"
-import Deleting from "@/app/components/Deleting"
-import { Button } from "@/components/ui/button"
+'use client'
+
+import { deletePlanAction } from '@/actions/deletePlanAction'
+import { AlertConfirmation } from '@/app/components/AlertConfirmation'
+import Deleting from '@/app/components/Deleting'
+import { Filter } from '@/components/react-table/Filter'
+import { NoFilter } from '@/components/react-table/NoFilter'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import {
     Table,
     TableBody,
@@ -10,28 +15,34 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-import { toast } from "@/hooks/use-toast"
-import { getPlansType } from "@/lib/queries/plan"
+} from '@/components/ui/table'
+import { toast } from '@/hooks/use-toast'
+import { useTableStateHelper } from '@/hooks/useTableStateHelper'
+import { getPlansType } from '@/lib/queries/plan'
+import { dateFormatter } from '@/lib/utils'
 import {
-    createColumnHelper,
+    Column,
+    ColumnDef,
     flexRender,
     getCoreRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    Table as TanstackTable,
     useReactTable,
-} from "@tanstack/react-table"
-import { TableOfContents } from "lucide-react"
-import { useAction } from "next-safe-action/hooks"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
-import { ActionsCell } from "./ActionsCell"
+} from '@tanstack/react-table'
+import { ArrowDown, ArrowUp, TableOfContents } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
+import { useRouter } from 'next/navigation'
+import { memo, useCallback, useMemo, useState } from 'react'
+import { ActionsCell } from './ActionsCell'
 
-type Props = {
-    data: getPlansType[]
-    handleUpdatePlan: (
+type Plan = getPlansType
+
+type PlanTableProps = {
+    readonly data: Plan[]
+    readonly handleUpdatePlan: (
         planId: string,
         code: string,
         description: string,
@@ -40,155 +51,255 @@ type Props = {
     ) => void
 }
 
-export function PlanTable({ data, handleUpdatePlan }: Props) {
+const euroFormatter = (value: string) => {
+    if (typeof value !== 'string' && typeof value !== 'number') return ''
+
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 4,
+    }).format(+value)
+}
+
+type TableToolbarProps = {
+    filterToggle: boolean
+    onFilterToggleChange: (checked: boolean) => void
+}
+
+const TableToolbar = memo(function TableToolbar({
+    filterToggle,
+    onFilterToggleChange,
+}: TableToolbarProps) {
+    return (
+        <div className='flex items-center justify-between'>
+            <h2 className='text-2xl font-bold'>Plans List</h2>
+            <div className='flex items-center space-x-2'>
+                <Switch
+                    id='filterToggle'
+                    checked={filterToggle}
+                    onCheckedChange={onFilterToggleChange}
+                />
+                <Label htmlFor='filterToggle' className='font-semibold'>
+                    Filter
+                </Label>
+            </div>
+        </div>
+    )
+})
+
+type TablePaginationProps = {
+    table: TanstackTable<Plan>
+    onPageChange: (direction: 'previous' | 'next') => void
+    onRefresh: () => void
+    onResetSorting: () => void
+    onResetFilters: () => void
+    filterToggle: boolean
+}
+
+const TablePagination = memo(function TablePagination({
+    table,
+    onPageChange,
+    onRefresh,
+    onResetSorting,
+    onResetFilters,
+    filterToggle,
+}: TablePaginationProps) {
+    const { pageIndex } = table.getState().pagination
+    const pageCount = table.getPageCount()
+    const filteredRowsCount = table.getFilteredRowModel().rows.length
+
+    return (
+        <div className='flex flex-wrap items-center justify-between gap-1'>
+            <div>
+                <p className='whitespace-nowrap font-bold'>
+                    {`Page ${pageIndex + 1} of ${Math.max(1, pageCount)}`}
+                    &nbsp;&nbsp;
+                    {`[${filteredRowsCount} ${
+                        filteredRowsCount === 1 ? 'result' : 'total results'
+                    }]`}
+                </p>
+            </div>
+            <div className='flex flex-row gap-1'>
+                <div className='flex flex-row gap-1'>
+                    <Button variant='outline' onClick={onRefresh}>
+                        Refresh Data
+                    </Button>
+                    <Button variant='outline' onClick={onResetSorting}>
+                        Reset Sorting
+                    </Button>
+                    {filterToggle && (
+                        <Button variant='outline' onClick={onResetFilters}>
+                            Reset Filters
+                        </Button>
+                    )}
+                </div>
+                <div className='flex flex-row gap-1'>
+                    <Button
+                        variant='outline'
+                        onClick={() => onPageChange('previous')}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant='outline'
+                        onClick={() => onPageChange('next')}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+})
+
+const SortableHeader = ({
+    children,
+    column,
+}: {
+    children: React.ReactNode
+    column: Column<Plan, unknown>
+}) => (
+    <Button
+        variant='ghost'
+        className='flex w-full justify-between pl-1'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    >
+        {children}
+        {column.getIsSorted() === 'asc' && <ArrowUp className='ml-2 h-4 w-4' />}
+        {column.getIsSorted() === 'desc' && (
+            <ArrowDown className='ml-2 h-4 w-4' />
+        )}
+    </Button>
+)
+
+export function PlanTable({ data, handleUpdatePlan }: PlanTableProps) {
     const router = useRouter()
-    const searchParams = useSearchParams()
-
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
-    const [planToDelete, setPlanToDelete] = useState<getPlansType | null>(null)
+    const [planToDelete, setPlanToDelete] = useState<Plan | null>(null)
 
-    const handleDeletePlan = (agreement: getPlansType) => {
-        setPlanToDelete(agreement)
-        setShowDeleteConfirmation(true)
-    }
-
-    const confirmDeletePlan = async () => {
-        if (planToDelete) {
-            resetDeleteAction()
-            try {
-                await executeDelete({
-                    planId: planToDelete.planId,
-                })
-            } catch (error) {
-                if (error instanceof Error) {
-                    toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description: `Action error: ${error.message}`,
-                    })
-                }
-            }
-        }
-        setShowDeleteConfirmation(false)
-        setPlanToDelete(null)
-    }
+    const [
+        filterToggle,
+        pageIndex,
+        sorting,
+        setSorting,
+        columnFilters,
+        setColumnFilters,
+        handleFilterToggle,
+        handlePage,
+    ] = useTableStateHelper()
 
     const {
         executeAsync: executeDelete,
         isPending: isDeleting,
         reset: resetDeleteAction,
     } = useAction(deletePlanAction, {
-        onSuccess({ data }) {
+        onSuccess: useCallback(({ data }: { data?: { message?: string } }) => {
             if (data?.message) {
                 toast({
-                    variant: "default",
-                    title: "Success! 🎉",
+                    variant: 'default',
+                    title: 'Success! 🎉',
                     description: data.message,
                 })
             }
-        },
-        onError({ error }) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.serverError,
-            })
-        },
+        }, []),
+        onError: useCallback(
+            ({ error }: { error: { serverError?: string } }) => {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: error.serverError,
+                })
+            },
+            [],
+        ),
     })
 
-    const pageIndex = useMemo(() => {
-        const page = searchParams.get("page")
-        return page ? +page - 1 : 0
-    }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
+    const handleDeleteRequest = useCallback((plan: Plan) => {
+        setPlanToDelete(plan)
+        setShowDeleteConfirmation(true)
+    }, [])
 
-    const columnHeadersArray: Array<keyof getPlansType> = [
-        "code",
-        "description",
-        "euro",
-        "planDate",
-    ]
+    const handleConfirmDelete = useCallback(async () => {
+        if (planToDelete) {
+            resetDeleteAction()
+            await executeDelete({ planId: planToDelete.planId })
+        }
+        setShowDeleteConfirmation(false)
+        setPlanToDelete(null)
+    }, [planToDelete, executeDelete, resetDeleteAction])
 
-    const columnLabels: Partial<{ [K in keyof getPlansType]: string }> = {
-        code: "Code",
-        description: "Description",
-        euro: "EUR / USD",
-        planDate: "Plan Date",
-    }
+    const handleFilterToggleChange = useCallback(
+        (checked: boolean) => {
+            if (!checked) {
+                setColumnFilters([])
+            }
+            handleFilterToggle(checked)
+        },
+        [handleFilterToggle, setColumnFilters],
+    )
 
-    const columnWidths: Partial<{
-        [K in keyof typeof columnLabels]: number
-    }> = {
-        code: 150,
-        euro: 150,
-    }
-
-    const columnHelper = createColumnHelper<getPlansType>()
-
-    const columns = [
-        columnHelper.display({
-            id: "actions",
-            header: () => <TableOfContents />,
-            cell: (ctx) => (
-                <ActionsCell
-                    {...ctx}
-                    handleUpdatePlan={handleUpdatePlan}
-                    handleDeletePlan={handleDeletePlan}
-                />
-            ),
-        }),
-        ...columnHeadersArray.map((columnName) => {
-            return columnHelper.accessor(
-                (row) => {
-                    // transformational
-                    const value = row[columnName]
-                    if (columnName === "euro") {
-                        return new Intl.NumberFormat("pt-BR", {
-                            style: "decimal",
-                            minimumFractionDigits: 4,
-                            maximumFractionDigits: 4,
-                        }).format(+value)
-                    }
-                    return value
-                },
-                {
-                    id: columnName,
-                    size:
-                        columnWidths[columnName as keyof typeof columnWidths] ??
-                        undefined,
-                    header: () =>
-                        columnLabels[columnName as keyof typeof columnLabels],
-                    cell: (info) => {
-                        return (
-                            <div
-                                className="cursor-pointer text-left"
-                                onClick={() =>
-                                    handleUpdatePlan(
-                                        info.row.original.planId,
-                                        info.row.original.code,
-                                        info.row.original.description,
-                                        info.row.original.euro,
-                                        info.row.original.planDate,
-                                    )
-                                }
-                            >
-                                {info.renderValue()}
-                            </div>
-                        )
-                    },
-                },
-            )
-        }),
-    ]
+    const columns = useMemo<ColumnDef<Plan>[]>(
+        () => [
+            {
+                id: 'actions',
+                header: () => <TableOfContents />,
+                cell: (ctx) => (
+                    <ActionsCell
+                        {...ctx}
+                        handleUpdatePlan={handleUpdatePlan}
+                        handleDeletePlan={handleDeleteRequest}
+                    />
+                ),
+                size: 48,
+            },
+            {
+                accessorKey: 'code',
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Code</SortableHeader>
+                ),
+                cell: ({ row }) => <div>{row.original.code}</div>,
+                enableColumnFilter: true,
+                size: 255,
+            },
+            {
+                accessorKey: 'description',
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Description</SortableHeader>
+                ),
+                enableColumnFilter: true,
+                size: 500,
+            },
+            {
+                accessorKey: 'euro',
+                header: ({ column }) => (
+                    <SortableHeader column={column}>EUR / USD</SortableHeader>
+                ),
+                cell: ({ getValue }) => euroFormatter(getValue<string>()),
+                enableColumnFilter: true,
+            },
+            {
+                accessorKey: 'planDate',
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Plan Date</SortableHeader>
+                ),
+                cell: ({ getValue }) => dateFormatter(getValue<string>()),
+            },
+        ],
+        [handleDeleteRequest, handleUpdatePlan],
+    )
 
     const table = useReactTable({
         data,
         columns,
         state: {
-            pagination: {
-                pageIndex,
-                pageSize: 20,
-            },
+            sorting,
+            columnFilters,
+            pagination: { pageIndex, pageSize: 10 },
         },
+        onColumnFiltersChange: setColumnFilters,
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -196,41 +307,71 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
         getSortedRowModel: getSortedRowModel(),
     })
 
-    const handlePageChange = (direction: "previous" | "next") => {
-        const index = direction === "previous" ? -1 : +1
-        const newIndex = table.getState().pagination.pageIndex + index
-        table.setPageIndex(newIndex)
-        const params = new URLSearchParams(searchParams.toString())
-        params.set("page", (newIndex + 1).toString())
-        router.replace(`?${params.toString()}`, {
-            scroll: false,
-        })
-    }
+    const handlePageChange = useCallback(
+        (direction: 'previous' | 'next') => {
+            table.setPageIndex(
+                handlePage(table.getState().pagination, direction),
+            )
+        },
+        [handlePage, table],
+    )
+
+    const handleResetFilters = useCallback(() => {
+        table.resetColumnFilters()
+    }, [table])
 
     return (
-        <div className="flex min-h-[350px] w-full flex-col gap-2 rounded-xl border bg-card p-4 shadow">
-            <h2 className="text-2xl font-bold">List</h2>
-            <div className="mt-4 overflow-hidden rounded-lg border border-border">
-                <Table className="border">
+        <div className='mt-6 flex flex-col gap-4'>
+            <TableToolbar
+                filterToggle={filterToggle}
+                onFilterToggleChange={handleFilterToggleChange}
+            />
+
+            <div className='overflow-hidden rounded-lg border border-border'>
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
+                                        className='bg-secondary p-2 font-semibold'
+                                        style={{ width: header.getSize() }}
                                     >
                                         <div
-                                            className={`${header.id === "actions" ? "flex items-center justify-center" : ""}`}
+                                            className={
+                                                header.id === 'actions'
+                                                    ? 'flex items-center justify-center'
+                                                    : ''
+                                            }
                                         >
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext(),
-                                                  )}
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext(),
+                                            )}
                                         </div>
+                                        {filterToggle &&
+                                            header.column.getCanFilter() && (
+                                                <div className='grid w-max place-content-center'>
+                                                    <Filter
+                                                        column={header.column}
+                                                        filteredRows={table
+                                                            .getFilteredRowModel()
+                                                            .rows.map((row) =>
+                                                                row.getValue(
+                                                                    header
+                                                                        .column
+                                                                        .id,
+                                                                ),
+                                                            )}
+                                                    />
+                                                </div>
+                                            )}
+                                        {filterToggle &&
+                                            !header.column.getCanFilter() &&
+                                            header.id !== 'actions' && (
+                                                <NoFilter />
+                                            )}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -240,10 +381,10 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="hover:bg-border/25 dark:hover:bg-ring/40"
+                                className='hover:bg-border/25 dark:hover:bg-ring/40'
                             >
                                 {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id} className="border">
+                                    <TableCell key={cell.id} className='border'>
                                         {flexRender(
                                             cell.column.columnDef.cell,
                                             cell.getContext(),
@@ -255,38 +396,21 @@ export function PlanTable({ data, handleUpdatePlan }: Props) {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-1">
-                <div>
-                    <p className="whitespace-nowrap font-bold">
-                        {`Page ${table.getState().pagination.pageIndex + 1} of ${Math.max(1, table.getPageCount())}`}
-                        &nbsp;&nbsp;
-                        {`[${table.getFilteredRowModel().rows.length} ${table.getFilteredRowModel().rows.length !== 1 ? "total results" : "result"}]`}
-                    </p>
-                </div>
-                <div className="flex flex-row gap-1">
-                    <div className="flex flex-row gap-1">
-                        <Button
-                            variant="outline"
-                            onClick={() => handlePageChange("previous")}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => handlePageChange("next")}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            Next
-                        </Button>
-                    </div>
-                </div>
-            </div>
+
+            <TablePagination
+                table={table}
+                onPageChange={handlePageChange}
+                onRefresh={() => router.refresh()}
+                onResetSorting={() => table.resetSorting()}
+                onResetFilters={handleResetFilters}
+                filterToggle={filterToggle}
+            />
+
             <AlertConfirmation
                 open={showDeleteConfirmation}
                 setOpen={setShowDeleteConfirmation}
-                confirmationAction={confirmDeletePlan}
-                title="Are you sure you want to delete this Plan?"
+                confirmationAction={handleConfirmDelete}
+                title='Are you sure you want to delete this Plan?'
                 message={`This action cannot be undone. This will permanently delete the plan ${planToDelete?.code}.`}
             />
             {isDeleting && <Deleting />}

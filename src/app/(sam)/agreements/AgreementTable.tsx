@@ -1,4 +1,5 @@
 "use client"
+
 import { deleteAgreementAction } from "@/actions/deleteAgreementAction"
 import { AlertConfirmation } from "@/app/components/AlertConfirmation"
 import Deleting from "@/app/components/Deleting"
@@ -22,34 +23,146 @@ import { useTableStateHelper } from "@/hooks/useTableStateHelper"
 import { getAgreementSearchResultsType } from "@/lib/queries/agreement"
 import { dateFormatter } from "@/lib/utils"
 import {
-    createColumnHelper,
+    Column,
+    ColumnDef,
     flexRender,
     getCoreRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    Table as TanstackTable,
     useReactTable,
 } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { JSX, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { memo, useCallback, useMemo, useState } from "react"
 import { ActionsCell } from "./ActionsCell"
 
-type Props = {
-    data: getAgreementSearchResultsType[]
+type Agreement = getAgreementSearchResultsType
+
+type AgreementTableProps = {
+    readonly data: Agreement[]
 }
 
-export function AgreementTable({ data }: Props) {
+type TableToolbarProps = {
+    filterToggle: boolean
+    onFilterToggleChange: (checked: boolean) => void
+}
+
+const TableToolbar = memo(function TableToolbar({
+    filterToggle,
+    onFilterToggleChange,
+}: TableToolbarProps) {
+    return (
+        <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Agreements List</h2>
+            <div className="flex items-center space-x-2">
+                <Switch
+                    id="filterToggle"
+                    checked={filterToggle}
+                    onCheckedChange={onFilterToggleChange}
+                />
+                <Label htmlFor="filterToggle" className="font-semibold">
+                    Filter
+                </Label>
+            </div>
+        </div>
+    )
+})
+
+type TablePaginationProps = {
+    table: TanstackTable<Agreement>
+    onPageChange: (direction: "previous" | "next") => void
+    onRefresh: () => void
+    onResetSorting: () => void
+    onResetFilters: () => void
+    filterToggle: boolean
+}
+
+const TablePagination = memo(function TablePagination({
+    table,
+    onPageChange,
+    onRefresh,
+    onResetSorting,
+    onResetFilters,
+    filterToggle,
+}: TablePaginationProps) {
+    const { pageIndex } = table.getState().pagination
+    const pageCount = table.getPageCount()
+    const filteredRowsCount = table.getFilteredRowModel().rows.length
+
+    return (
+        <div className="flex flex-wrap items-center justify-between gap-1">
+            <div>
+                <p className="whitespace-nowrap font-bold">
+                    {`Page ${pageIndex + 1} of ${Math.max(1, pageCount)}`}
+                    &nbsp;&nbsp;
+                    {`[${filteredRowsCount} ${filteredRowsCount === 1 ? "result" : "total results"}]`}
+                </p>
+            </div>
+            <div className="flex flex-row gap-1">
+                <div className="flex flex-row gap-1">
+                    <Button variant="outline" onClick={onRefresh}>
+                        Refresh Data
+                    </Button>
+                    <Button variant="outline" onClick={onResetSorting}>
+                        Reset Sorting
+                    </Button>
+                    {filterToggle && (
+                        <Button variant="outline" onClick={onResetFilters}>
+                            Reset Filters
+                        </Button>
+                    )}
+                </div>
+                <div className="flex flex-row gap-1">
+                    <Button
+                        variant="outline"
+                        onClick={() => onPageChange("previous")}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => onPageChange("next")}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+})
+
+const SortableHeader = ({
+    children,
+    column,
+}: {
+    children: React.ReactNode
+    column: Column<Agreement, unknown>
+}) => (
+    <Button
+        variant="ghost"
+        className="flex w-full justify-between pl-1"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+        {children}
+        {column.getIsSorted() === "asc" && <ArrowUp className="ml-2 h-4 w-4" />}
+        {column.getIsSorted() === "desc" && (
+            <ArrowDown className="ml-2 h-4 w-4" />
+        )}
+    </Button>
+)
+
+export function AgreementTable({ data }: AgreementTableProps) {
     const router = useRouter()
-
-    const searchParams = useSearchParams()
-
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
     const [agreementToDelete, setAgreementToDelete] =
-        useState<getAgreementSearchResultsType | null>(null)
+        useState<Agreement | null>(null)
 
     const [
         filterToggle,
@@ -60,32 +173,14 @@ export function AgreementTable({ data }: Props) {
         setColumnFilters,
         handleFilterToggle,
         handlePage,
-        handlePagination,
-        handleSorting,
-        handleColumnFilters,
     ] = useTableStateHelper()
-
-    const handleDeleteAgreement = (
-        agreement: getAgreementSearchResultsType,
-    ) => {
-        setAgreementToDelete(agreement)
-        setShowDeleteConfirmation(true)
-    }
-
-    const handleFilterToggleChange = (checked: boolean) => {
-        if (!checked) {
-            table.resetColumnFilters()
-        }
-
-        handleFilterToggle(checked)
-    }
 
     const {
         executeAsync: executeDelete,
         isPending: isDeleting,
         reset: resetDeleteAction,
     } = useAction(deleteAgreementAction, {
-        onSuccess({ data }) {
+        onSuccess: useCallback(({ data }: { data?: { message?: string } }) => {
             if (data?.message) {
                 toast({
                     variant: "default",
@@ -93,170 +188,134 @@ export function AgreementTable({ data }: Props) {
                     description: data.message,
                 })
             }
-        },
-        onError({ error }) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.serverError,
-            })
-        },
+        }, []),
+        onError: useCallback(
+            ({ error }: { error: { serverError?: string } }) => {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: error.serverError,
+                })
+            },
+            [],
+        ),
     })
 
-    const confirmDeleteAgreement = async () => {
+    const handleDeleteRequest = useCallback((agreement: Agreement) => {
+        setAgreementToDelete(agreement)
+        setShowDeleteConfirmation(true)
+    }, [])
+
+    const handleConfirmDelete = useCallback(async () => {
         if (agreementToDelete) {
             resetDeleteAction()
-            try {
-                await executeDelete({
-                    agreementId: agreementToDelete.agreementId,
-                })
-            } catch (error) {
-                if (error instanceof Error) {
-                    toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description: `Action error: ${error.message}`,
-                    })
-                }
-            }
+            await executeDelete({ agreementId: agreementToDelete.agreementId })
         }
         setShowDeleteConfirmation(false)
         setAgreementToDelete(null)
-    }
+    }, [agreementToDelete, executeDelete, resetDeleteAction])
 
-    const columnHeadersArray: Array<keyof getAgreementSearchResultsType> = [
-        "code",
-        "name",
-        "contactEmail",
-        "localPlan",
-        "year",
-        "revision",
-        "isRevised",
-        "revisionDate",
-    ]
-
-    const columnDefs: Partial<{
-        [K in keyof getAgreementSearchResultsType]: {
-            label: string
-            width?: number
-            filterable?: boolean
-            transform?: (value: unknown) => string
-            presenter?: ({ value }: { value: unknown }) => JSX.Element
-        }
-    }> = {
-        code: { label: "Code", width: 255, filterable: true },
-        name: { label: "Agreement", width: 500, filterable: true },
-        contactEmail: { label: "Contact Email", width: 1, filterable: true },
-        localPlan: { label: "Local Plan", width: 1, filterable: true },
-        year: { label: "Year", width: 1 },
-        revision: { label: "Revision", width: 1 },
-        isRevised: {
-            label: "Revised",
-            width: 1,
-            presenter: IsRevisedPresenter,
+    const handleFilterToggleChange = useCallback(
+        (checked: boolean) => {
+            if (!checked) {
+                setColumnFilters([])
+            }
+            handleFilterToggle(checked)
         },
-        revisionDate: {
-            label: "Revision Date",
-            width: 1,
-            transform: dateFormatter,
-        },
-    }
+        [handleFilterToggle, setColumnFilters],
+    )
 
-    const columnHelper = createColumnHelper<getAgreementSearchResultsType>()
-
-    const columns = [
-        columnHelper.display({
-            id: "actions",
-            header: () => (
-                <IconButtonWithTooltip
-                    text="New Agreement"
-                    href="/agreements/form"
-                />
-            ),
-            cell: (ctx) => (
-                <ActionsCell
-                    {...ctx}
-                    handleDeleteAgreement={handleDeleteAgreement}
-                />
-            ),
-        }),
-        ...columnHeadersArray.map((columnName) => {
-            return columnHelper.accessor(
-                (row) => {
-                    // transformational
-                    const value = row[columnName]
-                    const transformFn =
-                        columnDefs[columnName as keyof typeof columnDefs]
-                            ?.transform
-                    if (transformFn) {
-                        return transformFn(value)
-                    }
-                    return value
-                },
-                {
-                    id: columnName,
-                    size:
-                        columnDefs[columnName as keyof typeof columnDefs]
-                            ?.width ?? undefined,
-                    enableColumnFilter:
-                        columnDefs[columnName as keyof typeof columnDefs]
-                            ?.filterable ?? false,
-                    header: (headerCtx) => {
-                        const column = headerCtx.column
-                        return (
-                            <Button
-                                variant="ghost"
-                                className="flex w-full justify-between pl-1"
-                                onClick={() =>
-                                    column.toggleSorting(
-                                        column.getIsSorted() === "asc",
-                                    )
-                                }
-                            >
-                                {
-                                    columnDefs[
-                                        columnName as keyof typeof columnDefs
-                                    ]?.label
-                                }
-                                {column.getIsSorted() === "asc" && (
-                                    <ArrowUp className="ml-2 h-4 w-4" />
-                                )}
-
-                                {column.getIsSorted() === "desc" && (
-                                    <ArrowDown className="ml-2 h-4 w-4" />
-                                )}
-                            </Button>
-                        )
-                    },
-                    cell: (info) => {
-                        const presenterFn =
-                            columnDefs[columnName as keyof typeof columnDefs]
-                                ?.presenter
-                        // Para a coluna 'code', o link deve ser para o form, para as demais, manter o valor
-                        if (columnName === "code") {
-                            return (
-                                <Link
-                                    href={`/agreements/form?agreementId=${info.row.original.agreementId}`}
-                                    prefetch={false}
-                                >
-                                    {presenterFn ? (
-                                        presenterFn({ value: info.getValue() })
-                                    ) : (
-                                        <div>{info.getValue()?.toString()}</div>
-                                    )}
-                                </Link>
-                            )
-                        }
-                        return presenterFn ? (
-                            presenterFn({ value: info.getValue() })
-                        ) : (
-                            <div>{info.getValue()?.toString()}</div>
-                        )
-                    },
-                },
-            )
-        }),
-    ]
+    const columns = useMemo<ColumnDef<Agreement>[]>(
+        () => [
+            {
+                id: "actions",
+                header: () => (
+                    <IconButtonWithTooltip
+                        text="New Agreement"
+                        href="/agreements/form"
+                    />
+                ),
+                cell: (ctx) => (
+                    <ActionsCell
+                        {...ctx}
+                        handleDeleteAgreement={handleDeleteRequest}
+                    />
+                ),
+                size: 48,
+            },
+            {
+                accessorKey: "code",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Code</SortableHeader>
+                ),
+                cell: ({ row, getValue }) => (
+                    <Link
+                        href={`/agreements/form?agreementId=${row.original.agreementId}`}
+                        prefetch={false}
+                    >
+                        {getValue<string>()}
+                    </Link>
+                ),
+                enableColumnFilter: true,
+                size: 255,
+            },
+            {
+                accessorKey: "name",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Agreement</SortableHeader>
+                ),
+                enableColumnFilter: true,
+                size: 500,
+            },
+            {
+                accessorKey: "contactEmail",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>
+                        Contact Email
+                    </SortableHeader>
+                ),
+                enableColumnFilter: true,
+            },
+            {
+                accessorKey: "localPlan",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Local Plan</SortableHeader>
+                ),
+                enableColumnFilter: true,
+            },
+            {
+                accessorKey: "year",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Year</SortableHeader>
+                ),
+            },
+            {
+                accessorKey: "revision",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Revision</SortableHeader>
+                ),
+            },
+            {
+                accessorKey: "isRevised",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>Revised</SortableHeader>
+                ),
+                cell: ({ getValue }) => (
+                    <IsRevisedPresenter value={getValue<boolean>()} />
+                ),
+            },
+            {
+                accessorKey: "revisionDate",
+                header: ({ column }) => (
+                    <SortableHeader column={column}>
+                        Revision Date
+                    </SortableHeader>
+                ),
+                cell: ({ getValue }) => dateFormatter(getValue<string>()),
+            },
+        ],
+        [handleDeleteRequest],
+    )
 
     const table = useReactTable({
         data,
@@ -264,10 +323,7 @@ export function AgreementTable({ data }: Props) {
         state: {
             sorting,
             columnFilters,
-            pagination: {
-                pageIndex,
-                pageSize: 10,
-            },
+            pagination: { pageIndex, pageSize: 10 },
         },
         onColumnFiltersChange: setColumnFilters,
         onSortingChange: setSorting,
@@ -278,68 +334,51 @@ export function AgreementTable({ data }: Props) {
         getSortedRowModel: getSortedRowModel(),
     })
 
-    const handlePageChange = (direction: "previous" | "next") => {
-        table.setPageIndex(handlePage(table.getState().pagination, direction))
-    }
+    const handlePageChange = useCallback(
+        (direction: "previous" | "next") => {
+            table.setPageIndex(
+                handlePage(table.getState().pagination, direction),
+            )
+        },
+        [handlePage, table],
+    )
 
-    useEffect(() => {
-        handlePagination(table.getState().pagination, table.getPageCount())
-    }, [table.getState().pagination]) // eslint-disable-line react-hooks/exhaustive-deps
-
-    useEffect(() => {
-        handleSorting(table.getState().sorting)
-    }, [table.getState().sorting]) // eslint-disable-line react-hooks/exhaustive-deps
-
-    useEffect(() => {
-        handleColumnFilters(table.getState().columnFilters)
-    }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
+    const handleResetFilters = useCallback(() => {
+        table.resetColumnFilters()
+    }, [table])
 
     return (
         <div className="mt-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Agreements List</h2>
-                <div className="flex items-center space-x-2">
-                    <Switch
-                        id="filterToggle"
-                        checked={filterToggle}
-                        onCheckedChange={handleFilterToggleChange}
-                    />
-                    <Label htmlFor="filterToggle" className="font-semibold">
-                        Filter
-                    </Label>
-                </div>
-            </div>
+            <TableToolbar
+                filterToggle={filterToggle}
+                onFilterToggleChange={handleFilterToggleChange}
+            />
+
             <div className="overflow-hidden rounded-lg border border-border">
-                <Table className="border">
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
-                                        style={
-                                            header.id !== "actions"
-                                                ? {
-                                                      width: header.getSize(),
-                                                  }
-                                                : undefined
-                                        }
+                                        className="bg-secondary p-2 font-semibold"
+                                        style={{ width: header.getSize() }}
                                     >
                                         <div
-                                            className={`${header.id === "actions" ? "flex items-center justify-center" : ""}`}
+                                            className={
+                                                header.id === "actions"
+                                                    ? "flex items-center justify-center"
+                                                    : ""
+                                            }
                                         >
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext(),
-                                                  )}
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext(),
+                                            )}
                                         </div>
-
-                                        {filterToggle ? (
-                                            header.column.getCanFilter() ? (
+                                        {filterToggle &&
+                                            header.column.getCanFilter() && (
                                                 <div className="grid w-max place-content-center">
                                                     <Filter
                                                         column={header.column}
@@ -354,11 +393,12 @@ export function AgreementTable({ data }: Props) {
                                                             )}
                                                     />
                                                 </div>
-                                            ) : header.id ===
-                                              "actions" ? null : (
+                                            )}
+                                        {filterToggle &&
+                                            !header.column.getCanFilter() &&
+                                            header.id !== "actions" && (
                                                 <NoFilter />
-                                            )
-                                        ) : null}
+                                            )}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -383,68 +423,20 @@ export function AgreementTable({ data }: Props) {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-1">
-                <div>
-                    <p className="whitespace-nowrap font-bold">
-                        {`Page ${table.getState().pagination.pageIndex + 1} of ${Math.max(1, table.getPageCount())}`}
-                        &nbsp;&nbsp;
-                        {`[${table.getFilteredRowModel().rows.length} ${table.getFilteredRowModel().rows.length !== 1 ? "total results" : "result"}]`}
-                    </p>
-                </div>
-                <div className="flex flex-row gap-1">
-                    <div className="flex flex-row gap-1">
-                        <Button
-                            variant="outline"
-                            onClick={() => router.refresh()}
-                        >
-                            Refresh Data
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => table.resetSorting()}
-                        >
-                            Reset Sorting
-                        </Button>
-                        {filterToggle && (
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    table.resetColumnFilters()
-                                    const params = new URLSearchParams(
-                                        searchParams.toString(),
-                                    )
-                                    params.delete("filter")
-                                    router.replace(`?${params.toString()}`, {
-                                        scroll: false,
-                                    })
-                                }}
-                            >
-                                Reset Filters
-                            </Button>
-                        )}
-                    </div>
-                    <div className="flex flex-row gap-1">
-                        <Button
-                            variant="outline"
-                            onClick={() => handlePageChange("previous")}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => handlePageChange("next")}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            Next
-                        </Button>
-                    </div>
-                </div>
-            </div>
+
+            <TablePagination
+                table={table}
+                onPageChange={handlePageChange}
+                onRefresh={() => router.refresh()}
+                onResetSorting={() => table.resetSorting()}
+                onResetFilters={handleResetFilters}
+                filterToggle={filterToggle}
+            />
+
             <AlertConfirmation
                 open={showDeleteConfirmation}
                 setOpen={setShowDeleteConfirmation}
-                confirmationAction={confirmDeleteAgreement}
+                confirmationAction={handleConfirmDelete}
                 title="Are you sure you want to delete this Agreement?"
                 message={`This action cannot be undone. This will permanently delete the agreement ${agreementToDelete?.code} of year ${agreementToDelete?.year} revsion ${agreementToDelete?.revision}.`}
             />
