@@ -47,7 +47,9 @@ const runUsersListTests = (role: Role) => {
             await button.click()
 
             await expect(
-                page.getByText("Users ListUserEmailRoleOpen"),
+                page.getByText(
+                    "Users ListFilterUserEmailRoleOpen MenuAdmin Useradmin@admin.comadminOpen",
+                ),
             ).toMatchAriaSnapshot({ name: "main.aria.yml" })
         })
     })

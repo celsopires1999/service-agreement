@@ -100,7 +100,6 @@ describe("UserListTable", () => {
         ).toBeInTheDocument()
 
         const nameHeader = screen.getByRole("button", { name: /name/i })
-        await user.click(nameHeader) // Sort ascending (already is)
         await user.click(nameHeader) // Sort descending
 
         await waitFor(() => {

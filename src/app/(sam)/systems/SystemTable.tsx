@@ -2,7 +2,11 @@
 import { deleteSystemAction } from "@/actions/deleteSystemAction"
 import { AlertConfirmation } from "@/app/components/AlertConfirmation"
 import Deleting from "@/app/components/Deleting"
+import { Filter } from "@/components/react-table/Filter"
+import { NoFilter } from "@/components/react-table/NoFilter"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import {
     Table,
     TableBody,
@@ -14,7 +18,7 @@ import {
 import { toast } from "@/hooks/use-toast"
 import type { getSystemType } from "@/lib/queries/system"
 import {
-    createColumnHelper,
+    CellContext,
     flexRender,
     getCoreRowModel,
     getFacetedUniqueValues,
@@ -23,38 +27,33 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { TableOfContents } from "lucide-react"
+import { ArrowDown, ArrowUp } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
+
+import { IconButtonWithTooltip } from "@/app/components/IconButtonWithTooltip"
+import { useTableStateHelper } from "@/hooks/useTableStateHelper"
+import { useCallback, useMemo, useState } from "react"
 import { ActionsCell } from "./ActionsCell"
 
-type Props = {
-    data: getSystemType[]
+type System = getSystemType
+
+type SystemTableProps = {
+    readonly data: System[]
 }
 
-export function SystemTable({ data }: Props) {
+export function SystemTable({ data }: SystemTableProps) {
     const router = useRouter()
-
-    const searchParams = useSearchParams()
-
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
-    const [systemToDelete, setSystemToDelete] = useState<getSystemType | null>(
-        null,
-    )
-
-    const handleDeleteSystem = (system: getSystemType) => {
-        setSystemToDelete(system)
-        setShowDeleteConfirmation(true)
-    }
+    const [systemToDelete, setSystemToDelete] = useState<System | null>(null)
 
     const {
         executeAsync: executeDelete,
         isPending: isDeleting,
         reset: resetDeleteAction,
     } = useAction(deleteSystemAction, {
-        onSuccess({ data }) {
+        onSuccess: useCallback(({ data }: { data?: { message?: string } }) => {
             if (data?.message) {
                 toast({
                     variant: "default",
@@ -62,109 +61,164 @@ export function SystemTable({ data }: Props) {
                     description: data.message,
                 })
             }
-        },
-        onError({ error }) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.serverError,
-            })
-        },
+        }, []),
+        onError: useCallback(
+            ({ error }: { error: { serverError?: string } }) => {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: error.serverError,
+                })
+            },
+            [],
+        ),
     })
 
-    const confirmDeleteSystem = async () => {
+    const handleDeleteRequest = useCallback((system: System) => {
+        setSystemToDelete(system)
+        setShowDeleteConfirmation(true)
+    }, [])
+
+    const handleConfirmDelete = useCallback(async () => {
         if (systemToDelete) {
             resetDeleteAction()
-            try {
-                await executeDelete({
-                    systemId: systemToDelete.systemId,
-                })
-            } catch (error) {
-                if (error instanceof Error) {
-                    toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description: `Action error: ${error.message}`,
-                    })
-                }
-            }
+            await executeDelete({ systemId: systemToDelete.systemId })
         }
         setShowDeleteConfirmation(false)
         setSystemToDelete(null)
-    }
+    }, [systemToDelete, executeDelete, resetDeleteAction])
 
-    const pageIndex = useMemo(() => {
-        const page = searchParams.get("page")
-        return page ? +page - 1 : 0
-    }, [searchParams.get("page")]) // eslint-disable-line react-hooks/exhaustive-deps
+    const [
+        filterToggle,
+        pageIndex,
+        sorting,
+        setSorting,
+        columnFilters,
+        setColumnFilters,
+        handleFilterToggle,
+        handlePage,
+    ] = useTableStateHelper()
 
-    const columnHeadersArray: Array<keyof getSystemType> = [
-        "name",
-        "applicationId",
-        "description",
-    ]
+    const handleFilterToggleChange = useCallback(
+        (checked: boolean) => {
+            if (!checked) {
+                setColumnFilters([])
+            }
+            handleFilterToggle(checked)
+        },
+        [handleFilterToggle, setColumnFilters],
+    )
 
-    const columnLabels: Partial<{ [K in keyof getSystemType]: string }> = {
-        name: "System",
-        applicationId: "Application ID",
-        description: "Description",
-    }
+    const SortableHeader = ({
+        children,
+        column,
+    }: {
+        children: React.ReactNode
+        column: import("@tanstack/react-table").Column<System, unknown>
+    }) => (
+        <Button
+            variant="ghost"
+            className="flex w-full justify-between pl-1"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+            {children}
+            {column.getIsSorted() === "asc" && (
+                <ArrowUp className="ml-2 h-4 w-4" />
+            )}
+            {column.getIsSorted() === "desc" && (
+                <ArrowDown className="ml-2 h-4 w-4" />
+            )}
+        </Button>
+    )
 
-    const columnWidths: Partial<{
-        [K in keyof typeof columnLabels]: number
-    }> = {
-        applicationId: 150,
-    }
-
-    const columnHelper = createColumnHelper<getSystemType>()
-
-    const columns = [
-        columnHelper.display({
-            id: "actions",
-            header: () => <TableOfContents />,
-            cell: (ctx) => (
-                <ActionsCell {...ctx} handleDeleteSystem={handleDeleteSystem} />
-            ),
-        }),
-        ...columnHeadersArray.map((columnName) => {
-            return columnHelper.accessor(
-                (row) => {
-                    // transformational
-                    const value = row[columnName]
-                    // for now there is no need for transformation
-                    return value
-                },
-                {
-                    id: columnName,
-                    size:
-                        columnWidths[columnName as keyof typeof columnWidths] ??
-                        undefined,
-                    header: () =>
-                        columnLabels[columnName as keyof typeof columnLabels],
-                    cell: (info) => {
-                        return (
-                            <Link
-                                href={`/systems/form?systemId=${info.row.original.systemId}`}
-                                prefetch={false}
-                            >
-                                <div>{info.renderValue()?.toString()}</div>
-                            </Link>
-                        )
-                    },
-                },
-            )
-        }),
-    ]
+    const columns = useMemo(
+        () => [
+            {
+                id: "actions",
+                header: () => (
+                    <IconButtonWithTooltip
+                        text="New Agreement"
+                        href="/systems/form"
+                    />
+                ),
+                cell: (ctx: CellContext<System, unknown>) => (
+                    <ActionsCell
+                        {...ctx}
+                        handleDeleteSystem={handleDeleteRequest}
+                    />
+                ),
+                size: 48,
+                enableColumnFilter: true,
+            },
+            {
+                accessorKey: "name",
+                header: ({
+                    column,
+                }: {
+                    column: import("@tanstack/react-table").Column<
+                        System,
+                        unknown
+                    >
+                }) => <SortableHeader column={column}>System</SortableHeader>,
+                cell: ({ row, getValue }: CellContext<System, unknown>) => (
+                    <Link
+                        href={`/systems/form?systemId=${row.original.systemId}`}
+                        prefetch={false}
+                    >
+                        {getValue() as string}
+                    </Link>
+                ),
+                size: 255,
+                enableColumnFilter: true,
+                enableSorting: true,
+            },
+            {
+                accessorKey: "applicationId",
+                header: ({
+                    column,
+                }: {
+                    column: import("@tanstack/react-table").Column<
+                        System,
+                        unknown
+                    >
+                }) => (
+                    <SortableHeader column={column}>
+                        Application ID
+                    </SortableHeader>
+                ),
+                size: 150,
+                enableColumnFilter: true,
+                enableSorting: true,
+            },
+            {
+                accessorKey: "description",
+                header: ({
+                    column,
+                }: {
+                    column: import("@tanstack/react-table").Column<
+                        System,
+                        unknown
+                    >
+                }) => (
+                    <SortableHeader column={column}>Description</SortableHeader>
+                ),
+                size: 500,
+                enableSorting: true,
+            },
+        ],
+        [handleDeleteRequest],
+    )
 
     const table = useReactTable({
         data,
         columns,
         state: {
-            pagination: {
-                pageIndex,
-                pageSize: 10,
-            },
+            sorting,
+            columnFilters,
+            pagination: { pageIndex, pageSize: 10 },
         },
+        onColumnFiltersChange: setColumnFilters,
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -172,41 +226,79 @@ export function SystemTable({ data }: Props) {
         getSortedRowModel: getSortedRowModel(),
     })
 
-    const handlePageChange = (direction: "previous" | "next") => {
-        const index = direction === "previous" ? -1 : +1
-        const newIndex = table.getState().pagination.pageIndex + index
-        table.setPageIndex(newIndex)
-        const params = new URLSearchParams(searchParams.toString())
-        params.set("page", (newIndex + 1).toString())
-        router.replace(`?${params.toString()}`, {
-            scroll: false,
-        })
-    }
+    const handlePageChange = useCallback(
+        (direction: "previous" | "next") => {
+            table.setPageIndex(
+                handlePage(table.getState().pagination, direction),
+            )
+        },
+        [handlePage, table],
+    )
+
+    const handleResetFilters = useCallback(() => {
+        table.resetColumnFilters()
+    }, [table])
 
     return (
         <div className="mt-6 flex flex-col gap-4">
-            <h2 className="text-2xl font-bold">Systems List</h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Systems List</h2>
+                <div className="flex items-center space-x-2">
+                    <Switch
+                        id="filterToggle"
+                        checked={filterToggle}
+                        onCheckedChange={handleFilterToggleChange}
+                    />
+                    <Label htmlFor="filterToggle" className="font-semibold">
+                        Filter
+                    </Label>
+                </div>
+            </div>
             <div className="overflow-hidden rounded-lg border border-border">
-                <Table className="border">
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
+                                        className="bg-secondary p-2 font-semibold"
+                                        style={{ width: header.getSize() }}
                                     >
                                         <div
-                                            className={`${header.id === "actions" ? "flex items-center justify-center" : ""}`}
+                                            className={
+                                                header.id === "actions"
+                                                    ? "flex items-center justify-center"
+                                                    : ""
+                                            }
                                         >
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext(),
-                                                  )}
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext(),
+                                            )}
                                         </div>
+                                        {filterToggle &&
+                                            header.column.getCanFilter() && (
+                                                <div className="grid place-items-start">
+                                                    <Filter
+                                                        column={header.column}
+                                                        filteredRows={table
+                                                            .getFilteredRowModel()
+                                                            .rows.map((row) =>
+                                                                row.getValue(
+                                                                    header
+                                                                        .column
+                                                                        .id,
+                                                                ),
+                                                            )}
+                                                    />
+                                                </div>
+                                            )}
+                                        {filterToggle &&
+                                            !header.column.getCanFilter() &&
+                                            header.id !== "actions" && (
+                                                <NoFilter />
+                                            )}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -243,6 +335,28 @@ export function SystemTable({ data }: Props) {
                     <div className="flex flex-row gap-1">
                         <Button
                             variant="outline"
+                            onClick={() => router.refresh()}
+                        >
+                            Refresh Data
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => table.resetSorting()}
+                        >
+                            Reset Sorting
+                        </Button>
+                        {filterToggle && (
+                            <Button
+                                variant="outline"
+                                onClick={handleResetFilters}
+                            >
+                                Reset Filters
+                            </Button>
+                        )}
+                    </div>
+                    <div className="flex flex-row gap-1">
+                        <Button
+                            variant="outline"
                             onClick={() => handlePageChange("previous")}
                             disabled={!table.getCanPreviousPage()}
                         >
@@ -261,7 +375,7 @@ export function SystemTable({ data }: Props) {
             <AlertConfirmation
                 open={showDeleteConfirmation}
                 setOpen={setShowDeleteConfirmation}
-                confirmationAction={confirmDeleteSystem}
+                confirmationAction={handleConfirmDelete}
                 title="Are you sure you want to delete this System?"
                 message={`This action cannot be undone. This will permanently delete the system ${systemToDelete?.name}.`}
             />

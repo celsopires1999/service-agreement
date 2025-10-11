@@ -16,32 +16,40 @@
 - button "Back"
 - button "Reset"
 - heading "List" [level=2]
+- switch "Filter"
+- text: Filter
 - table:
   - rowgroup:
     - row "Code Description EUR / USD Plan Date":
       - cell:
         - img
-      - cell "Code"
-      - cell "Description"
-      - cell "EUR / USD"
-      - cell "Plan Date"
+      - cell "Code":
+        - button "Code"
+      - cell "Description":
+        - button "Description"
+      - cell "EUR / USD":
+        - button "EUR / USD"
+      - cell "Plan Date":
+        - button "Plan Date"
   - rowgroup:
-    - row /Open Menu PLAN002 Existing Plan 2 \d+,\d+ \d+-\d+-\d+/:
+    - row /Open Menu PLAN002 Existing Plan 2 \d+,\d+ \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
           - img
       - cell "PLAN002"
       - cell "Existing Plan 2"
       - cell /\d+,\d+/
-      - cell /\d+-\d+-\d+/
-    - row /Open Menu PLAN001 Existing Plan 1 \d+,\d+ \d+-\d+-\d+/:
+      - cell /\d+\/\d+\/\d+/
+    - row /Open Menu PLAN001 Existing Plan 1 \d+,\d+ \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
           - img
       - cell "PLAN001"
       - cell "Existing Plan 1"
       - cell /\d+,\d+/
-      - cell /\d+-\d+-\d+/
+      - cell /\d+\/\d+\/\d+/
 - paragraph: Page 1 of 1 [2 total results]
+- button "Refresh Data"
+- button "Reset Sorting"
 - button "Previous" [disabled]
 - button "Next" [disabled]

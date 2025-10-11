@@ -45,7 +45,7 @@ describe("PlanTable", () => {
         renderComponent()
 
         expect(
-            screen.getByRole("heading", { name: "Plans List" }),
+            screen.getByRole("heading", { name: "List" }),
         ).toBeInTheDocument()
 
         // Check for table headers

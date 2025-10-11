@@ -20,7 +20,7 @@ import {
 import { toast } from "@/hooks/use-toast"
 import { useTableStateHelper } from "@/hooks/useTableStateHelper"
 import { getServiceSearchResultsType } from "@/lib/queries/service"
-import { validatorEmailFormatter } from "@/lib/utils"
+import { amountFormatter, validatorEmailFormatter } from "@/lib/utils"
 import {
     Column,
     ColumnDef,
@@ -242,7 +242,7 @@ export function ServiceTable({ data }: ServiceTableProps) {
                     <SortableHeader column={column}>Service</SortableHeader>
                 ),
                 enableColumnFilter: true,
-                size: 500,
+                size: 255,
                 cell: ({ row, getValue }) => (
                     <Link
                         href={`/services/form?serviceId=${row.original.serviceId}`}
@@ -257,8 +257,12 @@ export function ServiceTable({ data }: ServiceTableProps) {
                 header: ({ column }) => (
                     <SortableHeader column={column}>Amount</SortableHeader>
                 ),
+                enableColumnFilter: false,
+                size: 150,
                 cell: ({ getValue }) => (
-                    <AmountPresenter value={getValue<string>()} />
+                    <AmountPresenter
+                        value={amountFormatter(getValue<string>())}
+                    />
                 ),
             },
             {
@@ -267,6 +271,7 @@ export function ServiceTable({ data }: ServiceTableProps) {
                     <SortableHeader column={column}>Currency</SortableHeader>
                 ),
                 enableColumnFilter: true,
+                size: 100,
             },
             {
                 accessorKey: "validatorEmail",
@@ -274,6 +279,7 @@ export function ServiceTable({ data }: ServiceTableProps) {
                     <SortableHeader column={column}>Validator</SortableHeader>
                 ),
                 enableColumnFilter: true,
+                size: 150,
                 cell: ({ getValue }) =>
                     validatorEmailFormatter(getValue<string>()),
             },
@@ -283,6 +289,7 @@ export function ServiceTable({ data }: ServiceTableProps) {
                     <SortableHeader column={column}>Status</SortableHeader>
                 ),
                 enableColumnFilter: true,
+                size: 50,
             },
             {
                 accessorKey: "agreementCode",
@@ -290,6 +297,7 @@ export function ServiceTable({ data }: ServiceTableProps) {
                     <SortableHeader column={column}>Agreement</SortableHeader>
                 ),
                 enableColumnFilter: true,
+                size: 150,
             },
             {
                 accessorKey: "localPlan",
@@ -297,18 +305,23 @@ export function ServiceTable({ data }: ServiceTableProps) {
                     <SortableHeader column={column}>Local Plan</SortableHeader>
                 ),
                 enableColumnFilter: true,
+                size: 150,
             },
             {
                 accessorKey: "year",
                 header: ({ column }) => (
                     <SortableHeader column={column}>Year</SortableHeader>
                 ),
+                enableColumnFilter: false,
+                size: 100,
             },
             {
                 accessorKey: "revision",
                 header: ({ column }) => (
-                    <SortableHeader column={column}>Revision</SortableHeader>
+                    <SortableHeader column={column}>Rev</SortableHeader>
                 ),
+                enableColumnFilter: false,
+                size: 50,
             },
         ],
         [handleDeleteRequest],
@@ -376,7 +389,7 @@ export function ServiceTable({ data }: ServiceTableProps) {
                                         </div>
                                         {filterToggle &&
                                             header.column.getCanFilter() && (
-                                                <div className="grid w-max place-content-center">
+                                                <div className="grid place-items-start">
                                                     <Filter
                                                         column={header.column}
                                                         filteredRows={table

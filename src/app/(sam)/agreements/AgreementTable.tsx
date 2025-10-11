@@ -274,6 +274,7 @@ export function AgreementTable({ data }: AgreementTableProps) {
                         Contact Email
                     </SortableHeader>
                 ),
+                size: 1,
                 enableColumnFilter: true,
             },
             {
@@ -281,6 +282,7 @@ export function AgreementTable({ data }: AgreementTableProps) {
                 header: ({ column }) => (
                     <SortableHeader column={column}>Local Plan</SortableHeader>
                 ),
+                size: 1,
                 enableColumnFilter: true,
             },
             {
@@ -288,12 +290,16 @@ export function AgreementTable({ data }: AgreementTableProps) {
                 header: ({ column }) => (
                     <SortableHeader column={column}>Year</SortableHeader>
                 ),
+                size: 1,
+                enableColumnFilter: false,
             },
             {
                 accessorKey: "revision",
                 header: ({ column }) => (
                     <SortableHeader column={column}>Revision</SortableHeader>
                 ),
+                size: 1,
+                enableColumnFilter: false,
             },
             {
                 accessorKey: "isRevised",
@@ -303,6 +309,8 @@ export function AgreementTable({ data }: AgreementTableProps) {
                 cell: ({ getValue }) => (
                     <IsRevisedPresenter value={getValue<boolean>()} />
                 ),
+                size: 1,
+                enableColumnFilter: false,
             },
             {
                 accessorKey: "revisionDate",
@@ -312,6 +320,8 @@ export function AgreementTable({ data }: AgreementTableProps) {
                     </SortableHeader>
                 ),
                 cell: ({ getValue }) => dateFormatter(getValue<string>()),
+                size: 1,
+                enableColumnFilter: false,
             },
         ],
         [handleDeleteRequest],
@@ -379,7 +389,7 @@ export function AgreementTable({ data }: AgreementTableProps) {
                                         </div>
                                         {filterToggle &&
                                             header.column.getCanFilter() && (
-                                                <div className="grid w-max place-content-center">
+                                                <div className="grid place-items-start">
                                                     <Filter
                                                         column={header.column}
                                                         filteredRows={table
