@@ -179,7 +179,7 @@ export function UserListTable({ data }: UserListTableProps) {
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="bg-secondary p-2 font-semibold"
+                                        className="bg-secondary p-1 font-semibold"
                                         style={{ width: header.getSize() }}
                                     >
                                         <div

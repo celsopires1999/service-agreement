@@ -29,7 +29,11 @@ export function setupMockFormHooks() {
         jest.clearAllMocks()
 
         mockResult = { data: null, serverError: null, validationErrors: null }
-        mockUseRouter.mockReturnValue({ back: mockRouterBack })
+        mockUseRouter.mockReturnValue({
+            back: mockRouterBack,
+            replace: jest.fn(),
+            refresh: jest.fn(),
+        })
         mockUseAction.mockImplementation((_action, options) => ({
             executeAsync: jest.fn(async (input: unknown) => {
                 const result = await mockExecute(input)

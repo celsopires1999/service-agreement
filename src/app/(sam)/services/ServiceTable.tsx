@@ -37,7 +37,7 @@ import { ArrowDown, ArrowUp, TableOfContents } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import React, { memo, useCallback, useMemo, useState } from "react"
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react"
 import { ActionsCell } from "./ActionsCell"
 
 type Service = getServiceSearchResultsType
@@ -171,6 +171,9 @@ export function ServiceTable({ data }: ServiceTableProps) {
         setColumnFilters,
         handleFilterToggle,
         handlePage,
+        handlePagination,
+        handleSorting,
+        handleColumnFilters,
     ] = useTableStateHelper()
 
     const {
@@ -214,13 +217,8 @@ export function ServiceTable({ data }: ServiceTableProps) {
     }, [serviceToDelete, executeDelete, resetDeleteAction])
 
     const handleFilterToggleChange = useCallback(
-        (checked: boolean) => {
-            if (!checked) {
-                setColumnFilters([])
-            }
-            handleFilterToggle(checked)
-        },
-        [handleFilterToggle, setColumnFilters],
+        (checked: boolean) => handleFilterToggle(checked),
+        [handleFilterToggle],
     )
 
     const columns = useMemo<ColumnDef<Service>[]>(
@@ -357,6 +355,18 @@ export function ServiceTable({ data }: ServiceTableProps) {
         table.resetColumnFilters()
     }, [table])
 
+    useEffect(() => {
+        handlePagination(table.getState().pagination, table.getPageCount())
+    }, [table.getState().pagination]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleSorting(table.getState().sorting)
+    }, [table.getState().sorting]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleColumnFilters(table.getState().columnFilters)
+    }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
         <div className="mt-6 flex flex-col gap-4">
             <TableToolbar
@@ -372,7 +382,7 @@ export function ServiceTable({ data }: ServiceTableProps) {
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="bg-secondary p-2 font-semibold"
+                                        className="bg-secondary p-1 font-semibold"
                                         style={{ width: header.getSize() }}
                                     >
                                         <div

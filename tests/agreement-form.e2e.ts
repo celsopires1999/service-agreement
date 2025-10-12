@@ -38,7 +38,9 @@ test.describe(`Agreement Form`, () => {
         await expect(button).toBeVisible()
         await button.click()
 
-        await expect(page).toHaveURL("agreements?localPlanId=&searchText=%40")
+        await expect(page).toHaveURL(
+            "agreements?localPlanId=&searchText=%40&page=1",
+        )
 
         await page.waitForLoadState("networkidle")
 

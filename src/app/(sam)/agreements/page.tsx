@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/auth"
 import { getAgreementSearchResults } from "@/lib/queries/agreement"
+import { getPlansForSearch } from "@/lib/queries/plan"
 import { cookies } from "next/headers"
 import { AgreementSearch } from "./AgreementSearch"
 import { AgreementTable } from "./AgreementTable"
@@ -14,6 +15,7 @@ export default async function AgreementsPage({
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
     const params = await searchParams
+    const plans = await getPlansForSearch()
     const { localPlanId, searchText } = params
     await getSession("/agreements", params)
 
@@ -34,6 +36,7 @@ export default async function AgreementsPage({
         return (
             <div>
                 <AgreementSearch
+                    data={plans}
                     localPlanId={searchLocalPlanId}
                     searchText=""
                 />
@@ -58,6 +61,7 @@ export default async function AgreementsPage({
         return (
             <div>
                 <AgreementSearch
+                    data={plans}
                     localPlanId={searchLocalPlanId}
                     searchText={searchText}
                 />

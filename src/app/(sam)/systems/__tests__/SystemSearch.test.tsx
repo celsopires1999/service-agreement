@@ -2,16 +2,13 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useFormStatus } from "react-dom" // This import will be the mocked version
 import { SystemSearch } from "@/app/(sam)/systems/SystemSearch"
+import { useRouter, useSearchParams } from "next/navigation"
 
-// Mock the 'next/form' component to render a standard form element
-jest.mock("next/form", () => {
-    // eslint-disable-next-line
-    return ({ children, ...props }: any) => (
-        <form {...props} data-testid="system-search-form">
-            {children}
-        </form>
-    )
-})
+// Mock next/navigation
+jest.mock("next/navigation", () => ({
+    useRouter: jest.fn(),
+    useSearchParams: jest.fn(),
+}))
 
 // Mock the useFormStatus hook first
 jest.mock("react-dom", () => ({
@@ -31,11 +28,21 @@ jest.mock("@/app/components/SearchButton", () => ({
 }))
 
 const mockUseFormStatus = useFormStatus as jest.Mock
+const mockUseRouter = useRouter as jest.Mock
+const mockUseSearchParams = useSearchParams as jest.Mock
 
 describe("SystemSearch", () => {
+    const mockPush = jest.fn()
+
     beforeEach(() => {
         // Set the default mock state for useFormStatus
         mockUseFormStatus.mockReturnValue({ pending: false })
+        mockUseRouter.mockReturnValue({
+            push: mockPush,
+        })
+        mockUseSearchParams.mockReturnValue({
+            toString: () => "",
+        })
     })
 
     afterEach(() => {
@@ -83,5 +90,20 @@ describe("SystemSearch", () => {
         expect(
             screen.queryByRole("button", { name: "Search" }),
         ).not.toBeInTheDocument()
+    })
+
+    it("should call router.push with the correct search parameters on submit", async () => {
+        const user = userEvent.setup()
+        render(<SystemSearch />)
+
+        const searchInput = screen.getByPlaceholderText("Search Systems")
+        await user.type(searchInput, "My System")
+
+        const searchButton = screen.getByRole("button", { name: "Search" })
+        await user.click(searchButton)
+
+        expect(mockPush).toHaveBeenCalledWith(
+            "/systems?searchText=My+System&page=1",
+        )
     })
 })

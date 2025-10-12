@@ -4,7 +4,7 @@ import {
     SortingState,
 } from "@tanstack/react-table"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 export function useTableStateHelper() {
     const router = useRouter()
@@ -62,7 +62,9 @@ export function useTableStateHelper() {
     const handleFilterToggle = (checked: boolean) => {
         const params = new URLSearchParams(searchParams.toString())
         params.set("filterToggle", checked.toString())
-        params.delete("filter")
+        if (!checked) {
+            params.delete("filter")
+        }
         router.replace(`?${params.toString()}`, {
             scroll: false,
         })
@@ -72,6 +74,15 @@ export function useTableStateHelper() {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
         filter ?? [],
     )
+
+    // Sync internal state with URL
+    useEffect(() => {
+        setColumnFilters(filter ?? [])
+    }, [filter])
+
+    useEffect(() => {
+        setSorting(sort ?? [])
+    }, [sort])
 
     const handlePage = (
         pagination: PaginationState,
@@ -121,10 +132,12 @@ export function useTableStateHelper() {
     const handleColumnFilters = (columnFilters: ColumnFiltersState) => {
         const params = new URLSearchParams(searchParams.toString())
         if (columnFilters.length === 0) {
-            return
+            params.delete("filter")
+        } else {
+            params.set("filter", JSON.stringify(columnFilters))
         }
-
-        params.set("filter", JSON.stringify(columnFilters))
+        // When changing filters, always go back to the first page
+        params.set("page", "1")
         router.replace(`?${params.toString()}`, {
             scroll: false,
         })

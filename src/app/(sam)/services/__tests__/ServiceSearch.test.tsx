@@ -1,76 +1,107 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, fireEvent } from "@testing-library/react"
 import { ServiceSearch } from "../ServiceSearch"
-import { getPlansForSearch } from "@/lib/queries/plan"
+import { useRouter, useSearchParams } from "next/navigation"
 
-// Mock the 'next/form' component to render a standard form element
-jest.mock("next/form", () => {
-    // eslint-disable-next-line
-    return ({ children, ...props }: any) => (
-        <form {...props} data-testid="service-search-form">
-            {children}
-        </form>
-    )
-})
+const mockPush = jest.fn()
+const mockUseRouter = useRouter as jest.Mock
+const mockUseSearchParams = useSearchParams as jest.Mock
 
-// Mock the async data fetching function
-jest.mock("@/lib/queries/plan", () => ({
-    getPlansForSearch: jest.fn(),
-}))
+interface Plan {
+    id: string
+    description: string
+}
 
-// Mock child components to isolate the component under test
 jest.mock("@/app/components/LocalPlanSearch", () => ({
-    LocalPlanSearch: jest.fn(({ defaultValue }) => (
-        <select defaultValue={defaultValue} data-testid="local-plan-select">
+    LocalPlanSearch: jest.fn(({ defaultValue, data }) => (
+        <select name="localPlanId" defaultValue={defaultValue} data-testid="local-plan-select">
             <option value="">All Plans</option>
-            {/* Add an option for the defaultValue if it exists, so .toHaveValue() works */}
-            {defaultValue && (
-                <option value={defaultValue}>Plan: {defaultValue}</option>
-            )}
+            {data.map((plan: Plan) => (
+                <option key={plan.id} value={plan.id}>
+                    {plan.description}
+                </option>
+            ))}
         </select>
     )),
 }))
 
 jest.mock("@/app/components/SearchButton", () => ({
-    SearchButton: () => <button>Search</button>,
+    SearchButton: () => <button type="submit">Search</button>,
 }))
 
 describe("ServiceSearch", () => {
-    const mockPlans = [{ id: "plan-1", name: "Plan 1" }]
-    const mockGetPlansForSearch = getPlansForSearch as jest.Mock
+    const mockPlans: Plan[] = [
+        { id: "plan-1", description: "Plan 1" },
+        { id: "plan-2", description: "Plan 2" },
+    ]
 
     beforeEach(() => {
-        // Provide a mock resolved value for the async function
-        mockGetPlansForSearch.mockResolvedValue(mockPlans)
+        mockUseRouter.mockReturnValue({ push: mockPush })
+        mockUseSearchParams.mockReturnValue(new URLSearchParams())
+        jest.clearAllMocks()
     })
 
-    it("should render the search form with default values", async () => {
-        // Since ServiceSearch is an async component, we must await it to resolve
-        // before passing it to the render function.
-        const ResolvedServiceSearch = await ServiceSearch({})
-        render(ResolvedServiceSearch)
+    it("should render the search form with default values", () => {
+        render(<ServiceSearch data={mockPlans} />)
 
-        expect(
-            screen.getByPlaceholderText("Search Services"),
-        ).toBeInTheDocument()
-        expect(
-            screen.getByRole("button", { name: "Search" }),
-        ).toBeInTheDocument()
-        expect(screen.getByRole("combobox")).toBeInTheDocument() // from LocalPlanSearch mock
+        expect(screen.getByPlaceholderText("Search Services")).toBeInTheDocument()
+        expect(screen.getByRole("button", { name: "Search" })).toBeInTheDocument()
+        expect(screen.getByTestId("local-plan-select")).toBeInTheDocument()
     })
 
-    it("should render with initial search text and local plan id", async () => {
+    it("should render with initial search text and local plan id", () => {
         const searchText = "test service"
-        const localPlanId = "plan-123"
+        const localPlanId = "plan-1"
 
-        const ResolvedServiceSearch = await ServiceSearch({
-            searchText,
-            localPlanId,
-        })
-        render(ResolvedServiceSearch)
+        render(
+            <ServiceSearch
+                data={mockPlans}
+                searchText={searchText}
+                localPlanId={localPlanId}
+            />,
+        )
 
         const searchInput = screen.getByPlaceholderText("Search Services")
         expect(searchInput).toHaveValue(searchText)
 
         expect(screen.getByTestId("local-plan-select")).toHaveValue(localPlanId)
     })
+
+    it("should call router.push with correct params on form submission", () => {
+        render(<ServiceSearch data={mockPlans} />)
+
+        const searchInput = screen.getByPlaceholderText("Search Services")
+        const planSelect = screen.getByTestId("local-plan-select")
+        const form = searchInput.closest("form")
+
+        fireEvent.change(searchInput, { target: { value: "new search" } })
+        fireEvent.change(planSelect, { target: { value: "plan-2" } })
+
+        if (form) {
+            fireEvent.submit(form)
+        }
+
+        expect(mockPush).toHaveBeenCalledWith(
+            `/services?localPlanId=plan-2&searchText=new+search&page=1`,
+        )
+    })
+
+    it("should preserve existing URL search params on form submission", () => {
+        mockUseSearchParams.mockReturnValue(new URLSearchParams("filter=%5B%5D&sort=%5B%5D"));
+
+        render(<ServiceSearch data={mockPlans} />)
+
+        const searchInput = screen.getByPlaceholderText("Search Services")
+        const form = searchInput.closest("form")
+
+        fireEvent.change(searchInput, { target: { value: "another search" } })
+
+        if (form) {
+            fireEvent.submit(form)
+        }
+
+        expect(mockPush).toHaveBeenCalledWith(
+            `/services?filter=%5B%5D&sort=%5B%5D&localPlanId=&searchText=another+search&page=1`,
+        )
+    });
 })
+

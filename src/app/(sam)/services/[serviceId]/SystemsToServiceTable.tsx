@@ -250,7 +250,7 @@ export function SystemsToServiceTable({
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className={`bg-secondary font-semibold ${header.id === "actions" ? "w-12" : ""}`}
+                                        className="bg-secondary font-semibold"
                                         style={{ width: header.getSize() }}
                                     >
                                         <div

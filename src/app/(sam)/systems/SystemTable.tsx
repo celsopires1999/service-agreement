@@ -34,7 +34,7 @@ import { useRouter } from "next/navigation"
 
 import { IconButtonWithTooltip } from "@/app/components/IconButtonWithTooltip"
 import { useTableStateHelper } from "@/hooks/useTableStateHelper"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { ActionsCell } from "./ActionsCell"
 
 type System = getSystemType
@@ -97,16 +97,14 @@ export function SystemTable({ data }: SystemTableProps) {
         setColumnFilters,
         handleFilterToggle,
         handlePage,
+        handlePagination,
+        handleSorting,
+        handleColumnFilters,
     ] = useTableStateHelper()
 
     const handleFilterToggleChange = useCallback(
-        (checked: boolean) => {
-            if (!checked) {
-                setColumnFilters([])
-            }
-            handleFilterToggle(checked)
-        },
-        [handleFilterToggle, setColumnFilters],
+        (checked: boolean) => handleFilterToggle(checked),
+        [handleFilterToggle],
     )
 
     const SortableHeader = ({
@@ -239,6 +237,18 @@ export function SystemTable({ data }: SystemTableProps) {
         table.resetColumnFilters()
     }, [table])
 
+    useEffect(() => {
+        handlePagination(table.getState().pagination, table.getPageCount())
+    }, [table.getState().pagination]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleSorting(table.getState().sorting)
+    }, [table.getState().sorting]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleColumnFilters(table.getState().columnFilters)
+    }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
         <div className="mt-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
@@ -262,7 +272,7 @@ export function SystemTable({ data }: SystemTableProps) {
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="bg-secondary p-2 font-semibold"
+                                        className="bg-secondary p-1 font-semibold"
                                         style={{ width: header.getSize() }}
                                     >
                                         <div

@@ -35,7 +35,7 @@ import {
 import { ArrowDown, ArrowUp, TableOfContents } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useRouter } from "next/navigation"
-import { memo, useCallback, useMemo, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useState } from "react"
 import { ActionsCell } from "./ActionsCell"
 
 type Plan = getPlansType
@@ -188,6 +188,9 @@ export function PlanTable({ data, handleUpdatePlan }: PlanTableProps) {
         setColumnFilters,
         handleFilterToggle,
         handlePage,
+        handlePagination,
+        handleSorting,
+        handleColumnFilters,
     ] = useTableStateHelper()
 
     const {
@@ -231,13 +234,8 @@ export function PlanTable({ data, handleUpdatePlan }: PlanTableProps) {
     }, [planToDelete, executeDelete, resetDeleteAction])
 
     const handleFilterToggleChange = useCallback(
-        (checked: boolean) => {
-            if (!checked) {
-                setColumnFilters([])
-            }
-            handleFilterToggle(checked)
-        },
-        [handleFilterToggle, setColumnFilters],
+        (checked: boolean) => handleFilterToggle(checked),
+        [handleFilterToggle],
     )
 
     const columns = useMemo<ColumnDef<Plan>[]>(
@@ -336,6 +334,18 @@ export function PlanTable({ data, handleUpdatePlan }: PlanTableProps) {
         table.resetColumnFilters()
     }, [table])
 
+    useEffect(() => {
+        handlePagination(table.getState().pagination, table.getPageCount())
+    }, [table.getState().pagination]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleSorting(table.getState().sorting)
+    }, [table.getState().sorting]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleColumnFilters(table.getState().columnFilters)
+    }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
         <div className="flex min-h-[350px] w-full flex-col gap-2 rounded-xl border bg-card p-4 shadow">
             <div className="flex flex-col gap-4">
@@ -352,7 +362,7 @@ export function PlanTable({ data, handleUpdatePlan }: PlanTableProps) {
                                     {headerGroup.headers.map((header) => (
                                         <TableHead
                                             key={header.id}
-                                            className="bg-secondary p-2 font-semibold"
+                                            className="bg-secondary p-1 font-semibold"
                                             style={{ width: header.getSize() }}
                                         >
                                             <div

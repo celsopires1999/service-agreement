@@ -29,9 +29,11 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
+import { ArrowDown, ArrowUp } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import Link from "next/link"
-import { memo, useCallback, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
+import { memo, useCallback, useEffect, useMemo, useState } from "react"
 
 import { ActionsCell } from "./ActionsCell"
 
@@ -45,6 +47,71 @@ type TableToolbarProps = {
     filterToggle: boolean
     onFilterToggleChange: (checked: boolean) => void
 }
+
+type TablePaginationProps = {
+    table: ReturnType<typeof useReactTable<User>>
+    onPageChange: (direction: "previous" | "next") => void
+    onRefresh: () => void
+    onResetSorting: () => void
+    onResetFilters: () => void
+    filterToggle: boolean
+}
+
+const TablePagination = memo(function TablePagination({
+    table,
+    onPageChange,
+    onRefresh,
+    onResetSorting,
+    onResetFilters,
+    filterToggle,
+}: TablePaginationProps) {
+    const { pageIndex } = table.getState().pagination
+    const pageCount = table.getPageCount()
+    const filteredRowsCount = table.getFilteredRowModel().rows.length
+
+    return (
+        <div className="flex flex-wrap items-center justify-between gap-1">
+            <div>
+                <p className="whitespace-nowrap font-bold">
+                    {`Page ${pageIndex + 1} of ${Math.max(1, pageCount)}`}
+                    &nbsp;&nbsp;
+                    {`[${filteredRowsCount} ${filteredRowsCount === 1 ? "result" : "total results"}]`}
+                </p>
+            </div>
+            <div className="flex flex-row gap-1">
+                <div className="flex flex-row gap-1">
+                    <Button variant="outline" onClick={onRefresh}>
+                        Refresh Data
+                    </Button>
+                    <Button variant="outline" onClick={onResetSorting}>
+                        Reset Sorting
+                    </Button>
+                    {filterToggle && (
+                        <Button variant="outline" onClick={onResetFilters}>
+                            Reset Filters
+                        </Button>
+                    )}
+                </div>
+                <div className="flex flex-row gap-1">
+                    <Button
+                        variant="outline"
+                        onClick={() => onPageChange("previous")}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => onPageChange("next")}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+})
 
 const TableToolbar = memo(function TableToolbar({
     filterToggle,
@@ -80,12 +147,15 @@ const SortableHeader = ({
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
     >
         {children}
-        {column.getIsSorted() === "asc" && <span className="ml-2">▲</span>}
-        {column.getIsSorted() === "desc" && <span className="ml-2">▼</span>}
+        {column.getIsSorted() === "asc" && <ArrowUp className="ml-2 h-4 w-4" />}
+        {column.getIsSorted() === "desc" && (
+            <ArrowDown className="ml-2 h-4 w-4" />
+        )}
     </Button>
 )
 
 export function UserTable({ data }: UserTableProps) {
+    const router = useRouter()
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
     const [userToDelete, setUserToDelete] = useState<User | null>(null)
 
@@ -98,6 +168,9 @@ export function UserTable({ data }: UserTableProps) {
         setColumnFilters,
         handleFilterToggle,
         handlePage,
+        handlePagination,
+        handleSorting,
+        handleColumnFilters,
     ] = useTableStateHelper()
 
     const {
@@ -151,13 +224,8 @@ export function UserTable({ data }: UserTableProps) {
     }, [userToDelete, executeDelete, resetDeleteAction])
 
     const handleFilterToggleChange = useCallback(
-        (checked: boolean) => {
-            if (!checked) {
-                setColumnFilters([])
-            }
-            handleFilterToggle(checked)
-        },
-        [handleFilterToggle, setColumnFilters],
+        (checked: boolean) => handleFilterToggle(checked),
+        [handleFilterToggle],
     )
 
     const columns = useMemo<ColumnDef<User>[]>(
@@ -228,6 +296,18 @@ export function UserTable({ data }: UserTableProps) {
         getSortedRowModel: getSortedRowModel(),
     })
 
+    const handleRefresh = useCallback(() => {
+        router.refresh()
+    }, [router])
+
+    const handleResetSorting = useCallback(() => {
+        table.resetSorting()
+    }, [table])
+
+    const handleResetFilters = useCallback(() => {
+        table.resetColumnFilters()
+    }, [table])
+
     const handlePageChange = useCallback(
         (direction: "previous" | "next") => {
             table.setPageIndex(
@@ -236,6 +316,18 @@ export function UserTable({ data }: UserTableProps) {
         },
         [handlePage, table],
     )
+
+    useEffect(() => {
+        handlePagination(table.getState().pagination, table.getPageCount())
+    }, [table.getState().pagination]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleSorting(table.getState().sorting)
+    }, [table.getState().sorting]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        handleColumnFilters(table.getState().columnFilters)
+    }, [table.getState().columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className="mt-6 flex flex-col gap-4">
@@ -251,7 +343,7 @@ export function UserTable({ data }: UserTableProps) {
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="bg-secondary p-2 font-semibold"
+                                        className="bg-secondary p-1 font-semibold"
                                         style={{ width: header.getSize() }}
                                     >
                                         <div
@@ -312,31 +404,14 @@ export function UserTable({ data }: UserTableProps) {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-1">
-                <div>
-                    <p className="whitespace-nowrap font-bold">
-                        {`Page ${table.getState().pagination.pageIndex + 1} of ${Math.max(1, table.getPageCount())}`}
-                        &nbsp;&nbsp;
-                        {`[${table.getFilteredRowModel().rows.length} ${table.getFilteredRowModel().rows.length !== 1 ? "total results" : "result"}]`}
-                    </p>
-                </div>
-                <div className="flex flex-row gap-1">
-                    <Button
-                        variant="outline"
-                        onClick={() => handlePageChange("previous")}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => handlePageChange("next")}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        Next
-                    </Button>
-                </div>
-            </div>
+            <TablePagination
+                table={table}
+                onPageChange={handlePageChange}
+                onRefresh={handleRefresh}
+                onResetSorting={handleResetSorting}
+                onResetFilters={handleResetFilters}
+                filterToggle={filterToggle}
+            />
             <AlertConfirmation
                 open={showDeleteConfirmation}
                 setOpen={setShowDeleteConfirmation}

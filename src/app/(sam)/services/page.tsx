@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/auth"
+import { getPlansForSearch } from "@/lib/queries/plan"
 import { getServiceSearchResults } from "@/lib/queries/service"
 import { cookies } from "next/headers"
 import { ServiceSearch } from "./ServiceSearch"
@@ -20,6 +21,8 @@ export default async function ServicesPage({
     const cookieStore = await cookies()
     const cookieLocalPlanId = cookieStore.get("localPlanId")?.value
 
+    const plans = await getPlansForSearch()
+
     let searchLocalPlanId: string
 
     if (localPlanId) {
@@ -33,7 +36,11 @@ export default async function ServicesPage({
     if (!searchText) {
         return (
             <div>
-                <ServiceSearch localPlanId={searchLocalPlanId} searchText="" />
+                <ServiceSearch
+                    data={plans}
+                    localPlanId={searchLocalPlanId}
+                    searchText=""
+                />
                 <div className="mt-6 flex flex-col gap-4">
                     <h2 className="text-2xl font-bold">Services List</h2>
                     <p className="mt-2">You can search by:</p>
@@ -56,6 +63,7 @@ export default async function ServicesPage({
         return (
             <div>
                 <ServiceSearch
+                    data={plans}
                     localPlanId={searchLocalPlanId}
                     searchText={searchText}
                 />
