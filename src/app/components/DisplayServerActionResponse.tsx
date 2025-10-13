@@ -48,9 +48,7 @@ export function DisplayServerActionResponse({
                 <MessageBox
                     type="error"
                     content={Object.keys(validationErrors).map((key) => (
-                        <p
-                            key={key}
-                        >{`${key}: ${validationErrors[key as keyof typeof validationErrors]}`}</p>
+                        <p key={key}>{`${key}: ${validationErrors[key]}`}</p>
                     ))}
                 />
             )}

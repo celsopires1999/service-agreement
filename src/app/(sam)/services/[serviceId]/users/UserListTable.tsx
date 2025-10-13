@@ -238,7 +238,7 @@ export function UserListTable({ data }: UserListTableProps) {
                     <p className="whitespace-nowrap font-bold">
                         {`Page ${table.getState().pagination.pageIndex + 1} of ${Math.max(1, table.getPageCount())}`}
                         &nbsp;&nbsp;
-                        {`[${table.getFilteredRowModel().rows.length} ${table.getFilteredRowModel().rows.length !== 1 ? "total results" : "result"}]`}
+                        {`[${table.getFilteredRowModel().rows.length} ${table.getFilteredRowModel().rows.length === 1 ? "result" : "total results"}]`}
                     </p>
                 </div>
                 <div className="flex flex-row gap-1">

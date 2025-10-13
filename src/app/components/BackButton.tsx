@@ -8,14 +8,13 @@ type Props = {
     title: string
     className?: string
     variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link"
-    | null
-    | undefined
+        | "default"
+        | "destructive"
+        | "outline"
+        | "secondary"
+        | "ghost"
+        | "link"
+        | null
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
 export function BackButton({ title, className, variant, ...props }: Props) {

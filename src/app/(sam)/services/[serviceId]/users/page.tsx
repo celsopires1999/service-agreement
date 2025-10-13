@@ -49,7 +49,6 @@ export default async function SystemsToServiceFormPage({
                 service={service}
                 agreement={agreement}
                 userListItems={userListItems}
-                isEditable={!agreement.isRevised}
             />
         )
     } catch (error) {

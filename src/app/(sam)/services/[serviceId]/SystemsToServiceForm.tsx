@@ -65,7 +65,7 @@ export function SystemsToServiceForm({
         const decimalAmount = amount.replace(",", ".")
         try {
             new Decimal(decimalAmount)
-        } catch (error) /* eslint-disable-line @typescript-eslint/no-unused-vars */ {
+        } catch {
             setValue("allocation", "")
             return
         }

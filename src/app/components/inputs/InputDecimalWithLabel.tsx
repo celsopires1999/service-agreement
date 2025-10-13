@@ -29,7 +29,7 @@ export function InputDecimalWithLabel<Schema>({
             return ""
         }
         const val = value.replace(",", ".")
-        if (isNaN(+val)) {
+        if (Number.isNaN(+val)) {
             return value
         }
 

@@ -96,48 +96,44 @@ export function UserListLoader({ serviceId }: Props) {
         }
     }
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
         if (file) {
-            const reader = new FileReader()
-            reader.readAsArrayBuffer(file)
-            reader.onload = (event) => {
-                const data = event.target?.result
-                try {
-                    const workbook = read(data, { type: "binary" })
-                    const sheetName = workbook.SheetNames[0]
-                    const sheet = workbook.Sheets[sheetName]
-                    const parsedData = utils.sheet_to_json(sheet, {
-                        range: 1,
-                        header: [
-                            "costCenter",
-                            "area",
-                            "name",
-                            "email",
-                            "corpUserId",
-                        ],
-                    }) satisfies userListUploadSchemaType["items"]
+            try {
+                const data = await file.arrayBuffer()
+                const workbook = read(data, { type: "buffer" })
+                const sheetName = workbook.SheetNames[0]
+                const sheet = workbook.Sheets[sheetName]
+                const parsedData = utils.sheet_to_json(sheet, {
+                    range: 1,
+                    header: [
+                        "costCenter",
+                        "area",
+                        "name",
+                        "email",
+                        "corpUserId",
+                    ],
+                }) satisfies userListUploadSchemaType["items"]
 
-                    const params: userListUploadSchemaType = {
-                        serviceId,
-                        items: parsedData,
-                    }
-
-                    const validation = userListUploadSchema.safeParse(params)
-                    if (!validation.success) {
-                        const errors = validation.error.flatten().fieldErrors
-                        setError(Object.values(errors).flat().join(", ") + ".")
-                        return
-                    }
-
-                    handleUserListUpload(validation.data)
-                } catch (error) {
-                    if (error instanceof Error) {
-                        setError(error.message)
-                        return
-                    }
-                    console.log(error)
+                const params: userListUploadSchemaType = {
+                    serviceId,
+                    items: parsedData,
                 }
+
+                const validation = userListUploadSchema.safeParse(params)
+                if (!validation.success) {
+                    const errors = validation.error.flatten().fieldErrors
+                    setError(Object.values(errors).flat().join(", ") + ".")
+                    return
+                }
+
+                await handleUserListUpload(validation.data)
+            } catch (error) {
+                if (error instanceof Error) {
+                    setError(error.message)
+                    return
+                }
+                console.log(error)
             }
         }
     }

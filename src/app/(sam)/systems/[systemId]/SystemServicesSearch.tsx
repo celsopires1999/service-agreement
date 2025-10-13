@@ -19,7 +19,7 @@ export async function SystemServicesSearch({
 
     try {
         plans = await getPlans()
-    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+    } catch {
         plans = []
     }
 
@@ -33,7 +33,7 @@ export async function SystemServicesSearch({
             searchExchangeRate =
                 plans.find((item) => item.planId === searchLocalPlanId)?.euro ??
                 "1"
-        } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+        } catch {
             searchLocalPlanId = ""
             searchExchangeRate = "1"
         }

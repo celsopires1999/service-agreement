@@ -67,6 +67,15 @@ const mockExcelData = [
     },
 ]
 
+const createMockFile = (name: string, type: string) => {
+    const file = new File(["content"], name, { type })
+    Object.defineProperty(file, "arrayBuffer", {
+        value: jest.fn().mockResolvedValue(new ArrayBuffer(8)),
+        writable: true,
+    })
+    return file
+}
+
 describe("UserListLoader", () => {
     const renderComponent = () => {
         return render(<UserListLoader serviceId={mockServiceId} />)
@@ -197,9 +206,10 @@ describe("UserListLoader", () => {
             renderComponent()
             await openDialog(user)
 
-            const validFile = new File(["content"], "users.xlsx", {
-                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            })
+            const validFile = createMockFile(
+                "users.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
             await uploadFileWithFire(validFile)
 
             await user.click(screen.getByRole("button", { name: /save/i }))
@@ -239,9 +249,10 @@ describe("UserListLoader", () => {
             renderComponent()
             await openDialog(user)
 
-            const validFile = new File(["content"], "users.xlsx", {
-                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            })
+            const validFile = createMockFile(
+                "users.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
             await uploadFileWithFire(validFile)
 
             await user.click(screen.getByRole("button", { name: /save/i }))
@@ -289,9 +300,10 @@ describe("UserListLoader", () => {
         const { rerender } = renderComponent()
         await openDialog(user)
 
-        const validFile = new File(["content"], "users.xlsx", {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        })
+        const validFile = createMockFile(
+            "users.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
         await uploadFileWithFire(validFile)
 
         // Rerender with validation errors
@@ -321,9 +333,11 @@ describe("UserListLoader", () => {
         })
         renderComponent()
         await openDialog(user)
-        const file = new File(["content"], "test.xlsx", {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        })
+
+        const file = createMockFile(
+            "test.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
         await uploadFileWithFire(file)
         await user.click(screen.getByRole("button", { name: /save/i }))
         await waitFor(() => {

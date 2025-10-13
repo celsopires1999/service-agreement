@@ -93,7 +93,7 @@ export default async function SystemsToServiceFormPage({
 
         try {
             exchangeRateDecimal = new Decimal(exchangeRate)
-        } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+        } catch {
             return (
                 <>
                     <h2 className="mb-2 text-2xl">

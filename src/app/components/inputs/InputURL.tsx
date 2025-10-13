@@ -20,6 +20,15 @@ type Props<Schema> = {
     className?: string
 } & InputHTMLAttributes<HTMLInputElement>
 
+function isValidUrl(url: string) {
+    try {
+        new URL(url)
+        return true
+    } catch {
+        return false
+    }
+}
+
 export function InputURL<Schema>({
     fieldTitle,
     nameInSchema,
@@ -27,15 +36,6 @@ export function InputURL<Schema>({
     ...props
 }: Props<Schema>) {
     const form = useFormContext()
-
-    function isValidUrl(url: string) {
-        try {
-            new URL(url)
-            return true
-        } catch {
-            return false
-        }
-    }
 
     return (
         <FormField

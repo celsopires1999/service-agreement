@@ -138,8 +138,8 @@ export function SystemsToServiceTable({
                 accessorKey: "name",
                 header: "System Name",
                 cell: ({ row, getValue }) => (
-                    <div
-                        className="cursor-pointer text-left"
+                    <button
+                        className="w-full cursor-pointer text-left focus:outline-none"
                         onClick={() =>
                             handleUpdateServiceSystem(
                                 row.original.systemId,
@@ -148,7 +148,7 @@ export function SystemsToServiceTable({
                         }
                     >
                         {getValue<string>()}
-                    </div>
+                    </button>
                 ),
                 size: 200,
             },
@@ -156,8 +156,8 @@ export function SystemsToServiceTable({
                 accessorKey: "allocation",
                 header: "Alloc (%)",
                 cell: ({ row, getValue }) => (
-                    <div
-                        className="cursor-pointer text-right"
+                    <button
+                        className="w-full cursor-pointer text-right focus:outline-none"
                         onClick={() =>
                             handleUpdateServiceSystem(
                                 row.original.systemId,
@@ -170,7 +170,7 @@ export function SystemsToServiceTable({
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 6,
                         }).format(Number(getValue<string>()))}
-                    </div>
+                    </button>
                 ),
                 size: 150,
             },
@@ -178,8 +178,8 @@ export function SystemsToServiceTable({
                 accessorKey: "amount",
                 header: "Amount",
                 cell: ({ row, getValue }) => (
-                    <div
-                        className="cursor-pointer text-right"
+                    <button
+                        className="w-full cursor-pointer text-right focus:outline-none"
                         onClick={() =>
                             handleUpdateServiceSystem(
                                 row.original.systemId,
@@ -192,7 +192,7 @@ export function SystemsToServiceTable({
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                         }).format(Number(getValue<string>()))}
-                    </div>
+                    </button>
                 ),
                 size: 150,
             },
@@ -315,7 +315,7 @@ export function SystemsToServiceTable({
                     <p className="whitespace-nowrap font-bold">
                         {`Page ${table.getState().pagination.pageIndex + 1} of ${Math.max(1, table.getPageCount())}`}
                         &nbsp;&nbsp;
-                        {`[${table.getFilteredRowModel().rows.length} ${table.getFilteredRowModel().rows.length !== 1 ? "total results" : "result"}]`}
+                        {`[${table.getFilteredRowModel().rows.length} ${table.getFilteredRowModel().rows.length === 1 ? "result" : "total results"}]`}
                     </p>
                 </div>
                 <div className="flex flex-row gap-1">

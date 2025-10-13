@@ -101,36 +101,36 @@ export function ServiceForm({
         }
     }
 
+    let formTitle = "New"
+    if (service?.serviceId) {
+        formTitle = isEditable ? "Edit" : "View"
+    }
+
+    const allocationBadge = service?.isActive ? (
+        <BadgeWithTooltip
+            variant="default"
+            text="cost allocation to systems is complete"
+        >
+            Allocation
+        </BadgeWithTooltip>
+    ) : (
+        <BadgeWithTooltip
+            variant="destructive"
+            text="cost allocation to systems is not complete"
+        >
+            Allocation
+        </BadgeWithTooltip>
+    )
+
     return (
         <div className="flex flex-col gap-1 sm:px-8">
             <DisplayServerActionResponse result={saveResult} />
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <h2 className="text-2xl font-bold">
-                        {service?.serviceId && isEditable
-                            ? "Edit"
-                            : service?.serviceId
-                              ? "View"
-                              : "New"}{" "}
-                        Service Form{" "}
+                        {formTitle} Service Form{" "}
                     </h2>
-                    {service?.serviceId ? (
-                        service?.isActive ? (
-                            <BadgeWithTooltip
-                                variant="default"
-                                text="cost allocation to systems is complete"
-                            >
-                                Allocation
-                            </BadgeWithTooltip>
-                        ) : (
-                            <BadgeWithTooltip
-                                variant="destructive"
-                                text="cost allocation to systems is not complete"
-                            >
-                                Allocation
-                            </BadgeWithTooltip>
-                        )
-                    ) : null}
+                    {service?.serviceId ? allocationBadge : null}
                 </div>
 
                 <AgreementNav

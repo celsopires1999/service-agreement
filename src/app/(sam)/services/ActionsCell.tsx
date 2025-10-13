@@ -91,15 +91,15 @@ export function ActionsCell({ row, handleDeleteService }: ActionsCellProps) {
                                     className="flex w-full"
                                     prefetch={false}
                                 >
-                                    {!row.original.isRevised ? (
-                                        <>
-                                            <EditIcon className="mr-2 h-4 w-4" />
-                                            <span>Edit</span>
-                                        </>
-                                    ) : (
+                                    {row.original.isRevised ? (
                                         <>
                                             <EyeIcon className="mr-2 h-4 w-4" />
                                             <span>View</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <EditIcon className="mr-2 h-4 w-4" />
+                                            <span>Edit</span>
                                         </>
                                     )}
                                 </Link>
@@ -132,15 +132,15 @@ export function ActionsCell({ row, handleDeleteService }: ActionsCellProps) {
                                     className="flex w-full"
                                     prefetch={false}
                                 >
-                                    {!row.original.isRevised ? (
-                                        <>
-                                            <EditIcon className="mr-2 h-4 w-4" />
-                                            <span>Edit</span>
-                                        </>
-                                    ) : (
+                                    {row.original.isRevised ? (
                                         <>
                                             <EyeIcon className="mr-2 h-4 w-4" />
                                             <span>View</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <EditIcon className="mr-2 h-4 w-4" />
+                                            <span>Edit</span>
                                         </>
                                     )}
                                 </Link>

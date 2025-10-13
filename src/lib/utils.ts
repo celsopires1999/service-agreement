@@ -26,7 +26,7 @@ export function isValidDecimalWithPrecision(
         }
 
         return true
-    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+    } catch {
         return false
     }
 }
@@ -35,7 +35,7 @@ export function isGreaterThanZero(value: string) {
     try {
         const valueDecimal = new Decimal(value)
         return valueDecimal.gt(0)
-    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+    } catch {
         return false
     }
 }
@@ -44,7 +44,7 @@ export function isGreaterThanOrEqualToZero(value: string) {
     try {
         const valueDecimal = new Decimal(value)
         return valueDecimal.gte(0)
-    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+    } catch {
         return false
     }
 }
@@ -53,7 +53,7 @@ export function toDecimal(value: string) {
     try {
         const valueDecimal = new Decimal(value)
         return valueDecimal
-    } catch (error) /* eslint-disable-line  @typescript-eslint/no-unused-vars */ {
+    } catch {
         return new Decimal(0)
     }
 }

@@ -93,10 +93,11 @@ test.describe("Cost Allocation Form", () => {
 
         await page.goto("services/1d323e0d-1ed8-4183-9fde-d46db6da09b7")
 
-        await page
-            .getByRole("row", { name: "Open Menu NX" })
-            .getByRole("button")
-            .click()
+        // await page
+        //     .getByRole("row", { name: "Open Menu NX" })
+        //     .getByRole("button")
+        //     .click()
+        await page.getByRole("button", { name: "Open Menu" }).first().click()
         await page.getByRole("menuitem", { name: "Delete" }).click()
 
         await expect(getSuccessMessage(page)).toBeVisible()

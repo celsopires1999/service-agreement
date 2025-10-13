@@ -25,20 +25,7 @@ type Props = {
 export function AgreementNav({ agreementId, serviceId, omit }: Props) {
     return (
         <div className="flex">
-            {/* {omit === "agreement" || !agreementId ? null : (
-                <Button variant="ghost" asChild>
-                    <Link
-                        href={`/agreements/form?agreementId=${agreementId}`}
-                        className="flex w-full"
-                        prefetch={false}
-                    >
-                        <span>Agreement</span>{" "}
-                        <ChevronRight className="h-4 w-4" />
-                    </Link>
-                </Button>
-            )} */}
-
-            {!agreementId ? null : (
+            {agreementId ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost">
@@ -77,9 +64,9 @@ export function AgreementNav({ agreementId, serviceId, omit }: Props) {
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            )}
+            ) : null}
 
-            {!serviceId ? null : (
+            {serviceId ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost">
@@ -131,7 +118,7 @@ export function AgreementNav({ agreementId, serviceId, omit }: Props) {
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            )}
+            ) : null}
         </div>
     )
 }

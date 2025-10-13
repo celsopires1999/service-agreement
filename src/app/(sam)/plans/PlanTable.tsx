@@ -258,8 +258,8 @@ export function PlanTable({ data, handleUpdatePlan }: PlanTableProps) {
                     <SortableHeader column={column}>Code</SortableHeader>
                 ),
                 cell: ({ row }) => (
-                    <div
-                        className="cursor-pointer text-left"
+                    <button
+                        className="w-full cursor-pointer text-left focus:outline-none"
                         onClick={() =>
                             handleUpdatePlan(
                                 row.original.planId,
@@ -271,7 +271,7 @@ export function PlanTable({ data, handleUpdatePlan }: PlanTableProps) {
                         }
                     >
                         {row.original.code}
-                    </div>
+                    </button>
                 ),
                 enableColumnFilter: true,
                 size: 255,

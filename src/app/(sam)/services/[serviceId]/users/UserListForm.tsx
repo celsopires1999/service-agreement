@@ -18,7 +18,6 @@ type Props = {
     service: selectServiceSchemaType
     agreement: getAgreementType
     userListItems?: getUserListItemsByServiceIdType[]
-    isEditable?: boolean
 }
 
 export function UserListForm({ service, agreement, userListItems }: Props) {
