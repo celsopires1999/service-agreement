@@ -40,7 +40,7 @@ test.describe("Plan Form", () => {
 
     test("should display plans page with form and list", async ({ page }) => {
         await page.goto("/plans")
-        await expect(page).toHaveURL("/plans")
+        await expect(page).toHaveURL("/plans?page=1")
 
         await expect(
             page.getByRole("heading", { name: "Company Plans" }),
@@ -59,7 +59,7 @@ test.describe("Plan Form", () => {
 
     test("should create a new plan", async ({ page }) => {
         await page.goto("/plans")
-        await expect(page).toHaveURL("/plans")
+        await expect(page).toHaveURL("/plans?page=1")
 
         await fillPlanForm(page)
 
@@ -77,7 +77,7 @@ test.describe("Plan Form", () => {
 
     test("should edit an existing plan", async ({ page }) => {
         await page.goto("/plans")
-        await expect(page).toHaveURL("/plans")
+        await expect(page).toHaveURL("/plans?page=1")
 
         // Click the first plan in the table to load it in the form
         await page.getByText("PLAN001").click()

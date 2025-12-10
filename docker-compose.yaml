@@ -1,16 +1,23 @@
 services:
-  sav:
+  sav-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
       args:
-        DOCKER_GID: 989
+        DOCKER_GROUP_ID: ${DOCKER_GROUP_ID:-999}
+        USER_ID: ${USER_ID:-1000}
     command: .docker/start.sh
+    stop_signal: SIGKILL
+    stdin_open: true
+    tty: true
     volumes:
       - .:/home/node/app
       - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.docker/config-read.json:/home/node/.docker/config.json:ro
     ports:
       - 3000:3000
+    environment:
+      - TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal
     extra_hosts:
       - host.docker.internal:host-gateway
 
@@ -18,7 +25,7 @@ services:
     image: postgres:latest
     restart: unless-stopped
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      # - postgres-data:/var/lib/postgresql/data
       - ./.docker/postgres/user/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     environment:
       POSTGRES_USER: postgres
@@ -28,14 +35,5 @@ services:
     ports:
       - 5432:5432
 
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   restart: unless-stopped
-  #   ports:
-  #     - 9080:80
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: user@domain.com
-  #     PGADMIN_DEFAULT_PASSWORD: SuperSecret
-
-volumes:
-  postgres-data:
+# volumes:
+# postgres-data:

@@ -6,10 +6,7 @@ export default async function globalSetup() {
             .withPassword("test")
             .withUsername("test")
             .withDatabase("test")
-            .withExposedPorts({
-                container: 5432,
-                host: 54320,
-            })
+            .withExposedPorts(5432)
             .withReuse()
             .start()
     } catch (e) {

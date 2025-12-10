@@ -4,30 +4,31 @@
 - table:
   - rowgroup:
     - row "Code Agreement Contact Email Local Plan Year Revision Revised Revision Date":
-      - cell:
+      - columnheader:
         - link:
           - /url: /agreements/form
           - img
-      - cell "Code":
+      - columnheader "Code":
         - button "Code"
-      - cell "Agreement":
+      - columnheader "Agreement":
         - button "Agreement"
-      - cell "Contact Email":
+      - columnheader "Contact Email":
         - button "Contact Email"
-      - cell "Local Plan":
+      - columnheader "Local Plan":
         - button "Local Plan"
-      - cell "Year":
+      - columnheader "Year":
         - button "Year"
-      - cell "Revision":
+      - columnheader "Revision":
         - button "Revision"
-      - cell "Revised":
+      - columnheader "Revised":
         - button "Revised"
-      - cell "Revision Date":
+      - columnheader "Revision Date":
         - button "Revision Date"
   - rowgroup:
     - row /Open Menu TIC00001 SA Ines Kittel 8o6tD@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00001":
         - link "TIC00001":
@@ -43,6 +44,7 @@
     - row /Open Menu TIC00002 SA RD Team 8o6tD@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00002":
         - link "TIC00002":
@@ -58,6 +60,7 @@
     - row /Open Menu TIC00003 SA John Doe john\.doe@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00003":
         - link "TIC00003":
@@ -73,6 +76,7 @@
     - row /Open Menu TIC00004 SA Jane Smith jane\.smith@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00004":
         - link "TIC00004":
@@ -88,6 +92,7 @@
     - row /Open Menu TIC00005 SA Alice Johnson alice\.johnson@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00005":
         - link "TIC00005":
@@ -103,6 +108,7 @@
     - row /Open Menu TIC00006 SA Bob Brown bob\.brown@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00006":
         - link "TIC00006":
@@ -118,6 +124,7 @@
     - row /Open Menu TIC00007 SA Charlie Davis charlie\.davis@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00007":
         - link "TIC00007":
@@ -133,6 +140,7 @@
     - row /Open Menu TIC00008 SA Emily Clark emily\.clark@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00008":
         - link "TIC00008":
@@ -148,6 +156,7 @@
     - row /Open Menu TIC00009 SA Frank Edwards frank\.edwards@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00009":
         - link "TIC00009":
@@ -163,6 +172,7 @@
     - row /Open Menu TIC00010 SA Grace Wilson grace\.wilson@example\.com FC0325 \d+ 1 \d+\/\d+\/\d+/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "TIC00010":
         - link "TIC00010":

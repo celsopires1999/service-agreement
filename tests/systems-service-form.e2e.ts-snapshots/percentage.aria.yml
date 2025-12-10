@@ -1,8 +1,10 @@
 - 'heading "Cost Allocation: Additional User Licences" [level=2]'
 - text: Allocation
 - button "Agreement Agreement":
+  - text: ""
   - img
 - button "Services Services":
+  - text: ""
   - img
 - heading "TIC00001" [level=2]
 - paragraph: /Valid for \d+ with Local Plan FC0325/
@@ -16,35 +18,43 @@
 - text: Allocation (%)
 - spinbutton "Allocation (%)"
 - text: Amount
-- textbox
+- textbox "Amount"
 - button "Save"
 - table:
   - rowgroup:
     - row "System Name Alloc (%) Amount Currency Description":
-      - cell:
+      - columnheader:
         - img
-      - cell "System Name"
-      - cell "Alloc (%)"
-      - cell "Amount"
-      - cell "Currency"
-      - cell "Description"
+      - columnheader "System Name"
+      - columnheader "Alloc (%)"
+      - columnheader "Amount"
+      - columnheader "Currency"
+      - columnheader "Description"
   - rowgroup:
     - row /Open Menu PLATON \d+,\d+ \d+\.\d+,\d+ EUR PLATON is the new PLM toll for Engineering/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
-      - cell "PLATON"
-      - cell /\d+,\d+/
-      - cell /\d+\.\d+,\d+/
+      - cell "PLATON":
+        - button "PLATON"
+      - cell /\d+,\d+/:
+        - button /\d+,\d+/
+      - cell /\d+\.\d+,\d+/:
+        - button /\d+\.\d+,\d+/
       - cell "EUR"
       - cell "PLATON is the new PLM toll for Engineering"
     - row /Open Menu NX \d+,\d+ \d+\.\d+,\d+ EUR Engineering works with NX/:
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
-      - cell "NX"
-      - cell /\d+,\d+/
-      - cell /\d+\.\d+,\d+/
+      - cell "NX":
+        - button "NX"
+      - cell /\d+,\d+/:
+        - button /\d+,\d+/
+      - cell /\d+\.\d+,\d+/:
+        - button /\d+\.\d+,\d+/
       - cell "EUR"
       - cell "Engineering works with NX"
   - rowgroup:

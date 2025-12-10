@@ -70,7 +70,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Get Docker GID
         id: docker-gid
-        run: echo "DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)" >> $GITHUB_ENV
+        run: echo "DOCKER_GROUP_ID=$(stat -c '%g' /var/run/docker.sock)" >> $GITHUB_ENV
 
       - name: Build development
         id: build-and-push
@@ -85,10 +85,10 @@ jobs:
           file: Dockerfile.ci
           target: development
           build-args: |
-            DOCKER_GID=${{ env.DOCKER_GID }}
+            DOCKER_GROUP_ID=${{ env.DOCKER_GROUP_ID }}
 
       - name: up containers
-        run: DOCKER_GID=${{ env.DOCKER_GID }} docker compose -f docker-compose.ci.yaml up -d
+        run: DOCKER_GROUP_ID=${{ env.DOCKER_GROUP_ID }} docker compose -f docker-compose.ci.yaml up -d
 
       - name: generate envs
         run: |

@@ -4,20 +4,21 @@
 - table:
   - rowgroup:
     - row "User Email Role":
-      - cell:
+      - columnheader:
         - link:
           - /url: /users/form
           - img
-      - cell "User":
+      - columnheader "User":
         - button "User"
-      - cell "Email":
+      - columnheader "Email":
         - button "Email"
-      - cell "Role":
+      - columnheader "Role":
         - button "Role"
   - rowgroup:
     - row "Open Menu Admin User admin@admin.com admin":
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "Admin User":
         - link "Admin User":
@@ -27,6 +28,7 @@
     - row "Open Menu Validator User validator@validator.com validator":
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "Validator User":
         - link "Validator User":
@@ -36,6 +38,7 @@
     - row "Open Menu Viewer User viewer@viewer.com viewer":
       - cell "Open Menu":
         - button "Open Menu":
+          - text: ""
           - img
       - cell "Viewer User":
         - link "Viewer User":
@@ -43,5 +46,7 @@
       - cell "viewer@viewer.com"
       - cell "viewer"
 - paragraph: Page 1 of 1 [3 total results]
+- button "Refresh Data"
+- button "Reset Sorting"
 - button "Previous" [disabled]
 - button "Next" [disabled]
