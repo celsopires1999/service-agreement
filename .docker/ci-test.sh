@@ -22,4 +22,4 @@ docker compose -f docker-compose.ci.yaml down
 docker ps -a --filter "label=org.testcontainers=true" -q | xargs -r docker rm -fv
 docker volume prune -f
 docker network ls --filter "label=org.testcontainers=true" -q | xargs -r docker network rm
-docker rmi service-agreement-sav
+docker rmi $(basename "$PWD")-sav
