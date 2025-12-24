@@ -17,6 +17,12 @@ const config: Config = {
             lines: 80,
         },
     },
+    testPathIgnorePatterns: [
+        "/node_modules/",
+        "/.next/",
+        "/coverage/",
+        "/tests/",
+    ],
     projects: ["<rootDir>/jest.config.ui.ts", "<rootDir>/jest.config.core.ts"],
 }
 

@@ -21,7 +21,12 @@ const config: Config = {
     displayName: "core",
     testEnvironment: "node",
     testRegex: ["((\\.|/)(test|spec|int-spec))\\.[jt]s?$"],
-    testPathIgnorePatterns: ["/node_modules/", "/.next/", "/coverage/"],
+    // testPathIgnorePatterns: [
+    //     "/node_modules/",
+    //     "/.next/",
+    //     "/coverage/",
+    //     "/tests/",
+    // ],
     // Add more setup options before each test is run
     // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
     globalSetup:

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Installing dependencies..."
-npm install
+npm ci
 
 echo "Installing Playwright..."
 npx playwright install chromium

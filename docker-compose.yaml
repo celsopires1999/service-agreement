@@ -35,5 +35,22 @@ services:
     ports:
       - 5432:5432
 
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.57.0-noble
+    ports:
+      - "3001:3001"
+    # Adiciona o mapeamento para o host da máquina (host-gateway)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Equivalente ao --init
+    init: true
+    user: pwuser
+    working_dir: /home/pwuser
+    # O comando que o container deve executar
+    command: npx -y playwright@1.57.0 run-server --port 3001 --host 0.0.0.0
+    # Mantém o container aberto para entrada de comandos (equivalente ao -it)
+    stdin_open: true
+    tty: true
+
 # volumes:
 # postgres-data:
