@@ -1,6 +1,7 @@
 import type { Config } from "jest"
 
 const config: Config = {
+    maxWorkers: "50%",
     coverageDirectory: "<rootDir>/coverage",
     coverageReporters: ["text", "lcov", "cobertura"],
     collectCoverageFrom: [

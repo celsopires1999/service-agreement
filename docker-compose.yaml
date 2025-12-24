@@ -1,5 +1,5 @@
 services:
-  sav-dev:
+  sav:
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -22,7 +22,7 @@ services:
       - host.docker.internal:host-gateway
 
   db:
-    image: postgres:latest
+    image: postgres:18.1-alpine
     restart: unless-stopped
     volumes:
       # - postgres-data:/var/lib/postgresql/data
@@ -39,16 +39,12 @@ services:
     image: mcr.microsoft.com/playwright:v1.57.0-noble
     ports:
       - "3001:3001"
-    # Adiciona o mapeamento para o host da máquina (host-gateway)
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # Equivalente ao --init
     init: true
     user: pwuser
     working_dir: /home/pwuser
-    # O comando que o container deve executar
     command: npx -y playwright@1.57.0 run-server --port 3001 --host 0.0.0.0
-    # Mantém o container aberto para entrada de comandos (equivalente ao -it)
     stdin_open: true
     tty: true
 

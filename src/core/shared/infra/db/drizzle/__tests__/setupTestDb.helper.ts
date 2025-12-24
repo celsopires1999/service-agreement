@@ -66,7 +66,7 @@ export function startPostgres() {
         do {
             try {
                 _postgresContainer = await new PostgreSqlContainer(
-                    "postgres:latest",
+                    "postgres:18.1-alpine",
                 )
                     .withPassword("test")
                     .withUsername("test")

@@ -1,8 +1,5 @@
 import { db } from "@/db"
 import { agreements, plans, services, users } from "@/db/schema"
-import { expect, test } from "./utils/setup"
-import type { Page } from "./utils/setup"
-// import { expect, Page, test } from "@playwright/test"
 import path from "path"
 import {
     agreementsData,
@@ -12,6 +9,8 @@ import {
     validatedServicesData,
 } from "./fixtures"
 import { cleanTables } from "./utils/clean-tables"
+import type { Page } from "./utils/setup"
+import { expect, test } from "./utils/setup"
 
 test.describe(`Agreement Form`, () => {
     test.beforeEach(async () => {

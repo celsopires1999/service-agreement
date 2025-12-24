@@ -72,20 +72,20 @@ jobs:
         id: docker-gid
         run: echo "DOCKER_GROUP_ID=$(stat -c '%g' /var/run/docker.sock)" >> $GITHUB_ENV
 
-      - name: Build development
-        id: build-and-push
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
-        with:
-          context: .
-          push: false
-          tags: ${{ env.FOLDER_NAME }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          load: true
-          file: Dockerfile.ci
-          target: development
-          build-args: |
-            DOCKER_GROUP_ID=${{ env.DOCKER_GROUP_ID }}
+      # - name: Build development
+      #   id: build-and-push
+      #   uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+      #   with:
+      #     context: .
+      #     push: false
+      #     tags: ${{ env.FOLDER_NAME }}
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
+      #     load: true
+      #     file: Dockerfile.ci
+      #     target: development
+      #     build-args: |
+      #       DOCKER_GROUP_ID=${{ env.DOCKER_GROUP_ID }}
 
       - name: up containers
         run: DOCKER_GROUP_ID=${{ env.DOCKER_GROUP_ID }} docker compose -f docker-compose.ci.yaml up -d
@@ -103,8 +103,8 @@ jobs:
       - name: Copy coverage report from container
         run: docker compose -f docker-compose.ci.yaml cp sav:/home/node/app/coverage ./coverage
 
-      - name: install playwright
-        run: docker compose -f docker-compose.ci.yaml exec -T sav npx playwright install chromium
+      # - name: install playwright
+      #   run: docker compose -f docker-compose.ci.yaml exec -T sav npx playwright install chromium
 
       - name: run e2e tests
         run: docker compose -f docker-compose.ci.yaml exec -T sav npm run test:e2e

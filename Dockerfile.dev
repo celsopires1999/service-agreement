@@ -16,8 +16,6 @@ RUN groupadd -f -g ${DOCKER_GROUP_ID} docker && \
     usermod -aG docker node && \
     usermod -u ${USER_ID} node
 
-RUN npx playwright install-deps chromium
-
 USER node
 
 WORKDIR /home/node/app

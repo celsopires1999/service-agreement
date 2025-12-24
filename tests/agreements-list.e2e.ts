@@ -1,11 +1,11 @@
 import { db } from "@/db"
 import { agreements, plans, users } from "@/db/schema"
-import { expect, test } from "@playwright/test"
 import path from "path"
 import { agreementsData } from "./fixtures/agreementsData"
 import { plansData } from "./fixtures/plansData"
 import { usersData } from "./fixtures/usersData"
 import { cleanTables } from "./utils/clean-tables"
+import { expect, test } from "./utils/setup"
 
 const roles = ["admin", "viewer", "validator"] as const
 type Role = (typeof roles)[number]

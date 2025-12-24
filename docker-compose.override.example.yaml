@@ -1,6 +1,10 @@
 services:
-  sav-dev:
+  sav:
     build:
       args:
         DOCKER_GROUP_ID: "989"
         USER_ID: "1000"
+    environment:
+      AUTH_URL: http://sav:3000
+      E2E_BASE_URL: http://sav:3000
+      BROWSER_WSS_ENDPOINT: ws://playwright:3001

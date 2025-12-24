@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -e
+
 echo "get Docker GID"
 export DOCKER_GROUP_ID=$(stat -c '%g' /var/run/docker.sock)
 echo DOCKER_GROUP_ID=$DOCKER_GROUP_ID
@@ -9,13 +13,10 @@ echo "generate envs"
 docker compose -f docker-compose.ci.yaml exec -u root -T sav cp .env.e2e.example ./.env.e2e
 
 echo "unit and integration tests"
-docker compose -f docker-compose.ci.yaml exec -T sav npm run test
-
-echo "install playwright"
-docker compose -f docker-compose.ci.yaml exec -T sav npx playwright install chromium
+docker compose -f docker-compose.ci.yaml exec -T sav npm run test || exit 1
 
 echo "run e2e tests"
-docker compose -f docker-compose.ci.yaml exec -T sav npm run test:e2e
+docker compose -f docker-compose.ci.yaml exec -T sav npm run test:e2e || exit 1
 
 echo "removing containers"
 docker compose -f docker-compose.ci.yaml down

@@ -1,6 +1,5 @@
 import { db } from "@/db"
 import { users } from "@/db/schema"
-// import { expect, test as setup } from "@playwright/test"
 import { expect, test as setup } from "./utils/setup"
 
 import { migrate } from "drizzle-orm/node-postgres/migrator"

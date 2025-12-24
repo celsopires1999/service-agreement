@@ -7,10 +7,11 @@ import {
     systems,
     users,
 } from "@/db/schema"
-import { expect, test, type Page } from "@playwright/test"
 import path from "path"
 import { agreementsData, plansData, systemsData, usersData } from "./fixtures"
 import { cleanTables } from "./utils/clean-tables"
+import type { Page } from "./utils/setup"
+import { expect, test } from "./utils/setup"
 
 test.describe("Service Form", () => {
     test.beforeEach(async () => {

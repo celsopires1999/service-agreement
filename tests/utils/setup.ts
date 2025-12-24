@@ -1,4 +1,4 @@
-import { test as base, chromium } from "@playwright/test"
+import { test as base, chromium, expect } from "@playwright/test"
 import type { Browser, Page } from "@playwright/test"
 
 export const test = base.extend({
@@ -6,7 +6,10 @@ export const test = base.extend({
         let browser: Browser
         let page: Page
 
-        browser = await chromium.connect("ws://playwright:3001/")
+        const playwrightURL =
+            process.env.BROWSER_WSS_ENDPOINT || "ws://localhost:3001"
+
+        browser = await chromium.connect(playwrightURL)
 
         const context = await browser.newContext()
 
@@ -20,5 +23,5 @@ export const test = base.extend({
     },
 })
 
-export { expect } from "@playwright/test"
+export { expect }
 export type { Page }

@@ -10,14 +10,14 @@ services:
     tty: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 3000:3000
     depends_on:
       db:
         condition: service_healthy
+      playwright:
+        condition: service_healthy
 
   db:
-    image: postgres:latest
+    image: postgres:18.1-alpine
     restart: unless-stopped
     volumes:
       - ./.docker/postgres/user/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
@@ -26,11 +26,28 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
       POSTGRES_HOSTNAME: localhost
-    ports:
-      - 5432:5432
     healthcheck:
       test:
         ["CMD", "pg_isready", "-h", "localhost", "-p", "5432", "-U", "postgres"]
       interval: 10s
       timeout: 30s
       retries: 5
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.57.0-noble
+    init: true
+    user: pwuser
+    working_dir: /home/pwuser
+    command: npx -y playwright@1.57.0 run-server --port 3001 --host 0.0.0.0
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'node -e "const net = require(''net''); const client = net.createConnection({ port: 3001, host: ''127.0.0.1'' }, () => { client.end(); process.exit(0); }); client.on(''error'', () => { process.exit(1); });"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

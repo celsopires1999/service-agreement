@@ -1,9 +1,10 @@
 import { db } from "@/db"
 import { users } from "@/db/schema"
-import { expect, Page, test } from "@playwright/test"
 import path from "path"
 import { usersData } from "./fixtures"
 import { cleanTables } from "./utils/clean-tables"
+import type { Page } from "./utils/setup"
+import { expect, test } from "./utils/setup"
 
 test.describe("User Form", () => {
     test.beforeEach(async () => {
