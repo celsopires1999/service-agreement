@@ -4,7 +4,9 @@ services:
       args:
         DOCKER_GROUP_ID: "989"
         USER_ID: "1000"
+    volumes:
+      # Configuration for using custom images with Testcontainers
+      # - ~/.docker/config-read.json:/home/node/.docker/config.json:ro
     environment:
-      AUTH_URL: http://sav:3000
       E2E_BASE_URL: http://sav:3000
       BROWSER_WSS_ENDPOINT: ws://playwright:3001
