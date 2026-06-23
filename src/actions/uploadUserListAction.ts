@@ -3,7 +3,7 @@
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { SaveUserListUseCase } from "@/core/users-list/application/use-cases/save-user-list.use-case"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -35,6 +35,7 @@ export const uploadUserListAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const repo = new UserListDrizzleRepository(db)
             const uc = new SaveUserListUseCase(repo)
 

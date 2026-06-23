@@ -1,10 +1,11 @@
 import "server-only"
 
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { agreements, plans, services, serviceSystems } from "@/db/schema"
 import { and, asc, count, desc, eq, ilike, or, sum } from "drizzle-orm"
 
 export async function getService(serviceId: string) {
+    const db = await getDb()
     const service = await db
         .select()
         .from(services)
@@ -25,6 +26,7 @@ type countServicesByAgreementIdType = {
 export async function countServicesByAgreementId(
     agreementId: string,
 ): Promise<countServicesByAgreementIdType> {
+    const db = await getDb()
     const total = await db
         .select({ totalNumberOfServices: count() })
         .from(services)
@@ -51,6 +53,7 @@ export async function getServicesBySystemId(
     systemId: string,
     localPlanId: string,
 ) {
+    const db = await getDb()
     return db
         .select({
             year: agreements.year,
@@ -89,6 +92,7 @@ export async function getServiceSearchResults(
     localPlanId: string,
     searchText: string,
 ) {
+    const db = await getDb()
     let searchWithLocalPlan = true
 
     if (
@@ -151,6 +155,7 @@ export type getServiceSearchResultsType = Awaited<
 >[number]
 
 export async function getServiceWithRelations(serviceId: string) {
+    const db = await getDb()
     return db
         .select({
             serviceId: services.serviceId,
@@ -174,6 +179,7 @@ export async function getServiceWithRelations(serviceId: string) {
 }
 
 export async function getServicesByAgreementId(agreementId: string) {
+    const db = await getDb()
     const results = await db
         .select({
             serviceId: services.serviceId,

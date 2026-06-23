@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { agreements, plans, users } from "@/db/schema"
 import path from "path"
 import { agreementsData } from "./fixtures/agreementsData"
@@ -14,6 +14,7 @@ const runHomePageTests = (role: Role) => {
     test.describe(`Agreements List as ${role}`, () => {
         test.beforeAll(async () => {
             try {
+                const db = await getDb()
                 await cleanTables()
                 await db.insert(users).values(usersData)
                 await db.insert(plans).values(plansData)

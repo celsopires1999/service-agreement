@@ -4,7 +4,7 @@ import { ValidationError } from "@/core/shared/domain/validators/validation.erro
 import { CreateSystemUseCase } from "@/core/system/application/use-cases/create-system.use-case"
 import { UpdateSystemUseCase } from "@/core/system/application/use-cases/update-system.use-case"
 import { SystemDrizzleRepository } from "@/core/system/infra/db/drizzle/system-drizzle.repository"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -36,6 +36,7 @@ export const saveSystemAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const systemRepo = new SystemDrizzleRepository(db)
 
             if (system.systemId === "" || system.systemId === "(New)") {

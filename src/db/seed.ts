@@ -5,7 +5,7 @@ import { serviceSystemsData } from "./data/serviceSystems"
 import { systemsData } from "./data/systems"
 import { userListItemsData, userListsData } from "./data/userLists"
 import { usersData } from "./data/users"
-import { db } from "./index"
+import { getDb } from "./index"
 import {
     agreements,
     plans,
@@ -18,6 +18,7 @@ import {
 } from "./schema"
 
 const main = async () => {
+    const db = await getDb()
     console.log("Seeding...")
     try {
         await db.delete(userListItems)

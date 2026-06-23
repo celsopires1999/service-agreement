@@ -8,7 +8,7 @@ import { AgreementDrizzleRepository } from "@/core/agreement/infra/db/drizzle/ag
 import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/service-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import {
@@ -35,6 +35,7 @@ export const saveAgreementAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const uow = new UnitOfWorkDrizzle(db, {
                 agreement: (db) => new AgreementDrizzleRepository(db),
                 service: (db) => new ServiceDrizzleRepository(db),

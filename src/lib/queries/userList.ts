@@ -1,10 +1,11 @@
 import "server-only"
 
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { userListItems, userLists } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function getUserListItemsByServiceId(serviceId: string) {
+    const db = await getDb()
     const result = await db
         .select({
             userListItemId: userListItems.userListItemId,

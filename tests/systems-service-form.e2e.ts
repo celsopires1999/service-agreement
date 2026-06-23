@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { getDb } from "@/db"
 import {
     agreements,
     plans,
@@ -23,6 +23,7 @@ import { expect, test } from "./utils/setup"
 test.describe("Cost Allocation Form", () => {
     test.beforeEach(async () => {
         try {
+            const db = await getDb()
             await cleanTables()
             await db.insert(users).values(usersData)
             await db.insert(systems).values(systemsData)
@@ -90,6 +91,7 @@ test.describe("Cost Allocation Form", () => {
     })
 
     test("should delete a system from a service", async ({ page }) => {
+        const db = await getDb()
         await db.insert(serviceSystems).values(serviceSystemsData)
 
         await page.goto("services/1d323e0d-1ed8-4183-9fde-d46db6da09b7")

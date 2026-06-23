@@ -1,15 +1,17 @@
 import "server-only"
 
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { systems } from "@/db/schema"
 import { asc, eq, or, ilike } from "drizzle-orm"
 
 export async function getSystems() {
+    const db = await getDb()
     const results = await db.select().from(systems).orderBy(asc(systems.name))
     return results
 }
 
 export async function getSystem(systemId: string) {
+    const db = await getDb()
     const result = await db
         .select()
         .from(systems)
@@ -19,6 +21,7 @@ export async function getSystem(systemId: string) {
 }
 
 export async function getSystemSearchResults(searchText: string) {
+    const db = await getDb()
     const results = await db
         .select()
         .from(systems)

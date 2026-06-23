@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { getDb } from "@/db"
 import {
     agreements,
     plans,
@@ -16,6 +16,7 @@ import { expect, test } from "./utils/setup"
 test.describe("Service Form", () => {
     test.beforeEach(async () => {
         try {
+            const db = await getDb()
             await cleanTables()
             await db.insert(users).values(usersData)
             await db.insert(plans).values(plansData)
@@ -92,6 +93,7 @@ test.describe("Service Form", () => {
     })
 
     test("should edit an existing service", async ({ page }) => {
+        const db = await getDb()
         const serviceData = {
             serviceId: "c09dccdf-385f-4596-95bd-37fecab91d0d",
             name: "Initial Service Name",
@@ -163,6 +165,7 @@ test.describe("Service Form", () => {
     })
 
     test("should set to approved", async ({ page }) => {
+        const db = await getDb()
         const serviceData = {
             serviceId: "c09dccdf-385f-4596-95bd-37fecab91d0d",
             name: "Initial Service Name",
@@ -393,6 +396,7 @@ test.describe("Service Form", () => {
     test("should not set to approved when cost allocation is not 100%", async ({
         page,
     }) => {
+        const db = await getDb()
         const serviceData = {
             serviceId: "c09dccdf-385f-4596-95bd-37fecab91d0d",
             name: "Initial Service Name",

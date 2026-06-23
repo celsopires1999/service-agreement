@@ -1,10 +1,11 @@
 import "server-only"
 
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { serviceSystems, systems } from "@/db/schema"
 import { and, asc, desc, eq } from "drizzle-orm"
 
 export async function getServiceSystemsSearchResults(serviceId: string) {
+    const db = await getDb()
     const result = await db
         .select({
             serviceId: serviceSystems.serviceId,
@@ -28,6 +29,7 @@ export type getServiceSystemsSearchResultsType = Awaited<
 >[number]
 
 export async function getServiceSystem(serviceId: string, systemId: string) {
+    const db = await getDb()
     const serviceSystem = await db
         .select()
         .from(serviceSystems)

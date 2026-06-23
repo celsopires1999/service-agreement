@@ -3,7 +3,7 @@
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { DeleteUserUseCase } from "@/core/user/application/use-cases/delete-user.use-case"
 import { UserDrizzleRepository } from "@/core/user/infra/db/drizzle/user-drizzle.repository"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
@@ -34,6 +34,7 @@ export const deleteUserAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const userRepo = new UserDrizzleRepository(db)
             const deleteUser = new DeleteUserUseCase(userRepo)
             await deleteUser.execute({

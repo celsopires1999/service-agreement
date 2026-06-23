@@ -1,7 +1,8 @@
 import { migrate } from "drizzle-orm/node-postgres/migrator"
-import { db } from "./index"
+import { getDb } from "./index"
 
 const main = async () => {
+    const db = await getDb()
     console.log("Running migrations...")
 
     try {

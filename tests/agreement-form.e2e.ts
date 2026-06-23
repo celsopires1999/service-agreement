@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { agreements, plans, services, users } from "@/db/schema"
 import path from "path"
 import {
@@ -15,6 +15,7 @@ import { expect, test } from "./utils/setup"
 test.describe(`Agreement Form`, () => {
     test.beforeEach(async () => {
         try {
+            const db = await getDb()
             await cleanTables()
             await db.insert(users).values(usersData)
             await db.insert(plans).values(plansData)
@@ -170,6 +171,7 @@ test.describe(`Agreement Form`, () => {
     })
 
     test("should allow setting an agreement to revised", async ({ page }) => {
+        const db = await getDb()
         await db.insert(services).values(validatedServicesData)
 
         await page.goto(
@@ -288,6 +290,7 @@ test.describe(`Agreement Form`, () => {
     test("should not allow setting to revised when there are not validated services", async ({
         page,
     }) => {
+        const db = await getDb()
         await db.insert(services).values(servicesData)
         await page.goto(
             "/agreements/form?agreementId=84c93124-e3f9-48f9-92d5-fcdb4bbbe2ef",

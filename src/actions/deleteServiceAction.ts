@@ -5,7 +5,7 @@ import { ServiceDrizzleRepository } from "@/core/service/infra/db/drizzle/servic
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
 import { UnitOfWorkDrizzle } from "@/core/shared/infra/db/drizzle/unit-of-work-drizzle"
 import { UserListDrizzleRepository } from "@/core/users-list/infra/db/drizzle/user-list-drizzle.repository"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
@@ -36,6 +36,7 @@ export const deleteServiceAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const uow = new UnitOfWorkDrizzle(db, {
                 service: (db) => new ServiceDrizzleRepository(db),
                 userList: (db) => new UserListDrizzleRepository(db),

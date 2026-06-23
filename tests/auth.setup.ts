@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { users } from "@/db/schema"
 import { expect, test as setup } from "./utils/setup"
 
@@ -10,6 +10,7 @@ import { cleanTables } from "./utils/clean-tables"
 const adminFile = path.join(__dirname, "../playwright/.auth/admin.json")
 
 setup.beforeAll(async () => {
+    const db = await getDb()
     try {
         await migrate(db, {
             migrationsFolder: "src/db/migrations",
@@ -21,6 +22,7 @@ setup.beforeAll(async () => {
 })
 
 setup.beforeEach(async () => {
+    const db = await getDb()
     try {
         await cleanTables()
         await db.insert(users).values(usersData)

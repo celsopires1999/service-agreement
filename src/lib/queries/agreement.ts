@@ -1,10 +1,11 @@
 import "server-only"
 
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { agreements, plans, services, serviceSystems } from "@/db/schema"
 import { asc, desc, eq, ilike, max, or, and } from "drizzle-orm"
 
 export async function getAgreement(agreementId: string) {
+    const db = await getDb()
     const agreement = await db
         .select({
             agreementId: agreements.agreementId,
@@ -36,6 +37,7 @@ export async function getAgreementSearchResults(
     localPlanId: string,
     searchText: string,
 ) {
+    const db = await getDb()
     let searchWithLocalPlan = true
 
     if (
@@ -93,6 +95,7 @@ export type getAgreementSearchResultsType = Awaited<
 >[number]
 
 export async function getLastYearBySystemId(systemId: string) {
+    const db = await getDb()
     return db
         .selectDistinct({
             year: agreements.year,
@@ -111,6 +114,7 @@ export async function getLastYearBySystemId(systemId: string) {
 }
 
 export async function getAgreementLastReviewSearchResults(searchText: string) {
+    const db = await getDb()
     const t2 = db
         .select({
             code: agreements.code,

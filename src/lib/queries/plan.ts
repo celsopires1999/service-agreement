@@ -1,14 +1,16 @@
 import "server-only"
 
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { plans } from "@/db/schema"
 import { desc, eq } from "drizzle-orm"
 
 export async function getPlan(planId: string) {
+    const db = await getDb()
     return db.select().from(plans).where(eq(plans.planId, planId)).limit(1)
 }
 
 export async function getPlans() {
+    const db = await getDb()
     return db
         .select({
             planId: plans.planId,

@@ -1,10 +1,11 @@
 import "server-only"
 
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { users } from "@/db/schema"
 import { asc, eq, ilike, or } from "drizzle-orm"
 
 export async function getUserByEmail(email: string) {
+    const db = await getDb()
     const result = await db
         .select()
         .from(users)
@@ -14,6 +15,7 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function getUser(userId: string) {
+    const db = await getDb()
     const result = await db
         .select()
         .from(users)
@@ -23,6 +25,7 @@ export async function getUser(userId: string) {
 }
 
 export async function getUserSearchResults(searchText: string) {
+    const db = await getDb()
     const results = await db
         .select()
         .from(users)

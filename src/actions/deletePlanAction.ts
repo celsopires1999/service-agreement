@@ -3,7 +3,7 @@
 import { DeletePlanUseCase } from "@/core/plan/application/use-cases/delete-plan.use-case"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { flattenValidationErrors } from "next-safe-action"
@@ -34,6 +34,7 @@ export const deletePlanAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const deletePlan = new DeletePlanUseCase(
                 new PlanDrizzleRepository(db),
             )

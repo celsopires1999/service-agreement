@@ -6,7 +6,7 @@ import { CreatePlanUseCase } from "@/core/plan/application/use-cases/create-plan
 import { UpdatePlanUseCase } from "@/core/plan/application/use-cases/update-plan.use-case"
 import { PlanDrizzleRepository } from "@/core/plan/infra/db/drizzle/plan-drizzle.repository"
 import { ValidationError } from "@/core/shared/domain/validators/validation.error"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { insertPlanSchema, type insertPlanSchemaType } from "@/zod-schemas/plan"
@@ -30,6 +30,7 @@ export const savePlanAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const planRepo = new PlanDrizzleRepository(db)
 
             if (plan.planId === "(New)") {

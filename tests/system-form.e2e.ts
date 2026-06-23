@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { systems, users } from "@/db/schema"
 import path from "path"
 import { usersData } from "./fixtures"
@@ -24,6 +24,7 @@ const systemsData = [
 test.describe("System Form", () => {
     test.beforeEach(async () => {
         try {
+            const db = await getDb()
             await cleanTables()
             await db.insert(users).values(usersData)
             await db.insert(systems).values(systemsData)

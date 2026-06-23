@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { getDb } from "@/db"
 import {
     agreements,
     plans,
@@ -11,6 +11,7 @@ import {
 } from "@/db/schema"
 
 export async function cleanTables() {
+    const db = await getDb()
     try {
         await db.delete(userListItems)
         await db.delete(userLists)

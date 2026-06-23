@@ -25,6 +25,7 @@
     "test:e2e:report": "env $(cat .env.e2e | grep -v '^#' | xargs) playwright show-report"
   },
   "dependencies": {
+    "@azure/identity": "^4.13.1",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-checkbox": "^1.1.4",

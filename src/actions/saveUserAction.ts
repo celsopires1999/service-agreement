@@ -5,7 +5,7 @@ import { ValidationError } from "@/core/shared/domain/validators/validation.erro
 import { CreateUserUseCase } from "@/core/user/application/use-cases/create-user.use-case"
 import { UpdateUserUseCase } from "@/core/user/application/use-cases/update-user.use-case"
 import { UserDrizzleRepository } from "@/core/user/infra/db/drizzle/user-drizzle.repository"
-import { db } from "@/db"
+import { getDb } from "@/db"
 import { getSession } from "@/lib/auth"
 import { actionClient } from "@/lib/safe-action"
 import { insertUserSchema, type insertUserSchemaType } from "@/zod-schemas/user"
@@ -29,6 +29,7 @@ export const saveUserAction = actionClient
                 throw new ValidationError("Unauthorized")
             }
 
+            const db = await getDb()
             const userRepo = new UserDrizzleRepository(db)
 
             if (user.userId === "" || user.userId === "(New)") {
